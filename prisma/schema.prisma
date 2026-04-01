@@ -1,0 +1,230 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Availability {
+  DAY
+  NIGHT
+  BOTH
+}
+
+model Product {
+  id           String       @id @default(cuid())
+  slug         String       @unique
+  name         String
+  price        Float
+  categoryId   String
+  tag          String?
+  img          String
+  desc         String
+  descLong     String
+  ingredients  String
+  allergens    String
+  weight       String
+  prepTime     String
+  availability Availability @default(BOTH)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  
+  promotions  Promotion[]
+
+  category     Category     @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  emoji     String    @default("•")
+  order     Int       @default(99)
+  createdAt DateTime  @default(now())
+
+  products  Product[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model SocialLink {
+  id            String      @id @default(cuid())
+  platform      String 
+  url           String
+  username      String?
+  order         Int         @default(0)
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  contactInfoId String
+  contactInfo   ContactInfo @relation(fields: [contactInfoId], references: [id])
+
+  @@unique([platform, contactInfoId])
+}
+
+model ContactInfo {
+  id              String       @id @default(cuid())
+  address         String?
+  email           String?
+  phone           String?
+  whatsapp        String?     
+  schedule        Json?       
+  isOpenOverride  Boolean?     @default(true)
+  extraInfo       String?    
+
+  socialLinks     SocialLink[]
+  updatedAt       DateTime     @updatedAt
+}
+
+model Location {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  city       String
+  name       String
+  address    String
+  addressMin String
+  phone      String
+  hours      String
+  image      String   @default("")
+  gallery    String   @default("[]")
+  mapUrl     String
+  embedUrl   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Schedule {
+  id          String         @id @default(cuid())
+  dayOfWeek   DayOfWeek
+  shifts      Shift[]
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@unique([dayOfWeek])
+}
+
+model Shift {
+  id         String    @id @default(cuid())
+  schedule   Schedule  @relation(fields: [scheduleId], references: [id])
+  scheduleId String
+  name       String?   // "Matutino", "Vespertino", etc.
+  openTime   String    // "08:30"
+  closeTime  String    // "13:00"
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+enum DayOfWeek {
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+  SABADO
+  DOMINGO
+}
+
+model Theme {
+  id       String  @id @default(cuid())
+  name     String
+  isActive Boolean @default(false)
+
+  /* Backgrounds */
+  bgBody String
+  bgDark String
+
+  /* Text */
+  textMain   String
+  textTitles String
+  textMuted  String
+  textInvert String
+
+  /* Brand */
+  brandPrimary       String
+  brandPrimaryHover  String
+  brandContrast      String
+  brandContrastHover String
+
+  /* Utilities */
+  borderColor String
+  statusError String
+  shadowColor String
+
+  /* Radius */
+  radius     String
+  radiusFull String
+
+  /* Fonts */
+  fontTitle String
+  fontBody  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PromotionType {
+  DISCOUNT
+  ANNOUNCE
+  WARNING
+}
+
+enum AnnouncementType {
+  PROMO
+  INFO
+  WARNING
+  CLOSED
+}
+
+model Promotion {
+  id          String        @id @default(cuid())
+  type        PromotionType @default(DISCOUNT)
+  title       String
+  description String?
+  discount    Float?
+  startsAt    DateTime
+  endsAt      DateTime
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+
+  products    Product[]
+}
+
+model Announcement {
+  id        String           @id @default(cuid())
+  type      AnnouncementType @default(INFO)
+  title     String
+  message   String?
+  startsAt  DateTime         @default(now())
+  endsAt    DateTime?
+  isActive  Boolean          @default(true)
+  createdAt DateTime         @default(now())
+}
+
+model Blog {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  subtitle        String
+  coverImage      String
+  gallery         String   @default("[]")
+  category        String
+  tags            String
+  sections        String
+  status          String   @default("published") // "draft" | "published" | "scheduled"
+  author          String   @default("")
+  metaDescription String   @default("")
+  publishedAt     DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
