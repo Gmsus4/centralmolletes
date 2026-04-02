@@ -18,7 +18,7 @@ export const Navbar = ({phone, whatsapp}: NavbarProps) => {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
-  const phoneCall = phone!.replace(/[^0-9]/g, '') ?? ""
+  const phoneCall = phone?.replace(/[^0-9]/g, '') ?? ""
 
   const isActive = (href: string) => pathname === href
   const isHome = pathname === "/"
