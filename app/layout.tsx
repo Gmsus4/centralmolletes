@@ -3,6 +3,10 @@ import "./globals.css"
 import { SessionProvider } from "next-auth/react"
 import { getCurrentTheme } from "@/lib/theme"
 import prisma from "@/lib/prisma"
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const revalidate = 3600
 
@@ -156,7 +160,7 @@ export default async function RootLayout({
           "--font-title": theme?.fontTitle || '"Lobster Two", cursive',
           "--font-body": theme?.fontBody || '"Onest Variable", sans-serif',
         } as React.CSSProperties
-      }
+      } className={cn("font-sans", geist.variable)}
     >
       <body className="antialiased">
         <script

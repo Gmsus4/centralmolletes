@@ -6,9 +6,13 @@ import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ProductSchema, ProductFormValues } from "@/lib/validators/products"
 import ImageUpload from "../components/ImageUpload"
-import { ComboBox } from "../components/ComboBox"
-
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet, FieldTitle } from "@/components/ui/field"
+import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group"
+import { ComboField } from "../components/ComboField"
+import { Button } from "@/components/ui/Button"
+import { Loader2 } from "lucide-react"
 
 type Availability = "DAY" | "NIGHT" | "BOTH"
 
@@ -35,8 +39,6 @@ type Props = {
   existingTags: string[]
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
 const inputClass = `
   w-full bg-white
   border border-stone-300 focus:border-stone-700
@@ -44,9 +46,6 @@ const inputClass = `
   text-stone-900 text-sm placeholder:text-stone-400
   outline-none transition-colors duration-200
 `
-const labelClass = "text-[10px] uppercase tracking-[0.25em] text-stone-600 font-medium"
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   <div className="flex items-center gap-3 mb-5">
@@ -54,29 +53,6 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     <span className="flex-1 h-px bg-stone-100" />
   </div>
 )
-
-function Field({
-  label,
-  hint,
-  error,
-  children,
-}: {
-  label: string
-  hint?: string
-  error?: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className={labelClass}>{label}</label>
-      {children}
-      {hint && !error && (
-        <span className="text-[9px] uppercase tracking-[0.2em] text-stone-400">{hint}</span>
-      )}
-      {error && <span className="text-red-500 text-xs">{error}</span>}
-    </div>
-  )
-}
 
 function DeleteButton({ onConfirm }: { onConfirm: () => void }) {
   const [confirm, setConfirm] = useState(false)
@@ -115,12 +91,10 @@ function DeleteButton({ onConfirm }: { onConfirm: () => void }) {
 }
 
 const AVAILABILITY_OPTIONS: { value: Availability; label: string; desc: string; icon: string }[] = [
-  { value: "BOTH",  label: "Ambos", desc: "Día y noche",      icon: "☀️🌙" },
-  { value: "DAY",   label: "Día",   desc: "Solo menú de día", icon: "☀️"   },
-  { value: "NIGHT", label: "Noche", desc: "Solo menú de noche", icon: "🌙" },
+  { value: "BOTH",  label: "Ambos", desc: "Día y noche",        icon: "☀️🌙" },
+  { value: "DAY",   label: "Día",   desc: "Solo menú de día",   icon: "☀️"   },
+  { value: "NIGHT", label: "Noche", desc: "Solo menú de noche", icon: "🌙"   },
 ]
-
-// ─── Main component ───────────────────────────────────────────────────────────
 
 export default function ProductForm({ product, existingCategories, existingTags }: Props) {
   const router = useRouter()
@@ -131,31 +105,30 @@ export default function ProductForm({ product, existingCategories, existingTags 
     register,
     handleSubmit,
     control,
-    setError, 
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<ProductFormValues>({
     resolver: zodResolver(ProductSchema),
     defaultValues: {
-      slug:         product?.slug        ?? "",
-      name:         product?.name        ?? "",
-      price:        product?.price       ?? 0,
-      category:     product?.category    ?? "",
-      tag:          product?.tag         ?? "",
-      img:          product?.img         ?? "",
-      desc:         product?.desc        ?? "",
-      descLong:     product?.descLong    ?? "",
+      slug:         product?.slug              ?? "",
+      name:         product?.name              ?? "",
+      price:        product?.price             ?? 0,
+      category:     product?.category          ?? "",
+      tag:          product?.tag               ?? "",
+      img:          product?.img               ?? "",
+      desc:         product?.desc              ?? "",
+      descLong:     product?.descLong          ?? "",
       ingredients:  product?.ingredients.join(", ") ?? "",
       allergens:    product?.allergens.join(", ")   ?? "",
-      weight:       product?.weight      ?? "",
-      prepTime:     product?.prepTime    ?? "Al momento",
-      availability: product?.availability ?? "BOTH",
+      weight:       product?.weight            ?? "",
+      prepTime:     product?.prepTime          ?? "Al momento",
+      availability: product?.availability      ?? "BOTH",
     },
   })
 
   const onSubmit = async (data: ProductFormValues) => {
     setSubmitError("")
 
-    // Aquí hacemos el transform: string → array antes de enviar al API
     const payload = {
       ...data,
       ingredients: data.ingredients.split(",").map((s) => s.trim()).filter(Boolean),
@@ -175,13 +148,12 @@ export default function ProductForm({ product, existingCategories, existingTags 
       const json = await res.json().catch(() => ({}))
       const message = json.error ?? "Hubo un error al guardar"
 
-      // Si el error es de slug duplicado, lo mostramos en el campo slug
       if (json.error?.toLowerCase().includes("slug")) {
         setError("slug", { message })
       } else if (json.error?.toLowerCase().includes("nombre")) {
         setError("name", { message })
       } else {
-        setSubmitError(message)  // error genérico en el header
+        setSubmitError(message)
       }
       return
     }
@@ -203,37 +175,44 @@ export default function ProductForm({ product, existingCategories, existingTags 
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-3">
-            <span className="w-8 h-px bg-stone-400" />
-            <span className="text-[10px] uppercase tracking-[0.3em] text-stone-500">Productos</span>
+            {/* <Separator orientation="horizontal" className="w-8" /> */}
+            <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Productos</span>
           </div>
-          <h1 className="font-titleText text-stone-900 uppercase text-4xl sm:text-5xl leading-none">
+          <h1 className="font-titleText text-foreground uppercase text-4xl sm:text-5xl leading-none">
             {isEditing ? "Editar" : "Nuevo"}
           </h1>
         </div>
 
         <div className="hidden sm:flex items-center gap-4">
-          {submitError && <p className="text-[11px] tracking-wide text-red-500">{submitError}</p>}
-          <button
+          {submitError && (
+            <p className="text-[11px] tracking-wide text-destructive">{submitError}</p>
+          )}
+
+          <Button
             type="button"
+            variant="link"
+            size="sm"
             onClick={() => router.push("/admin")}
-            className="text-[10px] uppercase tracking-[0.25em] text-stone-500 hover:text-stone-900 border-b border-stone-400 hover:border-stone-900 pb-px transition-colors duration-200 cursor-pointer"
+            className="text-[10px] cursor-pointer uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground px-0 h-auto"
           >
             Cancelar
-          </button>
+          </Button>
+
           {isEditing && <DeleteButton onConfirm={handleDelete} />}
-          <button
+
+          <Button
             type="submit"
             form="product-form"
             disabled={isSubmitting}
-            className="bg-stone-900 text-white px-6 py-3 text-[11px] uppercase tracking-[0.3em] font-semibold hover:opacity-90 active:opacity-75 disabled:opacity-50 transition-opacity duration-200 cursor-pointer disabled:cursor-not-allowed"
+            className="bg-stone-900 cursor-pointer text-white px-6 py-3 text-[11px] uppercase tracking-[0.3em] font-semibold"
           >
             {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full border border-white/30 border-t-white animate-spin" />
+              <>
+                <Loader2 className="w-3 h-3 animate-spin" />
                 Guardando…
-              </span>
+              </>
             ) : "Guardar"}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -251,64 +230,107 @@ export default function ProductForm({ product, existingCategories, existingTags 
           <div className="flex flex-col gap-5">
             <SectionTitle>Información general</SectionTitle>
 
-            <Field label="Nombre" error={errors.name?.message}>
-              <input
+            <Field data-invalid={!!errors.name}>
+              <FieldLabel htmlFor="name">Nombre</FieldLabel>
+              <FieldError>{errors.name?.message}</FieldError>
+              <Input
+                id="name"
+                aria-invalid={!!errors.name}
                 {...register("name")}
                 placeholder="Mollete Clásico"
                 className={inputClass}
               />
             </Field>
 
-            <Field label="Slug" error={errors.slug?.message}>
-              <input
+            <Field data-invalid={!!errors.slug}>
+              <FieldLabel htmlFor="slug">Slug</FieldLabel>
+              <FieldError>{errors.slug?.message}</FieldError>
+              <Input
+                id="slug"
+                aria-invalid={!!errors.slug}
                 {...register("slug")}
                 placeholder="mollete-clasico"
                 className={inputClass}
               />
+              <FieldDescription>
+                URL amigable. Solo minúsculas y guiones (ej: mollete-clasico).
+              </FieldDescription>
             </Field>
 
-            <Field label="Descripción corta" error={errors.desc?.message}>
-              <input
+            <Field data-invalid={!!errors.desc}>
+              <FieldLabel htmlFor="desc">Descripción corta</FieldLabel>
+              <FieldError>{errors.desc?.message}</FieldError>
+              <Input
+                id="desc"
+                aria-invalid={!!errors.desc}
                 {...register("desc")}
                 placeholder="Una línea descriptiva"
                 className={inputClass}
               />
             </Field>
 
-            <Field label="Descripción larga" error={errors.descLong?.message}>
-              <textarea
-                {...register("descLong")}
-                rows={4}
-                placeholder="Descripción extendida del producto…"
-                className={`${inputClass} resize-none`}
-              />
-            </Field>
+            <FieldSet className="w-full">
+              <FieldGroup>
+                <Field data-invalid={!!errors.descLong}>
+                  <FieldLabel htmlFor="descLong">Descripción larga</FieldLabel>
+                  <FieldError>{errors.descLong?.message}</FieldError>
+                  <Textarea
+                    id="descLong"
+                    aria-invalid={!!errors.descLong}
+                    {...register("descLong")}
+                    placeholder="Descripción extendida del producto…"
+                    rows={4}
+                  />
+                </Field>
+              </FieldGroup>
+            </FieldSet>
 
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Precio" error={errors.price?.message}>
-                <input
+              <Field data-invalid={!!errors.price}>
+                <FieldLabel htmlFor="price">Precio</FieldLabel>
+                <FieldError>{errors.price?.message}</FieldError>
+                <Input
+                  id="price"
+                  aria-invalid={!!errors.price}
                   {...register("price", { valueAsNumber: true })}
                   type="number"
                   step="0.01"
                   className={inputClass}
                 />
+                <FieldDescription>
+                  Precio unitario de venta al público (IVA incluido).
+                </FieldDescription>
               </Field>
 
-              <Field label="Peso" error={errors.weight?.message}>
-                <input
+              <Field data-invalid={!!errors.weight}>
+                <FieldLabel htmlFor="weight">Cantidad</FieldLabel>
+                <FieldError>{errors.weight?.message}</FieldError>
+                <Input
+                  id="weight"
+                  aria-invalid={!!errors.weight}
                   {...register("weight")}
                   placeholder="250g"
                   className={inputClass}
                 />
+                <FieldDescription>
+                  Peso neto o piezas por unidad (ej: 250g, 1 pza).
+                </FieldDescription>
               </Field>
             </div>
 
-            <Field label="Tiempo de preparación" error={errors.prepTime?.message}>
-              <input
+            <Field data-invalid={!!errors.prepTime}>
+              <FieldLabel htmlFor="prepTime">Tiempo de preparación</FieldLabel>
+              <FieldError>{errors.prepTime?.message}</FieldError>
+              <Input
+                id="prepTime"
+                aria-invalid={!!errors.prepTime}
                 {...register("prepTime")}
                 placeholder="Al momento"
                 className={inputClass}
               />
+              <FieldDescription>
+                Tiempo estimado de entrega (ej: '15 min', 'Al momento').
+              </FieldDescription>
             </Field>
           </div>
 
@@ -316,87 +338,83 @@ export default function ProductForm({ product, existingCategories, existingTags 
           <div className="flex flex-col gap-5 mt-8 lg:mt-0">
             <SectionTitle>Clasificación e imagen</SectionTitle>
 
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Categoría" hint="Escribe para crear nueva" error={errors.category?.message}>
-                <Controller
-                  control={control}
-                  name="category"
-                  render={({ field }) => (
-                    <ComboBox
-                      value={field.value}
-                      onChange={field.onChange}
-                      options={existingCategories}
-                      placeholder="Elige o escribe nueva"
-                    />
-                  )}
-                />
-              </Field>
-
-              <Field label="Tag" hint="Escribe para crear nuevo" error={errors.tag?.message}>
-                <Controller
-                  control={control}
-                  name="tag"
-                  render={({ field }) => (
-                    <ComboBox
-                      value={field.value ?? ""}
-                      onChange={field.onChange}
-                      options={existingTags}
-                      placeholder="Elige o escribe nuevo"
-                    />
-                  )}
-                />
-              </Field>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <ComboField
+                control={control}
+                name="category"
+                label="Categoría"
+                description="Escribe para crear una nueva."
+                placeholder="Elige o escribe nueva"
+                options={existingCategories}
+                error={errors.category?.message}
+              />
+              <ComboField
+                control={control}
+                name="tag"
+                label="Tag"
+                description="Escribe para crear uno nuevo."
+                placeholder="Elige o escribe nuevo"
+                options={existingTags}
+                error={errors.tag?.message}
+              />
             </div>
 
-            <Field label="Disponibilidad" error={errors.availability?.message}>
-              <Controller
-                control={control}
-                name="availability"
-                render={({ field }) => (
-                  <div className="grid grid-cols-3 gap-2">
-                    {AVAILABILITY_OPTIONS.map((opt) => (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => field.onChange(opt.value)}
-                        className={`
-                          flex flex-col items-center gap-1 py-3 px-2 border transition-colors duration-150 cursor-pointer
-                          ${field.value === opt.value
-                            ? "bg-stone-900 border-stone-900 text-white"
-                            : "bg-white border-stone-300 text-stone-600 hover:border-stone-600"}
-                        `}
-                      >
-                        <span className="text-base leading-none">{opt.icon}</span>
-                        <span className="text-[10px] uppercase tracking-[0.15em] font-semibold leading-none">
-                          {opt.label}
-                        </span>
-                        <span className={`text-[9px] leading-none ${field.value === opt.value ? "text-white/70" : "text-stone-400"}`}>
-                          {opt.desc}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              />
-            </Field>
+            <FieldGroup>
+              <FieldSet>
+                <FieldLegend variant="label">Disponibilidad</FieldLegend>
+                <FieldDescription>Selecciona cuándo estará disponible este producto.</FieldDescription>
+                <FieldError>{errors.availability?.message}</FieldError>
+                <Controller
+                  control={control}
+                  name="availability"
+                  render={({ field }) => (
+                    <RadioGroup value={field.value} onValueChange={field.onChange}>
+                      {AVAILABILITY_OPTIONS.map((opt) => (
+                        <FieldLabel key={opt.value} htmlFor={`availability-${opt.value}`} className="cursor-pointer">
+                          <Field orientation="horizontal">
+                            <FieldContent>
+                              <FieldTitle>{opt.icon} {opt.label}</FieldTitle>
+                              <FieldDescription>{opt.desc}</FieldDescription>
+                            </FieldContent>
+                            <RadioGroupItem value={opt.value} id={`availability-${opt.value}`} />
+                          </Field>
+                        </FieldLabel>
+                      ))}
+                    </RadioGroup>
+                  )}
+                />
+              </FieldSet>
+            </FieldGroup>
 
-            <Field label="Ingredientes" hint="Separados por coma" error={errors.ingredients?.message}>
-              <input
+            <Field data-invalid={!!errors.ingredients}>
+              <FieldLabel htmlFor="ingredients">Ingredientes</FieldLabel>
+              <FieldError>{errors.ingredients?.message}</FieldError>
+              <Input
+                id="ingredients"
+                aria-invalid={!!errors.ingredients}
                 {...register("ingredients")}
                 placeholder="harina, sal, levadura"
                 className={inputClass}
               />
+              <FieldDescription>Separados por coma.</FieldDescription>
             </Field>
 
-            <Field label="Alérgenos" hint="Separados por coma" error={errors.allergens?.message}>
-              <input
+            <Field data-invalid={!!errors.allergens}>
+              <FieldLabel htmlFor="allergens">Alérgenos</FieldLabel>
+              <FieldError>{errors.allergens?.message}</FieldError>
+              <Input
+                id="allergens"
+                aria-invalid={!!errors.allergens}
                 {...register("allergens")}
                 placeholder="gluten, lácteos"
                 className={inputClass}
               />
+              <FieldDescription>Separados por coma.</FieldDescription>
             </Field>
 
-            <Field label="Imagen" error={errors.img?.message}>
+            <Field data-invalid={!!errors.img}>
+              <FieldLabel htmlFor="img">Imagen</FieldLabel>
+              <FieldError>{errors.img?.message}</FieldError>
               <Controller
                 control={control}
                 name="img"
