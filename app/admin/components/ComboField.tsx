@@ -7,7 +7,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Check, ChevronsUpDown } from "lucide-react"
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { ProductFormValues } from "@/lib/validators/products"
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/button"
 
 interface ComboFieldProps {
   control: Control<ProductFormValues>

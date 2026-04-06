@@ -5,17 +5,16 @@ import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AnnouncementSchema, AnnouncementFormValues } from "@/lib/validators/announcement"
-
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
-const inputClass = `
-  w-full bg-white
-  border border-stone-300 focus:border-stone-700
-  px-4 py-2.5
-  text-stone-900 text-sm placeholder:text-stone-400
-  outline-none transition-colors duration-200
-`
-const labelClass = "text-[10px] uppercase tracking-[0.25em] text-stone-600 font-medium"
+import { AdminFormLayout } from "../components/AdminFormLayout"
+import { Field, FieldLabel, FieldError } from "@/components/ui/field"
+import { Switch } from "@/components/ui/switch"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Controller } from "react-hook-form"
+import { SavingOverlay } from "@/components/ui/saving-overlay"
+import { useFormOverlay } from "@/hooks/useFormOverlay"
+import { useDuplicate } from "@/hooks/useDuplicate"
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -25,60 +24,6 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     <span className="flex-1 h-px bg-stone-100" />
   </div>
 )
-
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string
-  error?: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className={labelClass}>{label}</label>
-      {children}
-      {error && <span className="text-red-500 text-xs">{error}</span>}
-    </div>
-  )
-}
-
-function DeleteButton({ onConfirm }: { onConfirm: () => void }) {
-  const [confirm, setConfirm] = useState(false)
-
-  if (confirm) {
-    return (
-      <div className="flex items-center gap-3">
-        <span className="text-[10px] uppercase tracking-[0.2em] text-stone-500">¿Confirmar?</span>
-        <button
-          type="button"
-          onClick={onConfirm}
-          className="text-[10px] uppercase tracking-[0.2em] text-red-500 hover:text-red-700 border-b border-red-400 hover:border-red-700 pb-px transition-colors duration-200 cursor-pointer"
-        >
-          Sí, eliminar
-        </button>
-        <button
-          type="button"
-          onClick={() => setConfirm(false)}
-          className="text-[10px] uppercase tracking-[0.2em] text-stone-500 hover:text-stone-700 border-b border-stone-400 hover:border-stone-700 pb-px transition-colors duration-200 cursor-pointer"
-        >
-          No
-        </button>
-      </div>
-    )
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={() => setConfirm(true)}
-      className="text-[10px] uppercase tracking-[0.2em] text-stone-400 hover:text-red-500 border-b border-stone-300 hover:border-red-500 pb-px transition-colors duration-200 cursor-pointer"
-    >
-      Eliminar
-    </button>
-  )
-}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -93,17 +38,17 @@ type Announcement = {
 }
 
 const ANNOUNCEMENT_TYPES = [
-  { value: "PROMO",   label: "Promoción" },
-  { value: "INFO",    label: "Información" },
-  { value: "WARNING", label: "Aviso" },
-  { value: "CLOSED",  label: "Cerrado" },
+  { value: "PROMO",   label: "Promoción"    },
+  { value: "INFO",    label: "Información"  },
+  { value: "WARNING", label: "Aviso"        },
+  { value: "CLOSED",  label: "Cerrado"      },
 ] as const
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function toDatetimeLocal(value: string | Date | undefined | null): string {
   if (!value) return ""
-  const d = new Date(value)
+  const d   = new Date(value)
   const pad = (n: number) => String(n).padStart(2, "0")
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
@@ -111,13 +56,17 @@ function toDatetimeLocal(value: string | Date | undefined | null): string {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function AnnouncementForm({ announcement }: { announcement?: Announcement }) {
-  const router = useRouter()
+  const router    = useRouter()
   const isEditing = !!announcement?.id
   const [submitError, setSubmitError] = useState("")
+  const { overlayMode, setOverlayMode, isVisible } = useFormOverlay()
 
   const {
     register,
     handleSubmit,
+    watch,
+    getValues,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<AnnouncementFormValues>({
     resolver: zodResolver(AnnouncementSchema),
@@ -131,8 +80,18 @@ export default function AnnouncementForm({ announcement }: { announcement?: Anno
     },
   })
 
+  const handleDuplicate = useDuplicate({
+    apiPath:      "/api/announcements",
+    redirectPath: "/admin/announcements",
+    getValues,
+    setOverlayMode,
+    setSubmitError,
+    nameField: "title"
+  })
+
   const onSubmit = async (data: AnnouncementFormValues) => {
     setSubmitError("")
+    setOverlayMode("saving")
 
     const url    = isEditing ? `/api/announcements/${announcement!.id}` : `/api/announcements`
     const method = isEditing ? "PUT" : "POST"
@@ -146,6 +105,7 @@ export default function AnnouncementForm({ announcement }: { announcement?: Anno
     if (!res.ok) {
       const json = await res.json().catch(() => ({}))
       setSubmitError(json.error ?? "Hubo un error al guardar")
+      setOverlayMode(null)
       return
     }
 
@@ -154,53 +114,27 @@ export default function AnnouncementForm({ announcement }: { announcement?: Anno
   }
 
   const handleDelete = useCallback(async () => {
+    setOverlayMode("deleting")
     await fetch(`/api/announcements/${announcement!.id}`, { method: "DELETE" })
     router.push("/admin/announcements?deleted=true")
     router.refresh()
   }, [announcement, router])
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-px bg-stone-400" />
-            <span className="text-[10px] uppercase tracking-[0.3em] text-stone-500">Anuncios</span>
-          </div>
-          <h1 className="font-titleText text-stone-900 uppercase text-4xl sm:text-5xl leading-none">
-            {isEditing ? "Editar" : "Nuevo"}
-          </h1>
-        </div>
-
-        <div className="hidden sm:flex items-center gap-4">
-          {submitError && <p className="text-[11px] tracking-wide text-red-500">{submitError}</p>}
-          <button
-            type="button"
-            onClick={() => router.push("/admin/announcements")}
-            className="text-[10px] uppercase tracking-[0.25em] text-stone-500 hover:text-stone-900 border-b border-stone-400 hover:border-stone-900 pb-px transition-colors duration-200 cursor-pointer"
-          >
-            Cancelar
-          </button>
-          {isEditing && <DeleteButton onConfirm={handleDelete} />}
-          <button
-            type="submit"
-            form="announcement-form"
-            disabled={isSubmitting}
-            className="bg-stone-900 text-white px-6 py-3 text-[11px] uppercase tracking-[0.3em] font-semibold hover:opacity-90 active:opacity-75 disabled:opacity-50 transition-opacity duration-200 cursor-pointer"
-          >
-            {isSubmitting ? "Guardando…" : "Guardar"}
-          </button>
-        </div>
-      </div>
-
-      {/* Divider */}
-      <div className="flex items-center gap-3 mb-8">
-        <span className="flex-1 h-px bg-stone-200" />
-        <span className="w-1 h-1 rounded-full bg-stone-300" />
-        <span className="flex-1 h-px bg-stone-200" />
-      </div>
-
+    <AdminFormLayout
+      section="Anuncios"
+      title={isEditing ? "Editar" : "Nuevo"}
+      backHref="/admin/announcements"
+      formId="announcement-form"
+      isEditing={isEditing}
+      isSubmitting={isSubmitting}
+      submitError={submitError}
+      onDelete={isEditing ? handleDelete : undefined}
+      deleteTitle="¿Eliminar anuncio?"
+      deleteDescription="Esta acción no se puede deshacer. El anuncio será eliminado permanentemente."
+      onDuplicate={isEditing ? handleDuplicate : undefined}
+    >
+      <SavingOverlay isVisible={isVisible} mode={overlayMode ?? "saving"} />
       <form id="announcement-form" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
 
@@ -208,88 +142,93 @@ export default function AnnouncementForm({ announcement }: { announcement?: Anno
           <div className="flex flex-col gap-5">
             <SectionTitle>Contenido</SectionTitle>
 
-            <Field label="Tipo" error={errors.type?.message}>
-              <select {...register("type")} className={inputClass}>
-                {ANNOUNCEMENT_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
-                ))}
-              </select>
-            </Field>
-
-            <Field label="Título" error={errors.title?.message}>
-              <input
-                {...register("title")}
-                placeholder="Cerramos el próximo lunes"
-                className={inputClass}
+            {/* Tipo */}
+            <Field data-invalid={!!errors.type}>
+              <FieldLabel>Tipo</FieldLabel>
+              <Controller
+                name="type"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona un tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ANNOUNCEMENT_TYPES.map((t) => (
+                        <SelectItem key={t.value} value={t.value}>
+                          {t.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
+              <FieldError>{errors.type?.message}</FieldError>
             </Field>
 
-            <Field label="Mensaje" error={errors.message?.message}>
-              <textarea
+            {/* Título */}
+            <Field data-invalid={!!errors.title}>
+              <FieldLabel>Título</FieldLabel>
+              <Input {...register("title")} placeholder="Cerramos el próximo lunes" />
+              <FieldError>{errors.title?.message}</FieldError>
+            </Field>
+
+            {/* Mensaje */}
+            <Field data-invalid={!!errors.message}>
+              <FieldLabel>Mensaje</FieldLabel>
+              <Textarea
                 {...register("message")}
                 rows={4}
                 placeholder="Información adicional del anuncio…"
-                className={`${inputClass} resize-none`}
+                className="resize-none"
               />
+              <FieldError>{errors.message?.message}</FieldError>
             </Field>
 
-            {/* Active toggle */}
-            <label className="flex items-center gap-2 cursor-pointer mt-1">
-              <input
-                type="checkbox"
-                {...register("isActive")}
-                className="w-3.5 h-3.5 accent-stone-800"
+            {/* Activo */}
+            <div className="flex items-center gap-2">
+              <Controller
+                name="isActive"
+                control={control}
+                render={({ field }) => (
+                  <Switch
+                    id="isActive"
+                    className="cursor-pointer"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                )}
               />
-              <span className="text-[10px] uppercase tracking-[0.2em] text-stone-500">Activo</span>
-            </label>
+              <FieldLabel htmlFor="isActive" className="cursor-pointer">
+                {errors.isActive ? errors.isActive.message : watch("isActive") ? "Activo" : "Inactivo"}
+              </FieldLabel>
+            </div>
           </div>
 
           {/* ── RIGHT: Vigencia ── */}
           <div className="flex flex-col gap-5 mt-8 lg:mt-0">
             <SectionTitle>Vigencia</SectionTitle>
 
-            <Field label="Inicia" error={errors.startsAt?.message}>
-              <input
-                {...register("startsAt")}
-                type="datetime-local"
-                className={inputClass}
-              />
+            {/* Inicia */}
+            <Field data-invalid={!!errors.startsAt}>
+              <FieldLabel>Inicia</FieldLabel>
+              <Input {...register("startsAt")} type="datetime-local" className="[color-scheme:light]"/>
+              <FieldError>{errors.startsAt?.message}</FieldError>
             </Field>
 
-            <Field label="Termina (opcional)" error={errors.endsAt?.message}>
-              <input
-                {...register("endsAt")}
-                type="datetime-local"
-                className={inputClass}
-              />
-              <span className="text-[10px] text-stone-400 tracking-wide">
+            {/* Termina */}
+            <Field data-invalid={!!errors.endsAt}>
+              <FieldLabel>Termina (opcional)</FieldLabel>
+              <Input {...register("endsAt")} type="datetime-local" className="[color-scheme:light]"/>
+              <p className="text-[10px] text-stone-400 tracking-wide">
                 Deja vacío si el anuncio no tiene fecha de expiración
-              </span>
+              </p>
+              <FieldError>{errors.endsAt?.message}</FieldError>
             </Field>
           </div>
-        </div>
 
-        {/* Mobile actions */}
-        <div className="sm:hidden flex flex-col gap-4 mt-8 pt-6 border-t border-stone-100">
-          {submitError && (
-            <p className="text-[11px] tracking-wide text-red-500 text-center">{submitError}</p>
-          )}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-stone-900 text-white px-6 py-3 text-[11px] uppercase tracking-[0.3em] font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity duration-200 cursor-pointer"
-          >
-            {isSubmitting ? "Guardando…" : "Guardar"}
-          </button>
-          <button
-            type="button"
-            onClick={() => router.push("/admin/announcements")}
-            className="text-[10px] uppercase tracking-[0.25em] text-stone-500 hover:text-stone-900 border-b border-stone-400 pb-px transition-colors duration-200 cursor-pointer"
-          >
-            Cancelar
-          </button>
         </div>
       </form>
-    </div>
+    </AdminFormLayout>
   )
 }

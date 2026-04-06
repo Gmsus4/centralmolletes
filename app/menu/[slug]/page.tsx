@@ -18,6 +18,17 @@ import ExtrasBadge from "@/components/ui/ExtrasBadge"
 export const revalidate = 3600
 
 // ── Helpers ──
+
+function parseList(value: string): string[] {
+  if (!value) return []
+  try {
+    const parsed = JSON.parse(value)
+    return Array.isArray(parsed) ? parsed : value.split(",").map((s) => s.trim()).filter(Boolean)
+  } catch {
+    return value.split(",").map((s) => s.trim()).filter(Boolean)
+  }
+}
+
 function parseProduct(p: {
   id: string
   slug: string
@@ -38,8 +49,8 @@ function parseProduct(p: {
     ...p,
     category:    p.category.name,
     tag:         p.tag ?? undefined,
-    ingredients: JSON.parse(p.ingredients) as string[],
-    allergens:   JSON.parse(p.allergens)   as string[],
+    ingredients: parseList(p.ingredients),
+    allergens:   parseList(p.allergens),
   }
 }
 

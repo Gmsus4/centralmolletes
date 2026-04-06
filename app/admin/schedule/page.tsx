@@ -2,10 +2,14 @@ export const dynamic = "force-dynamic"
 
 import Link from "next/link"
 import prisma from "@/lib/prisma"
-import { IconPlus } from "@tabler/icons-react"
 import Toast from "@/components/ui/Toast"
 import { Suspense } from "react"
 import { Metadata } from "next"
+import { LayoutAdminSection } from "../components/LayoutAdminSection"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { Clock, Pencil } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Admin | Horarios",
@@ -21,108 +25,81 @@ const DAY_LABELS: Record<string, string> = {
   DOMINGO:   "Domingo",
 }
 
-export default async function ScheduleForm() {
+export default async function SchedulePage() {
   const horarios = await prisma.schedule.findMany({
     include: { shifts: true },
     orderBy: { dayOfWeek: "asc" },
   })
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10">
+    <LayoutAdminSection
+      namePage="Horarios"
+      maxWidth="max-w-4xl"
+      link={{ label: "Nuevo horario", href: "/admin/schedule/new" }}
+    >
       <Suspense>
-        <Toast message="Nuevo horario asignado con éxito" type="success" triggerParam="add"/>
-        <Toast message="Horario gurdado con éxito" type="success" triggerParam="edit"/> 
-        <Toast message="Día eliminado del horario" type="success" triggerParam="deleted"/>
-        <Toast message="Hubo un error" type="error" triggerParam="error"/>
+        <Toast message="Nuevo horario asignado con éxito" type="success" triggerParam="add" />
+        <Toast message="Horario guardado con éxito"       type="success" triggerParam="edit" />
+        <Toast message="Día eliminado del horario"        type="success" triggerParam="deleted" />
+        <Toast message="Hubo un error"                   type="error"   triggerParam="error" />
       </Suspense>
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-px bg-stone-400" />
-            <span className="text-[10px] uppercase tracking-[0.3em] text-stone-500">Admin</span>
-          </div>
-          <h1 className="font-titleText text-stone-900 uppercase text-4xl sm:text-5xl leading-none">
-            Horarios
-          </h1>
-        </div>
-
-        <Link
-          href="/admin/schedule/new"
-          className="flex items-center gap-2 bg-stone-900 text-white px-5 py-3 text-[11px] uppercase tracking-[0.3em] font-semibold hover:opacity-90 transition-opacity"
-        >
-          <IconPlus size={14} />
-          Nuevo horario
-        </Link>
-      </div>
-
-      {/* Divider */}
-      <div className="flex items-center gap-3 mb-8">
-        <span className="flex-1 h-px bg-stone-200" />
-        <span className="w-1 h-1 rounded-full bg-stone-300" />
-        <span className="flex-1 h-px bg-stone-200" />
-      </div>
-
-      {/* Lista */}
       {horarios.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="text-stone-400 text-sm tracking-wide">No hay horarios registrados.</p>
-          <Link
-            href="/admin/schedule/new"
-            className="mt-4 inline-block text-[10px] uppercase tracking-[0.25em] text-stone-500 hover:text-stone-900 border-b border-stone-300 hover:border-stone-900 pb-px transition-colors"
-          >
-            Agregar el primero
-          </Link>
+        <div className="flex flex-col items-center justify-center py-24 gap-4">
+          <Clock className="w-8 h-8 text-muted-foreground/30" />
+          <p className="text-sm text-muted-foreground">No hay horarios registrados.</p>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/admin/schedule/new">Agregar el primero</Link>
+          </Button>
         </div>
       ) : (
-        <div className="flex flex-col divide-y divide-stone-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {horarios.map((horario) => (
-            <div
-              key={horario.id}
-              className="flex items-start justify-between gap-4 py-5"
-            >
-              {/* Día + estado */}
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center gap-3">
-                  <span className="font-medium text-stone-900 text-sm">
-                    {DAY_LABELS[horario.dayOfWeek] ?? horario.dayOfWeek}
-                  </span>
-                  {!horario.isActive && (
-                    <span className="text-[9px] uppercase tracking-[0.2em] text-stone-400 border border-stone-200 px-1.5 py-0.5">
-                      Inactivo
+            <Link href={`/admin/schedule/${horario.id}`} key={horario.id} className="flex flex-col gap-4 p-5 border rounded-lg bg-card hover:shadow-sm active:shadow-none transition-shadow duration-200 cursor-pointer">
+              {/* className="flex flex-col gap-4 p-5 border rounded-lg bg-card hover:shadow-sm transition-shadow duration-200" */}
+                {/* Card header */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex flex-col gap-1">
+                    <span className="font-semibold text-foreground text-base">
+                      {DAY_LABELS[horario.dayOfWeek] ?? horario.dayOfWeek}
                     </span>
-                  )}
+                    <Badge
+                      variant={horario.isActive ? "default" : "secondary"}
+                      className="w-fit text-[10px]"
+                    >
+                      {horario.isActive ? "Activo" : "Inactivo"}
+                    </Badge>
+                  </div>
                 </div>
 
+                <Separator />
+
                 {/* Turnos */}
-                <div className="flex flex-col gap-0.5">
+                <div className="flex flex-col gap-2">
                   {horario.shifts.length === 0 ? (
-                    <span className="text-xs text-stone-400">Sin turnos</span>
+                    <span className="text-xs text-muted-foreground">Sin turnos registrados</span>
                   ) : (
                     horario.shifts.map((shift) => (
-                      <span key={shift.id} className="text-xs text-stone-500">
-                        {shift.name && (
-                          <span className="text-stone-400 mr-1">{shift.name} —</span>
-                        )}
-                        {shift.openTime} a {shift.closeTime}
-                      </span>
+                      <div key={shift.id} className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="w-3 h-3 text-muted-foreground shrink-0" />
+                          {shift.name && (
+                            <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                              {shift.name}
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs font-medium text-foreground tabular-nums">
+                          {shift.openTime} — {shift.closeTime}
+                        </span>
+                      </div>
                     ))
                   )}
                 </div>
-              </div>
-
-              {/* Acción editar */}
-              <Link
-                href={`/admin/schedule/${horario.id}`}
-                className="shrink-0 text-[10px] uppercase tracking-[0.25em] text-stone-400 hover:text-stone-900 border-b border-stone-200 hover:border-stone-900 pb-px transition-colors"
-              >
-                Editar
-              </Link>
-            </div>
+            </Link>
           ))}
         </div>
       )}
-    </div>
+    </LayoutAdminSection>
   )
 }

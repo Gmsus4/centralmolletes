@@ -1,16 +1,11 @@
 import { NextResponse } from "next/server"
 import { revalidatePath } from "next/cache"
 import prisma from "@/lib/prisma"
+import { autoPublishScheduled } from "@/lib/blog"
 
-function parsePublishedAt(datetimeLocal?: string, tzOffset?: number): Date {
+function parsePublishedAt(datetimeLocal?: string): Date {
   if (!datetimeLocal) return new Date()
-  const local = new Date(datetimeLocal)
-  if (typeof tzOffset === "number") {
-    const serverOffset = 0
-    const diffMs = (tzOffset - serverOffset) * 60 * 1000
-    return new Date(local.getTime() + diffMs)
-  }
-  return local
+  return new Date(datetimeLocal)
 }
 
 function revalidate(slug: string) {
@@ -42,9 +37,6 @@ function parsePost(p: {
 
 // GET — todos los artículos visibles públicamente
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url)
-  const admin = searchParams.get("admin") === "1"
-
   function publicFilter() {
     return {
       OR: [
@@ -55,8 +47,10 @@ export async function GET(req: Request) {
   }
 
   try {
+    await autoPublishScheduled()
+
     const posts = await prisma.blog.findMany({
-      where:   admin ? undefined : publicFilter(),
+      where:   publicFilter(),
       orderBy: { publishedAt: "desc" },
     })
     return NextResponse.json(posts.map(parsePost))
@@ -99,7 +93,7 @@ export async function POST(req: Request) {
         status:          body.status          ?? "published",
         author:          body.author          ?? "",
         metaDescription: body.metaDescription ?? "",
-        publishedAt:     parsePublishedAt(body.publishedAt, body.tzOffset),
+        publishedAt: parsePublishedAt(body.publishedAt),
       },
     })
 

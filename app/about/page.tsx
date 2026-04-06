@@ -3,11 +3,12 @@ import { AboutDetails } from "@/components/shared/AboutDetails"
 import { TitlePage } from "@/components/ui/TitlePage"
 import { Titles } from "@/data/titles"
 import { Metadata } from "next"
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/button"
 import { socialMedia } from "@/data/socialMedia"
 
 import dynamic from "next/dynamic"
 import { NavbarServer } from "@/components/shared/NavbarServer"
+import { ButtonCustom } from "@/components/ui/ButtonCustom"
 
 const StatsGrid    = dynamic(() => import("@/components/about/StatsGrid").then(m => ({ default: m.StatsGrid })))
 const BenefitsPanel = dynamic(() => import("@/components/about/BenefitsPanel").then(m => ({ default: m.BenefitsPanel })))
@@ -46,8 +47,8 @@ export default function AboutUs() {
                   </p>
                 </div>
                 <div className="about-cta flex flex-col xs:flex-row gap-3 pt-2">
-                  <Button title="Contáctanos" url="/contact" />
-                  <Button title="Visítanos en Instagram" url={socialMedia.facebook.href} isFilled={false} target="_blank" className="text-darkWarm"/>
+                  <ButtonCustom title="Contáctanos" url="/contact" />
+                  <ButtonCustom title="Visítanos en Instagram" url={socialMedia.facebook.href} isFilled={false} target="_blank" className="text-darkWarm"/>
                 </div>
               </div>
 

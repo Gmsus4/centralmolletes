@@ -3,7 +3,8 @@
 import { IconSparkles, IconPhone, IconMapPin, IconMail } from "@tabler/icons-react"
 import Link from "next/link"
 import { SocialLinks } from "../ui/SocialLinks"
-import { Button } from "../ui/Button"
+import { Button } from "../ui/button"
+import { ButtonCustom } from "../ui/ButtonCustom"
 
 // ── Tipos ──
 type Shift = {
@@ -262,10 +263,10 @@ export const ContactPage = ({
           </div>
 
           {/* CTA */}
-          <Button url={`tel:${phone}`} className="flex gap-2 items-center" isFilled={false}>
+          <ButtonCustom url={`tel:${phone}`} className="flex gap-2 items-center" isFilled={false}>
             <IconPhone />
             <p className="font-bold text-base">Llamar ahora</p>
-          </Button>
+          </ButtonCustom>
         </div>
       </div>
     </div>

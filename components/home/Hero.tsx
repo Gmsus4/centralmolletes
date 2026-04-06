@@ -1,5 +1,6 @@
 import { Titles } from "@/data/titles"
-import { Button } from "../ui/Button"
+import { Button } from "../ui/button"
+import { ButtonCustom } from "../ui/ButtonCustom"
 
 export const Hero = () => {
   return (
@@ -80,8 +81,8 @@ export const Hero = () => {
 
         {/* Buttons */}
         <div className="anim-buttons flex flex-col xs:flex-row gap-3 pt-2">
-          <Button title="Explorar menú" url="/menu" isFilled={true} className="!outline-brand-primary !text-brand-primary" />
-          <Button title="Ubicaciones" url="/locations" isFilled={false} className="text-bg-dark" />
+          <ButtonCustom title="Explorar menú" url="/menu" isFilled={true} className="!outline-brand-primary !text-brand-primary" />
+          <ButtonCustom title="Ubicaciones" url="/locations" isFilled={false} className="text-bg-dark" />
         </div>
       </div>
 

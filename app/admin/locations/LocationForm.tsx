@@ -1,13 +1,31 @@
 "use client"
 
-import { Suspense, useCallback, useState } from "react"
+import { useCallback, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LocationSchema, LocationFormValues } from "@/lib/validators/location"
 import { IconX } from "@tabler/icons-react"
 import ImageUpload from "../components/ImageUpload"
-import Toast from "@/components/ui/Toast"
+import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { AdminFormLayout } from "../components/AdminFormLayout"
+import { useFormOverlay } from "@/hooks/useFormOverlay"
+import { SavingOverlay } from "@/components/ui/saving-overlay"
+import { useDuplicate } from "@/hooks/useDuplicate"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -50,71 +68,37 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   </div>
 )
 
-function Field({
-  label,
-  hint,
-  error,
-  children,
-}: {
-  label: React.ReactNode
-  hint?: string
-  error?: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className={labelClass}>{label}</label>
-      {children}
-      {hint && !error && (
-        <span className="text-[9px] uppercase tracking-[0.2em] text-stone-400">{hint}</span>
-      )}
-      {error && <span className="text-red-500 text-xs">{error}</span>}
-    </div>
-  )
-}
-
 function DeleteButton({ onConfirm }: { onConfirm: () => void }) {
-  const [confirm, setConfirm] = useState(false)
-
-  if (confirm) {
-    return (
-      <div className="flex items-center gap-3">
-        <span className="text-[10px] uppercase tracking-[0.2em] text-stone-500">¿Confirmar?</span>
-        <button
-          type="button"
-          onClick={onConfirm}
-          className="text-[10px] uppercase tracking-[0.2em] text-red-500 hover:text-red-700 border-b border-red-400 hover:border-red-700 pb-px transition-colors duration-200 cursor-pointer"
-        >
-          Sí, eliminar
-        </button>
-        <button
-          type="button"
-          onClick={() => setConfirm(false)}
-          className="text-[10px] uppercase tracking-[0.2em] text-stone-500 border-b border-stone-400 pb-px transition-colors duration-200 cursor-pointer"
-        >
-          No
-        </button>
-      </div>
-    )
-  }
-
   return (
-    <button
-      type="button"
-      onClick={() => setConfirm(true)}
-      className="text-[10px] uppercase tracking-[0.2em] text-stone-400 hover:text-red-500 border-b border-stone-300 hover:border-red-500 pb-px transition-colors duration-200 cursor-pointer"
-    >
-      Eliminar
-    </button>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button type="button" variant="destructive" className="cursor-pointer">
+          Eliminar
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>¿Eliminar producto?</AlertDialogTitle>
+          <AlertDialogDescription>Esta acción no se puede deshacer. La sucursal será eliminada permanentemente.</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} className="bg-destructive cursor-pointer text-destructive-foreground hover:bg-destructive/90">
+            Sí, eliminar
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function LocationForm({ location }: Props) {
-  const router    = useRouter()
+  const router = useRouter()
   const isEditing = !!location?.id
   const [submitError, setSubmitError] = useState("")
+  const { overlayMode, setOverlayMode, isVisible } = useFormOverlay()
 
   const {
     register,
@@ -122,22 +106,23 @@ export default function LocationForm({ location }: Props) {
     control,
     watch,
     setValue,
-    setError, 
+    getValues,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<LocationFormValues>({
     resolver: zodResolver(LocationSchema),
     defaultValues: {
-      slug:       location?.slug       ?? "",
-      city:       location?.city       ?? "",
-      name:       location?.name       ?? "",
-      address:    location?.address    ?? "",
+      slug: location?.slug ?? "",
+      city: location?.city ?? "",
+      name: location?.name ?? "",
+      address: location?.address ?? "",
       addressMin: location?.addressMin ?? "",
-      phone:      location?.phone      ?? "",
-      hours:      location?.hours      ?? "",
-      image:      location?.image      ?? "",
-      gallery:    location?.gallery    ?? [],
-      mapUrl:     location?.mapUrl     ?? "",
-      embedUrl:   location?.embedUrl   ?? "",
+      phone: location?.phone ?? "",
+      hours: location?.hours ?? "",
+      image: location?.image ?? "",
+      gallery: location?.gallery ?? [],
+      mapUrl: location?.mapUrl ?? "",
+      embedUrl: location?.embedUrl ?? "",
     },
   })
 
@@ -146,21 +131,31 @@ export default function LocationForm({ location }: Props) {
 
   function addToGallery(url: string) {
     if (!url) return
-    setValue("gallery", [...gallery, url], { shouldValidate: true })
+    const current = getValues("gallery") ?? []
+    setValue("gallery", [...current, url], { shouldValidate: true })
   }
 
   function removeFromGallery(idx: number) {
     setValue(
       "gallery",
       gallery.filter((_, i) => i !== idx),
-      { shouldValidate: true }
+      { shouldValidate: true },
     )
   }
 
+  const handleDuplicate = useDuplicate({
+    apiPath:      "/api/locations",
+    redirectPath: "/admin/locations",
+    getValues,
+    setOverlayMode,
+    setSubmitError,
+  })
+
   const onSubmit = async (data: LocationFormValues) => {
     setSubmitError("")
+    setOverlayMode("saving")
 
-    const url    = isEditing ? `/api/locations/${location!.id}` : "/api/locations"
+    const url = isEditing ? `/api/locations/${location!.id}` : "/api/locations"
     const method = isEditing ? "PUT" : "POST"
 
     const res = await fetch(url, {
@@ -180,7 +175,8 @@ export default function LocationForm({ location }: Props) {
       } else {
         setSubmitError(message)
       }
-      return  // ← quita el router.push de error, ya no es necesario
+      setOverlayMode(null)
+      return // ← quita el router.push de error, ya no es necesario
     }
 
     router.push("/admin/locations?success=true")
@@ -188,120 +184,74 @@ export default function LocationForm({ location }: Props) {
   }
 
   const handleDelete = useCallback(async () => {
+    setOverlayMode("deleting")
     await fetch(`/api/locations/${location!.id}`, { method: "DELETE" })
     router.push("/admin/locations?deleted=true")
     router.refresh()
   }, [location, router])
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-px bg-stone-400" />
-            <span className="text-[10px] uppercase tracking-[0.3em] text-stone-500">Locaciones</span>
-          </div>
-          <h1 className="font-titleText text-stone-900 uppercase text-4xl sm:text-5xl leading-none">
-            {isEditing ? "Editar" : "Nueva"}
-          </h1>
-        </div>
-
-        {/* Desktop actions */}
-        <div className="hidden sm:flex items-center gap-4">
-          {/* {submitError && <p className="text-[11px] tracking-wide text-red-500">{submitError}</p>} */}
-          <button
-            type="button"
-            onClick={() => router.push("/admin/locations")}
-            className="text-[10px] uppercase tracking-[0.25em] text-stone-500 hover:text-stone-900 border-b border-stone-400 hover:border-stone-900 pb-px transition-colors duration-200 cursor-pointer"
-          >
-            Cancelar
-          </button>
-          {isEditing && <DeleteButton onConfirm={handleDelete} />}
-          <button
-            type="submit"
-            form="location-form"
-            disabled={isSubmitting}
-            className="bg-stone-900 text-white px-6 py-3 text-[11px] uppercase tracking-[0.3em] font-semibold hover:opacity-90 active:opacity-75 disabled:opacity-50 transition-opacity duration-200 cursor-pointer disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full border border-white/30 border-t-white animate-spin" />
-                Guardando…
-              </span>
-            ) : "Guardar"}
-          </button>
-        </div>
-      </div>
-
-      {/* Divider */}
-      <div className="flex items-center gap-3 mb-8">
-        <span className="flex-1 h-px bg-stone-200" />
-        <span className="w-1 h-1 rounded-full bg-stone-300" />
-        <span className="flex-1 h-px bg-stone-200" />
-      </div>
-
+    <AdminFormLayout
+      section="Sucursales"
+      title={isEditing ? "Editar" : "Nuevo"}
+      backHref="/admin/locations"
+      formId="location-form"
+      isEditing={isEditing}
+      isSubmitting={isSubmitting}
+      submitError={submitError}
+      onDelete={isEditing ? handleDelete : undefined}
+      deleteTitle="¿Eliminar sucursal?"
+      deleteDescription="Esta acción no se puede deshacer. La sucursal será eliminada permanentemente."
+      // previewHref={isEditing ? `/locations/${watch("slug")}` : undefined}
+      onDuplicate={isEditing ? handleDuplicate : undefined}
+    >
+      <SavingOverlay isVisible={isVisible} mode={overlayMode ?? "saving"} />
       <form id="location-form" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
-
           {/* ── LEFT COLUMN ── */}
           <div className="flex flex-col gap-5">
             <SectionTitle>Información general</SectionTitle>
 
-            <Field label="Nombre" error={errors.name?.message}>
-              <input
-                {...register("name")}
-                placeholder="Central Molletes Cafetería"
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.name}>
+              <FieldLabel htmlFor="name">Nombre</FieldLabel>
+              <FieldError>{errors.name?.message}</FieldError>
+              <Input id="name" aria-invalid={!!errors.name} {...register("name")} placeholder="Central Molletes Cafetería" className={inputClass} />
             </Field>
 
-            <Field label="Slug" error={errors.slug?.message}>
-              <input
-                {...register("slug")}
-                placeholder="etzatlan"
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.slug}>
+              <FieldLabel htmlFor="slug">Slug</FieldLabel>
+              <FieldError>{errors.slug?.message}</FieldError>
+              <Input id="slug" aria-invalid={!!errors.slug} {...register("slug")} placeholder="etzatlán" className={inputClass} />
             </Field>
 
-            <Field label="Ciudad" error={errors.city?.message}>
-              <input
-                {...register("city")}
-                placeholder="Etzatlán"
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.city}>
+              <FieldLabel htmlFor="city">Ciudad</FieldLabel>
+              <FieldError>{errors.city?.message}</FieldError>
+              <Input id="city" aria-invalid={!!errors.city} {...register("city")} placeholder="Etzatlán " className={inputClass} />
             </Field>
 
-            <Field label="Dirección completa" error={errors.address?.message}>
-              <input
-                {...register("address")}
-                placeholder="Ocampo 63, Centro, 46500 Etzatlán, Jal."
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.address}>
+              <FieldLabel htmlFor="address">Dirección completa</FieldLabel>
+              <FieldError>{errors.address?.message}</FieldError>
+              <Input id="address" aria-invalid={!!errors.address} {...register("address")} placeholder="Ocampo 63, Centro, 46500 Etzatlán, Jal." className={inputClass} />
             </Field>
 
-            <Field label="Dirección corta" error={errors.addressMin?.message}>
-              <input
-                {...register("addressMin")}
-                placeholder="Ocampo 63, Centro"
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.addressMin}>
+              <FieldLabel htmlFor="addressMin">Dirección corta</FieldLabel>
+              <FieldError>{errors.addressMin?.message}</FieldError>
+              <Input id="addressMin" aria-invalid={!!errors.addressMin} {...register("addressMin")} placeholder="Ocampo 63, Centro" className={inputClass} />
             </Field>
 
-            <Field label="Teléfono" error={errors.phone?.message}>
-              <input
-                {...register("phone")}
-                placeholder="+52 (386) 105-4528"
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.phone}>
+              <FieldLabel htmlFor="phone">Teléfono</FieldLabel>
+              <FieldError>{errors.phone?.message}</FieldError>
+              <Input id="phone" aria-invalid={!!errors.phone} {...register("phone")} placeholder="+52 (386) 105-4528" className={inputClass} />
             </Field>
 
-            <Field label="Horario" error={errors.hours?.message}>
-              <input
-                {...register("hours")}
-                placeholder="8:30 am – 1:00 pm | 7:00 pm – 10:30 pm"
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.hours}>
+              <FieldLabel htmlFor="hours">Horario</FieldLabel>
+              <FieldError>{errors.hours?.message}</FieldError>
+              <Input id="hours" aria-invalid={!!errors.hours} {...register("hours")} placeholder="8:30 am – 1:00 pm | 7:00 pm – 10:30 pm" className={inputClass} />
             </Field>
           </div>
 
@@ -309,65 +259,39 @@ export default function LocationForm({ location }: Props) {
           <div className="flex flex-col gap-5 mt-8 lg:mt-0">
             <SectionTitle>Mapa e imágenes</SectionTitle>
 
-            <Field label="URL Google Maps" error={errors.mapUrl?.message}>
-              <input
-                {...register("mapUrl")}
-                placeholder="https://maps.app.goo.gl/..."
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.mapUrl}>
+              <FieldLabel htmlFor="mapUrl">URL Google Maps</FieldLabel>
+              <FieldError>{errors.mapUrl?.message}</FieldError>
+              <Input id="mapUrl" aria-invalid={!!errors.mapUrl} {...register("mapUrl")} placeholder="https://maps.app.goo.gl/..." className={inputClass} />
             </Field>
 
-            <Field label="Embed URL Maps" error={errors.embedUrl?.message}>
-              <textarea
-                {...register("embedUrl")}
-                rows={3}
-                placeholder="https://www.google.com/maps/embed?pb=..."
-                className={`${inputClass} resize-none`}
-              />
+            <Field data-invalid={!!errors.embedUrl}>
+              <FieldLabel htmlFor="embedUrl">Embed URL Maps</FieldLabel>
+              <FieldError>{errors.embedUrl?.message}</FieldError>
+              <Textarea id="embedUrl" rows={3} aria-invalid={!!errors.embedUrl} {...register("embedUrl")} placeholder="https://www.google.com/maps/embed?pb=..." className={inputClass} />
             </Field>
 
             {/* Imagen principal */}
-            <Field label="Imagen principal" error={errors.image?.message}>
-              <Controller
-                control={control}
-                name="image"
-                render={({ field }) => (
-                  <ImageUpload
-                    value={field.value}
-                    onChange={field.onChange}
-                    folder="locations"
-                  />
-                )}
-              />
+            <Field data-invalid={!!errors.image}>
+              <FieldLabel>Imágen principal</FieldLabel>
+              <Controller control={control} name="image" render={({ field }) => <ImageUpload value={field.value} onChange={field.onChange} folder="locations" />} />
             </Field>
 
             {/* Galería */}
-            <Field
-              label={
-                <>
-                  Galería{" "}
-                  <span className="ml-2 normal-case text-stone-400 tracking-normal">
-                    ({gallery.length} imagen{gallery.length !== 1 ? "es" : ""})
-                  </span>
-                </>
-              }
-              hint="Cada subida agrega una imagen a la galería"
-              error={errors.gallery?.message}
-            >
-              {/* Imágenes existentes */}
+            <Field>
+              <FieldLabel>
+                Galería
+                <span className="normal-case text-stone-400 tracking-normal">
+                  ({gallery.length} imagen{gallery.length !== 1 ? "es" : ""})
+                </span>
+              </FieldLabel>
+              <FieldError>{errors.gallery?.message}</FieldError>
               {gallery.length > 0 && (
                 <div className="flex flex-col gap-2 mb-2">
                   {gallery.map((url, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center gap-3 p-2 border border-stone-200 bg-stone-50"
-                    >
+                    <div key={idx} className="flex items-center gap-3 p-2 border border-stone-200 bg-stone-50">
                       <div className="w-12 h-12 rounded overflow-hidden shrink-0">
-                        <img
-                          src={url}
-                          alt={`Galería ${idx + 1}`}
-                          className="w-full h-full object-cover"
-                        />
+                        <img src={url} alt={`Galería ${idx + 1}`} className="w-full h-full object-cover" />
                       </div>
                       <span className="flex-1 text-xs text-stone-400 font-mono truncate">{url}</span>
                       <button
@@ -382,41 +306,11 @@ export default function LocationForm({ location }: Props) {
                   ))}
                 </div>
               )}
-
-              {/* Subir nueva a galería */}
-              <ImageUpload
-                folder="locations"
-                value=""
-                onChange={addToGallery}
-              />
+              <ImageUpload folder="locations" value="" onChange={addToGallery} />
             </Field>
           </div>
         </div>
-
-        {/* Mobile actions */}
-        <div className="sm:hidden flex flex-col gap-4 mt-8 pt-6 border-t border-stone-100">
-          {/* {submitError && (
-            <p className="text-[11px] tracking-wide text-red-500 text-center">{submitError}</p>
-          )} */}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-stone-900 text-white px-6 py-3 text-[11px] uppercase tracking-[0.3em] font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Guardando…" : "Guardar"}
-          </button>
-          <div className="flex justify-between">
-            <button
-              type="button"
-              onClick={() => router.push("/admin/locations")}
-              className="text-[10px] uppercase tracking-[0.25em] text-stone-500 hover:text-stone-900 border-b border-stone-400 pb-px transition-colors cursor-pointer"
-            >
-              Cancelar
-            </button>
-            {isEditing && <DeleteButton onConfirm={handleDelete} />}
-          </div>
-        </div>
       </form>
-    </div>
+    </AdminFormLayout>
   )
 }

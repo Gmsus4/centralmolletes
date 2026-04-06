@@ -2,7 +2,7 @@
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { tagColors } from "@/lib/tagColors"
-import { Button } from "../ui/Button"
+import { Button } from "../ui/button"
 import { getCategoryExtras } from "@/data/menuCategoryExtra"
 import ExtrasBadge from "../ui/ExtrasBadge"
 import Image from "next/image"

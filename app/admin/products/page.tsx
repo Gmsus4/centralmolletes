@@ -26,7 +26,7 @@ export default async function ProductsPage(){
 
   const categories = Array.from(new Set(parsed.map((p) => p.category))).sort()
   return (
-    <LayoutAdminSection namePage="Productos" className="max-w-6xl" linkName="producto" linkHref="products" >
+    <LayoutAdminSection namePage="Productos" maxWidth="max-w-6xl" link={{ label: "Nuevo producto", href: "/admin/products/new" }}>
         <Suspense>
           <Toast message="¡Producto guardado correctamente!" type="success" triggerParam="success"/>
           <Toast message="Producto eliminado" type="warning" triggerParam="deleted"/>

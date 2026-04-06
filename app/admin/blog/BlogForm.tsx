@@ -8,6 +8,14 @@ import { BlogSchema, BlogFormValues, BlogSection, BlogStatus } from "@/lib/valid
 import { IconX, IconPlus, IconGripVertical, IconChevronDown, IconChevronUp, IconExternalLink, IconCopy } from "@tabler/icons-react"
 import ImageUpload from "../components/ImageUpload"
 import MarkdownEditor from "@/components/blog/MarkdownEditor"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Separator } from "@/components/ui/separator"
+import { AdminFormLayout } from "../components/AdminFormLayout"
+import { SavingOverlay } from "@/components/ui/saving-overlay"
+import { useFormOverlay } from "@/hooks/useFormOverlay"
+import { useDuplicate } from "@/hooks/useDuplicate"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -31,84 +39,14 @@ type Props = {
   blog?: Blog
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
-const inputClass = `
-  w-full bg-white
-  border border-stone-300 focus:border-stone-700
-  px-4 py-2.5
-  text-stone-900 text-sm placeholder:text-stone-400
-  outline-none transition-colors duration-200
-`
-const labelClass = "text-[10px] uppercase tracking-[0.25em] text-stone-600 font-medium"
-
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   <div className="flex items-center gap-3 mb-5">
-    <span className="text-[10px] uppercase tracking-[0.3em] text-stone-400">{children}</span>
-    <span className="flex-1 h-px bg-stone-100" />
+    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">{children}</span>
+    <Separator className="flex-1" />
   </div>
 )
-
-function Field({
-  label,
-  hint,
-  error,
-  children,
-}: {
-  label:    React.ReactNode
-  hint?:    string
-  error?:   string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className={labelClass}>{label}</label>
-      {children}
-      {hint && !error && (
-        <span className="text-[9px] uppercase tracking-[0.2em] text-stone-400">{hint}</span>
-      )}
-      {error && <span className="text-red-500 text-xs">{error}</span>}
-    </div>
-  )
-}
-
-function DeleteButton({ onConfirm }: { onConfirm: () => void }) {
-  const [confirm, setConfirm] = useState(false)
-
-  if (confirm) {
-    return (
-      <div className="flex items-center gap-3">
-        <span className="text-[10px] uppercase tracking-[0.2em] text-stone-500">¿Confirmar?</span>
-        <button
-          type="button"
-          onClick={onConfirm}
-          className="text-[10px] uppercase tracking-[0.2em] text-red-500 hover:text-red-700 border-b border-red-400 hover:border-red-700 pb-px transition-colors duration-200 cursor-pointer"
-        >
-          Sí, eliminar
-        </button>
-        <button
-          type="button"
-          onClick={() => setConfirm(false)}
-          className="text-[10px] uppercase tracking-[0.2em] text-stone-500 border-b border-stone-400 pb-px transition-colors duration-200 cursor-pointer"
-        >
-          No
-        </button>
-      </div>
-    )
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={() => setConfirm(true)}
-      className="text-[10px] uppercase tracking-[0.2em] text-stone-400 hover:text-red-500 border-b border-stone-300 hover:border-red-500 pb-px transition-colors duration-200 cursor-pointer"
-    >
-      Eliminar
-    </button>
-  )
-}
 
 // ─── Status selector ──────────────────────────────────────────────────────────
 
@@ -125,8 +63,6 @@ function StatusSelector({
   value:    BlogStatus
   onChange: (v: BlogStatus) => void
 }) {
-  const current = STATUS_OPTIONS.find((o) => o.value === value) ?? STATUS_OPTIONS[0]
-
   return (
     <div className="flex gap-1">
       {STATUS_OPTIONS.map((opt) => (
@@ -176,8 +112,11 @@ export default function BlogForm({ blog }: Props) {
   const router    = useRouter()
   const isEditing = !!blog?.id
   const [tagInput,      setTagInput]      = useState("")
-  const [isDuplicating, setIsDuplicating] = useState(false)
+  const [submitError, setSubmitError] = useState("")
   const [charCount,     setCharCount]     = useState(blog?.metaDescription?.length ?? 0)
+  const { overlayMode, setOverlayMode, isVisible } = useFormOverlay()
+
+  const [defaultPublishedAt] = useState(() => toLocalDatetimeString(new Date()))
 
   const {
     register,
@@ -204,7 +143,7 @@ export default function BlogForm({ blog }: Props) {
       metaDescription: blog?.metaDescription ?? "",
       publishedAt:     blog?.publishedAt
         ? toLocalDatetimeString(new Date(blog.publishedAt))
-        : toLocalDatetimeString(new Date()),
+        : defaultPublishedAt,
     },
   })
 
@@ -241,41 +180,22 @@ export default function BlogForm({ blog }: Props) {
     setValue("tags", tags.filter((_, i) => i !== idx), { shouldValidate: true })
   }
 
-  // ── Preview ──
-  function openPreview() {
-    const slug = getValues("slug")
-    if (slug) window.open(`/blog/${slug}`, "_blank")
-  }
-
-  // ── Duplicate ──
-  const handleDuplicate = useCallback(async () => {
-    if (!blog?.id) return
-    setIsDuplicating(true)
-    try {
-      const values = getValues()
-      const newSlug = `${values.slug}-copia-${Date.now().toString(36)}`
-      const res = await fetch("/api/blog", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({
-          ...values,
-          slug:   newSlug,
-          status: "draft",
-          tzOffset: new Date().getTimezoneOffset(),
-        }),
-      })
-      if (res.ok) {
-        const created = await res.json()
-        router.push(`/admin/blog/${created.id}`)
-        router.refresh()
-      }
-    } finally {
-      setIsDuplicating(false)
-    }
-  }, [blog, getValues, router])
+  const handleDuplicate = useDuplicate({
+      apiPath:      "/api/blog",
+      redirectPath: "/admin/blog",
+      getValues,
+      setOverlayMode,
+      setSubmitError,
+      nameField: "title"
+  })
 
   // ── Submit ──
   const onSubmit = async (data: BlogFormValues) => {
+    const iso = new Date(data.publishedAt ?? new Date()).toISOString()
+    console.log("publishedAt input:", data.publishedAt)
+    console.log("publishedAt ISO enviado:", iso)
+    setSubmitError("")
+    setOverlayMode("saving")
     const url    = isEditing ? `/api/blog/${blog!.id}` : "/api/blog"
     const method = isEditing ? "PUT" : "POST"
 
@@ -284,7 +204,7 @@ export default function BlogForm({ blog }: Props) {
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({
         ...data,
-        tzOffset: new Date().getTimezoneOffset(),
+        publishedAt: new Date(data.publishedAt ?? new Date()).toISOString(),
       }),
     })
 
@@ -297,8 +217,11 @@ export default function BlogForm({ blog }: Props) {
       } else if (json.error?.toLowerCase().includes("título")) {
         setError("title", { message })
       } else {
+        setSubmitError(message)
         setError("root",  { message })
       }
+
+      setOverlayMode(null)
       return
     }
 
@@ -307,90 +230,29 @@ export default function BlogForm({ blog }: Props) {
   }
 
   const handleDelete = useCallback(async () => {
+    setOverlayMode("deleting")
     await fetch(`/api/blog/${blog!.id}`, { method: "DELETE" })
     router.push("/admin/blog?deleted=true")
     router.refresh()
   }, [blog, router])
 
-  // ── Shared action bar ──
-  const ActionBar = ({ mobile = false }: { mobile?: boolean }) => (
-    <div className={mobile ? "flex flex-col gap-4" : "hidden sm:flex items-center gap-4"}>
-      {errors.root && (
-        <p className="text-[11px] tracking-wide text-red-500">{errors.root.message}</p>
-      )}
-
-      {/* Preview */}
-      {isEditing && (
-        <button
-          type="button"
-          onClick={openPreview}
-          className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-stone-500 hover:text-stone-900 border-b border-stone-400 hover:border-stone-900 pb-px transition-colors duration-200 cursor-pointer"
-        >
-          <IconExternalLink size={11} /> Vista previa
-        </button>
-      )}
-
-      {/* Duplicate */}
-      {isEditing && (
-        <button
-          type="button"
-          onClick={handleDuplicate}
-          disabled={isDuplicating}
-          className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-stone-500 hover:text-stone-900 border-b border-stone-400 hover:border-stone-900 pb-px transition-colors duration-200 cursor-pointer disabled:opacity-40"
-        >
-          <IconCopy size={11} /> {isDuplicating ? "Duplicando…" : "Duplicar"}
-        </button>
-      )}
-
-      <button
-        type="button"
-        onClick={() => router.push("/admin/blog")}
-        className="text-[10px] uppercase tracking-[0.25em] text-stone-500 hover:text-stone-900 border-b border-stone-400 hover:border-stone-900 pb-px transition-colors duration-200 cursor-pointer"
-      >
-        Cancelar
-      </button>
-
-      {isEditing && <DeleteButton onConfirm={handleDelete} />}
-
-      <button
-        type="submit"
-        form="blog-form"
-        disabled={isSubmitting}
-        className="bg-stone-900 text-white px-6 py-3 text-[11px] uppercase tracking-[0.3em] font-semibold hover:opacity-90 active:opacity-75 disabled:opacity-50 transition-opacity duration-200 cursor-pointer disabled:cursor-not-allowed"
-      >
-        {isSubmitting ? (
-          <span className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full border border-white/30 border-t-white animate-spin" />
-            Guardando…
-          </span>
-        ) : "Guardar"}
-      </button>
-    </div>
-  )
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-px bg-stone-400" />
-            <span className="text-[10px] uppercase tracking-[0.3em] text-stone-500">Blog</span>
-          </div>
-          <h1 className="font-titleText text-stone-900 uppercase text-4xl sm:text-5xl leading-none">
-            {isEditing ? "Editar" : "Nuevo"}
-          </h1>
-        </div>
-        <ActionBar />
-      </div>
-
-      {/* Divider */}
-      <div className="flex items-center gap-3 mb-8">
-        <span className="flex-1 h-px bg-stone-200" />
-        <span className="w-1 h-1 rounded-full bg-stone-300" />
-        <span className="flex-1 h-px bg-stone-200" />
-      </div>
-
+    <AdminFormLayout
+      section="Artículos"
+      title={isEditing ? "Editar" : "Nuevo"}
+      backHref="/admin/blog"
+      formId="blog-form"
+      isEditing={isEditing}
+      isSubmitting={isSubmitting}
+      submitError={submitError}
+      onDelete={isEditing ? handleDelete : undefined}
+      deleteTitle="¿Eliminar artículo?"
+      deleteDescription="Esta acción no se puede deshacer. El artículo será eliminada permanentemente."
+      previewHref={isEditing ? `/blog/${watch("slug")}` : undefined} 
+      onDuplicate={isEditing ? handleDuplicate : undefined}  
+    >
+      <SavingOverlay isVisible={isVisible} mode={overlayMode ?? "saving"} />
       <form id="blog-form" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
 
@@ -399,15 +261,13 @@ export default function BlogForm({ blog }: Props) {
             <SectionTitle>Información general</SectionTitle>
 
             {/* Status */}
-            <Field label="Estado" error={errors.status?.message}>
+            <Field data-invalid={!!errors.status}>
+              <FieldLabel>Estado</FieldLabel>
               <Controller
                 control={control}
                 name="status"
                 render={({ field }) => (
-                  <StatusSelector
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
+                  <StatusSelector value={field.value} onChange={field.onChange} />
                 )}
               />
               {status === "scheduled" && (
@@ -415,93 +275,92 @@ export default function BlogForm({ blog }: Props) {
                   Se publicará automáticamente cuando llegue la fecha
                 </p>
               )}
+              <FieldError>{errors.status?.message}</FieldError>
             </Field>
 
-            <Field label="Título" error={errors.title?.message}>
-              <input
-                {...register("title")}
-                placeholder="El arte del mollete perfecto"
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.title}>
+              <FieldLabel htmlFor="title">Título</FieldLabel>
+              <Input id="title" {...register("title")} placeholder="El arte del mollete perfecto" aria-invalid={!!errors.title} />
+              <FieldError>{errors.title?.message}</FieldError>
             </Field>
 
-            <Field label="Subtítulo" error={errors.subtitle?.message}>
-              <textarea
-                {...register("subtitle")}
+            <Field data-invalid={!!errors.subtitle}>
+              <FieldLabel htmlFor="subtitle">Subtítulo</FieldLabel>
+              <Textarea
+                id="subtitle"
                 rows={2}
+                {...register("subtitle")}
                 placeholder="Una guía para entender la tradición detrás de nuestro platillo estrella"
-                className={`${inputClass} resize-none`}
+                className="resize-none"
+                aria-invalid={!!errors.subtitle}
               />
+              <FieldError>{errors.subtitle?.message}</FieldError>
             </Field>
 
-            <Field label="Slug" error={errors.slug?.message}>
-              <input
-                {...register("slug")}
-                placeholder="el-arte-del-mollete-perfecto"
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.slug}>
+              <FieldLabel htmlFor="slug">Slug</FieldLabel>
+              <Input id="slug" {...register("slug")} placeholder="el-arte-del-mollete-perfecto" aria-invalid={!!errors.slug}/>
+              <FieldError>{errors.slug?.message}</FieldError>
             </Field>
 
-            <Field label="Categoría" error={errors.category?.message}>
-              <input
-                {...register("category")}
-                placeholder="Gastronomía"
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.category}>
+              <FieldLabel htmlFor="category">Categoría</FieldLabel>
+              <Input id="category" {...register("category")} placeholder="Gastronomía" aria-invalid={!!errors.category}/>
+              <FieldError>{errors.category?.message}</FieldError>
             </Field>
 
-            <Field label="Autor" error={errors.author?.message}>
-              <input
-                {...register("author")}
-                placeholder="María García"
-                className={inputClass}
-              />
+            <Field data-invalid={!!errors.author}>
+              <FieldLabel htmlFor="author">Autor</FieldLabel>
+              <Input id="author" {...register("author")} placeholder="María García" />
+              <FieldError>{errors.author?.message}</FieldError>
             </Field>
 
             {/* Meta description */}
-            <Field
-              label={
-                <>
-                  Meta description{" "}
-                  <span className={`ml-2 normal-case tracking-normal ${charCount > 160 ? "text-red-400" : "text-stone-400"}`}>
-                    ({charCount}/160)
-                  </span>
-                </>
-              }
-              hint="Aparece en Google bajo el título. Máximo 160 caracteres."
-              error={errors.metaDescription?.message}
-            >
-              <textarea
-                {...register("metaDescription")}
+            <Field data-invalid={!!errors.metaDescription}>
+              <FieldLabel htmlFor="metaDescription">
+                Meta description{" "}
+                <span className={`ml-2 normal-case tracking-normal font-normal ${charCount > 160 ? "text-destructive" : "text-muted-foreground"}`}>
+                  ({charCount}/160)
+                </span>
+              </FieldLabel>
+              <Textarea
+                id="metaDescription"
                 rows={2}
+                {...register("metaDescription")}
                 placeholder="Descubre el secreto detrás del mollete perfecto…"
-                className={`${inputClass} resize-none`}
+                className="resize-none"
                 onChange={(e) => {
                   register("metaDescription").onChange(e)
                   setCharCount(e.target.value.length)
                 }}
               />
+              <FieldError>{errors.metaDescription?.message}</FieldError>
+              <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+                Aparece en Google bajo el título. Máximo 160 caracteres.
+              </span>
             </Field>
 
             {/* Tags */}
-            <Field
-              label={<>Tags <span className="ml-2 normal-case text-stone-400 tracking-normal">({tags.length})</span></>}
-              hint="Presiona Enter o la coma para agregar"
-              error={(errors.tags as { message?: string } | undefined)?.message}
-            >
+            <Field data-invalid={!!(errors.tags as { message?: string } | undefined)?.message}>
+              <FieldLabel>
+                Tags{" "}
+                <span className="ml-2 normal-case text-muted-foreground tracking-normal font-normal">
+                  ({tags.length})
+                </span>
+              </FieldLabel>
               <div className="flex flex-col gap-2">
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
                     {tags.map((tag, idx) => (
                       <span
                         key={idx}
-                        className="inline-flex items-center gap-1 bg-stone-100 text-stone-600 text-[10px] uppercase tracking-[0.15em] px-2 py-1"
+                        className="inline-flex items-center gap-1 bg-muted text-muted-foreground text-[10px] uppercase tracking-[0.15em] px-2 py-1"
                       >
                         {tag}
                         <button
                           type="button"
                           onClick={() => removeTag(idx)}
-                          className="text-stone-400 hover:text-red-500 transition-colors cursor-pointer"
+                          className="text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
                         >
                           <IconX size={10} />
                         </button>
@@ -510,7 +369,7 @@ export default function BlogForm({ blog }: Props) {
                   </div>
                 )}
                 <div className="flex gap-2">
-                  <input
+                  <Input
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={(e) => {
@@ -520,25 +379,32 @@ export default function BlogForm({ blog }: Props) {
                       }
                     }}
                     placeholder="cafetería, molletes…"
-                    className={`${inputClass} flex-1`}
+                    className="flex-1"
+                    aria-invalid={!!errors.tags}
                   />
                   <button
                     type="button"
                     onClick={addTag}
-                    className="px-3 bg-stone-100 hover:bg-stone-200 text-stone-600 text-[10px] uppercase tracking-[0.2em] transition-colors cursor-pointer shrink-0"
+                    className="px-3 bg-muted hover:bg-muted/80 text-muted-foreground text-[10px] uppercase tracking-[0.2em] transition-colors cursor-pointer shrink-0"
                   >
                     <IconPlus size={13} />
                   </button>
                 </div>
               </div>
+              <FieldError>{(errors.tags as { message?: string } | undefined)?.message}</FieldError>
+              <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+                Presiona Enter o la coma para agregar
+              </span>
             </Field>
 
-            <Field label="Fecha de publicación" error={errors.publishedAt?.message}>
-              <input
+            <Field data-invalid={!!errors.publishedAt}>
+              <FieldLabel htmlFor="publishedAt">Fecha de publicación</FieldLabel>
+              <Input
+                id="publishedAt"
                 type="datetime-local"
                 {...register("publishedAt")}
-                className={inputClass}
               />
+              <FieldError>{errors.publishedAt?.message}</FieldError>
             </Field>
           </div>
 
@@ -546,37 +412,37 @@ export default function BlogForm({ blog }: Props) {
           <div className="flex flex-col gap-5 mt-8 lg:mt-0">
             <SectionTitle>Imágenes</SectionTitle>
 
-            <Field label="Imagen de portada" error={errors.coverImage?.message}>
+            <Field data-invalid={!!errors.coverImage}>
+              <FieldLabel>Imagen de portada</FieldLabel>
               <Controller
                 control={control}
                 name="coverImage"
                 render={({ field }) => (
-                  <ImageUpload
-                    value={field.value}
-                    onChange={field.onChange}
-                    folder="blog"
-                  />
+                  <ImageUpload value={field.value} onChange={field.onChange} folder="blog" />
                 )}
               />
+              <FieldError>{errors.coverImage?.message}</FieldError>
             </Field>
 
-            <Field
-              label={<>Galería <span className="ml-2 normal-case text-stone-400 tracking-normal">({gallery.length} imagen{gallery.length !== 1 ? "es" : ""})</span></>}
-              hint="Cada subida agrega una imagen a la galería"
-              error={(errors.gallery as { message?: string } | undefined)?.message}
-            >
+            <Field data-invalid={!!(errors.gallery as { message?: string } | undefined)?.message}>
+              <FieldLabel>
+                Galería{" "}
+                <span className="ml-2 normal-case text-muted-foreground tracking-normal font-normal">
+                  ({gallery.length} imagen{gallery.length !== 1 ? "es" : ""})
+                </span>
+              </FieldLabel>
               {gallery.length > 0 && (
                 <div className="flex flex-col gap-2 mb-2">
                   {gallery.map((url, idx) => (
-                    <div key={idx} className="flex items-center gap-3 p-2 border border-stone-200 bg-stone-50">
+                    <div key={idx} className="flex items-center gap-3 p-2 border border-border bg-muted/40">
                       <div className="w-12 h-12 rounded overflow-hidden shrink-0">
                         <img src={url} alt={`Galería ${idx + 1}`} className="w-full h-full object-cover" />
                       </div>
-                      <span className="flex-1 text-xs text-stone-400 font-mono truncate">{url}</span>
+                      <span className="flex-1 text-xs text-muted-foreground font-mono truncate">{url}</span>
                       <button
                         type="button"
                         onClick={() => removeFromGallery(idx)}
-                        className="p-1 text-stone-300 hover:text-red-500 transition-colors cursor-pointer shrink-0"
+                        className="p-1 text-muted-foreground hover:text-destructive transition-colors cursor-pointer shrink-0"
                         aria-label="Quitar imagen"
                       >
                         <IconX size={14} />
@@ -586,6 +452,10 @@ export default function BlogForm({ blog }: Props) {
                 </div>
               )}
               <ImageUpload folder="blog" value="" onChange={addToGallery} />
+              <FieldError>{(errors.gallery as { message?: string } | undefined)?.message}</FieldError>
+              <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+                Cada subida agrega una imagen a la galería
+              </span>
             </Field>
           </div>
         </div>
@@ -593,29 +463,33 @@ export default function BlogForm({ blog }: Props) {
         {/* ── SECTIONS ── */}
         <div className="mt-10">
           <div className="flex items-center gap-3 mb-5">
-            <span className="text-[10px] uppercase tracking-[0.3em] text-stone-400">Secciones de contenido</span>
-            <span className="flex-1 h-px bg-stone-100" />
+            <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+              Secciones de contenido
+            </span>
+            <Separator className="flex-1" />
             <button
               type="button"
               onClick={() => append({ type: "text", heading: "", body: "" })}
-              className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-stone-500 hover:text-stone-900 border border-stone-300 hover:border-stone-700 px-3 py-1.5 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground border border-border hover:border-foreground px-3 py-1.5 transition-colors cursor-pointer"
             >
               <IconPlus size={11} /> Agregar sección
             </button>
           </div>
 
           {(errors.sections as { message?: string } | undefined)?.message && (
-            <p className="text-red-500 text-xs mb-4">{(errors.sections as { message?: string }).message}</p>
+            <p className="text-destructive text-xs mb-4">
+              {(errors.sections as { message?: string }).message}
+            </p>
           )}
 
           <div className="flex flex-col gap-4">
             {sectionFields.map((field, idx) => {
               const sectionType = watch(`sections.${idx}.type`)
               return (
-                <div key={field.id} className="border border-stone-200 bg-white p-5">
+                <div key={field.id} className="border border-border bg-white p-5">
                   <div className="flex items-center gap-3 mb-4">
-                    <IconGripVertical size={14} className="text-stone-300 shrink-0" />
-                    <span className="text-[10px] uppercase tracking-[0.25em] text-stone-400">
+                    <IconGripVertical size={14} className="text-muted-foreground shrink-0" />
+                    <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
                       Sección {idx + 1}
                     </span>
 
@@ -628,7 +502,7 @@ export default function BlogForm({ blog }: Props) {
                           className={`px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] transition-colors cursor-pointer ${
                             sectionType === t.value
                               ? "bg-stone-900 text-white"
-                              : "bg-stone-100 text-stone-500 hover:bg-stone-200"
+                              : "bg-muted text-muted-foreground hover:bg-muted/80"
                           }`}
                         >
                           {t.label}
@@ -641,7 +515,7 @@ export default function BlogForm({ blog }: Props) {
                         <button
                           type="button"
                           onClick={() => move(idx, idx - 1)}
-                          className="p-1 text-stone-300 hover:text-stone-700 transition-colors cursor-pointer"
+                          className="p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                         >
                           <IconChevronUp size={14} />
                         </button>
@@ -650,7 +524,7 @@ export default function BlogForm({ blog }: Props) {
                         <button
                           type="button"
                           onClick={() => move(idx, idx + 1)}
-                          className="p-1 text-stone-300 hover:text-stone-700 transition-colors cursor-pointer"
+                          className="p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                         >
                           <IconChevronDown size={14} />
                         </button>
@@ -658,7 +532,7 @@ export default function BlogForm({ blog }: Props) {
                       <button
                         type="button"
                         onClick={() => remove(idx)}
-                        className="p-1 text-stone-300 hover:text-red-500 transition-colors cursor-pointer"
+                        className="p-1 text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
                         aria-label="Eliminar sección"
                       >
                         <IconX size={14} />
@@ -668,21 +542,23 @@ export default function BlogForm({ blog }: Props) {
 
                   <div className="flex flex-col gap-3">
                     {sectionType !== "image" && (
-                      <Field label="Encabezado (opcional)">
-                        <input
+                      <Field>
+                        <FieldLabel htmlFor={`sections-${idx}-heading`}>
+                          Encabezado (opcional)
+                        </FieldLabel>
+                        <Input
+                          id={`sections-${idx}-heading`}
                           {...register(`sections.${idx}.heading`)}
                           placeholder="Encabezado de sección"
-                          className={inputClass}
                         />
                       </Field>
                     )}
 
                     {(sectionType === "text" || sectionType === "quote") && (
-                      <Field
-                        label={sectionType === "quote" ? "Cita" : "Cuerpo"}
-                        hint={sectionType === "text" ? undefined : undefined}
-                        error={(errors.sections?.[idx] as { body?: { message?: string } } | undefined)?.body?.message}
-                      >
+                      <Field data-invalid={!!(errors.sections?.[idx] as { body?: { message?: string } } | undefined)?.body?.message}>
+                        <FieldLabel htmlFor={`sections-${idx}-body`}>
+                          {sectionType === "quote" ? "Cita" : "Cuerpo"}
+                        </FieldLabel>
                         {sectionType === "text" ? (
                           <Controller
                             control={control}
@@ -697,21 +573,23 @@ export default function BlogForm({ blog }: Props) {
                             )}
                           />
                         ) : (
-                          <textarea
+                          <Textarea
+                            id={`sections-${idx}-body`}
                             {...register(`sections.${idx}.body`)}
                             rows={3}
                             placeholder='"El mollete es más que un platillo…"'
-                            className={`${inputClass} resize-none`}
+                            className="resize-none"
                           />
                         )}
+                        <FieldError>
+                          {(errors.sections?.[idx] as { body?: { message?: string } } | undefined)?.body?.message}
+                        </FieldError>
                       </Field>
                     )}
 
                     {sectionType === "image" && (
-                      <Field
-                        label="Imagen"
-                        error={(errors.sections?.[idx] as { image?: { message?: string } } | undefined)?.image?.message}
-                      >
+                      <Field data-invalid={!!(errors.sections?.[idx] as { image?: { message?: string } } | undefined)?.image?.message}>
+                        <FieldLabel>Imagen</FieldLabel>
                         <Controller
                           control={control}
                           name={`sections.${idx}.image`}
@@ -723,37 +601,52 @@ export default function BlogForm({ blog }: Props) {
                             />
                           )}
                         />
+                        <FieldError>
+                          {(errors.sections?.[idx] as { image?: { message?: string } } | undefined)?.image?.message}
+                        </FieldError>
                       </Field>
                     )}
 
                     {sectionType === "cta" && (
-                      <div className="flex flex-col gap-3 p-4 bg-stone-50 border border-stone-100">
-                        <Field
-                          label="Texto del botón"
-                          error={(errors.sections?.[idx] as { buttonLabel?: { message?: string } } | undefined)?.buttonLabel?.message}
-                        >
-                          <input
+                      <div className="flex flex-col gap-3 p-4 bg-muted/40 border border-border">
+                        <Field data-invalid={!!(errors.sections?.[idx] as { buttonLabel?: { message?: string } } | undefined)?.buttonLabel?.message}>
+                          <FieldLabel htmlFor={`sections-${idx}-buttonLabel`}>
+                            Texto del botón
+                          </FieldLabel>
+                          <Input
+                            id={`sections-${idx}-buttonLabel`}
                             {...register(`sections.${idx}.buttonLabel`)}
                             placeholder="Reserva tu mesa"
-                            className={inputClass}
                           />
+                          <FieldError>
+                            {(errors.sections?.[idx] as { buttonLabel?: { message?: string } } | undefined)?.buttonLabel?.message}
+                          </FieldError>
                         </Field>
-                        <Field
-                          label="URL del botón"
-                          error={(errors.sections?.[idx] as { buttonUrl?: { message?: string } } | undefined)?.buttonUrl?.message}
-                        >
-                          <input
+
+                        <Field data-invalid={!!(errors.sections?.[idx] as { buttonUrl?: { message?: string } } | undefined)?.buttonUrl?.message}>
+                          <FieldLabel htmlFor={`sections-${idx}-buttonUrl`}>
+                            URL del botón
+                          </FieldLabel>
+                          <Input
+                            id={`sections-${idx}-buttonUrl`}
                             {...register(`sections.${idx}.buttonUrl`)}
                             placeholder="https://…"
-                            className={inputClass}
                           />
+                          <FieldError>
+                            {(errors.sections?.[idx] as { buttonUrl?: { message?: string } } | undefined)?.buttonUrl?.message}
+                          </FieldError>
                         </Field>
-                        <Field label="Cuerpo (opcional)">
-                          <textarea
+
+                        <Field>
+                          <FieldLabel htmlFor={`sections-${idx}-body-cta`}>
+                            Cuerpo (opcional)
+                          </FieldLabel>
+                          <Textarea
+                            id={`sections-${idx}-body-cta`}
                             {...register(`sections.${idx}.body`)}
                             rows={2}
                             placeholder="Texto de apoyo bajo el encabezado…"
-                            className={`${inputClass} resize-none`}
+                            className="resize-none"
                           />
                         </Field>
                       </div>
@@ -764,12 +657,7 @@ export default function BlogForm({ blog }: Props) {
             })}
           </div>
         </div>
-
-        {/* Mobile actions */}
-        <div className="sm:hidden flex flex-col gap-4 mt-8 pt-6 border-t border-stone-100">
-          <ActionBar mobile />
-        </div>
       </form>
-    </div>
+    </AdminFormLayout>
   )
 }

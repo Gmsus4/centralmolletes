@@ -19,7 +19,7 @@ export default async function CategoriasPage() {
   })
 
   return (
-    <LayoutAdminSection namePage="Categorías" isLink={false} linkHref="" linkName="">
+    <LayoutAdminSection namePage="Categorías" >
       <CategoriesTable categories={categories} />
     </LayoutAdminSection>
   )

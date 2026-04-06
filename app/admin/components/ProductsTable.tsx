@@ -5,7 +5,7 @@ import { useState, useMemo } from "react"
 import { Search, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/button"
 import { Toggle } from "@/components/ui/toggle"
 import { Field, FieldLabel } from "@/components/ui/field"
 import {

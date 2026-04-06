@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/button"
 import { NavbarServer } from "@/components/shared/NavbarServer"
 import { Metadata } from "next"
+import { ButtonCustom } from "@/components/ui/ButtonCustom"
 
 export const metadata: Metadata = {
   title: "404 — Página no encontrada",
@@ -159,8 +160,8 @@ export default function NotFound() {
 
           {/* Botones */}
           <div className="anim-buttons flex flex-col xs:flex-row gap-3 pt-2">
-            <Button title="Volver al inicio" url="/" isFilled={true} className="outline-brand-primary text-brand-primary" />
-            <Button title="Ver el menú" url="/menu" isFilled={false} className="text-text-main" />
+            <ButtonCustom title="Volver al inicio" url="/" isFilled={true} className="outline-brand-primary text-brand-primary" />
+            <ButtonCustom title="Ver el menú" url="/menu" isFilled={false} className="text-text-main" />
           </div>
         </div>
 
