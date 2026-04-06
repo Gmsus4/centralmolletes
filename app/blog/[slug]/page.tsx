@@ -13,11 +13,9 @@ import RelatedPosts from "@/components/blog/RelatedPosts"
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://centralmolletes.com"
 
-const getPost = unstable_cache(
-  async (slug: string) => prisma.blog.findUnique({ where: { slug } }),
-  ["blog-post"],
-  { revalidate: 3600, tags: ["blog"] }
-)
+async function getPost(slug: string) {
+  return prisma.blog.findUnique({ where: { slug } })
+}
 
 export async function generateStaticParams() {
   const posts = await prisma.blog.findMany({ select: { slug: true } })

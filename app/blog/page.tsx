@@ -4,6 +4,7 @@ import type { Metadata } from "next"
 import { NavbarServer } from "@/components/shared/NavbarServer"
 import { FooterServer } from "@/components/shared/FooterServer"
 import type { BlogSection } from "@/lib/validators/blog"
+import { autoPublishScheduled } from "@/lib/blog"
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   },
 }
 
-export const revalidate = 3600
+export const revalidate = 60
 
 function readingTime(sections: BlogSection[]): number {
   const text = sections
@@ -27,6 +28,7 @@ function readingTime(sections: BlogSection[]): number {
 }
 
 export default async function BlogPage() {
+  await autoPublishScheduled()
   const raw = await prisma.blog.findMany({
     where: {
       OR: [
