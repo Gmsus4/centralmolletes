@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma"
-import { unstable_cache } from "next/cache"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import type { BlogSection } from "@/lib/validators/blog"
@@ -10,6 +9,8 @@ import SectionRenderer from "@/components/blog/SectionRenderer"
 import ReadingProgress from "@/components/blog/ReadingProgress"
 import ShareBar from "@/components/blog/ShareBar"
 import RelatedPosts from "@/components/blog/RelatedPosts"
+
+export const dynamicParams = true
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://centralmolletes.com"
 
