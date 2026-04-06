@@ -3,7 +3,6 @@
 import { IconSparkles, IconPhone, IconMapPin, IconMail } from "@tabler/icons-react"
 import Link from "next/link"
 import { SocialLinks } from "../ui/SocialLinks"
-import { Button } from "../ui/button"
 import { ButtonCustom } from "../ui/ButtonCustom"
 
 // ── Tipos ──

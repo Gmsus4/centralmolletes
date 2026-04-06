@@ -1,5 +1,4 @@
 import { Titles } from "@/data/titles"
-import { Button } from "../ui/button"
 import { ButtonCustom } from "../ui/ButtonCustom"
 
 export const Hero = () => {

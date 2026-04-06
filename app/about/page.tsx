@@ -3,7 +3,6 @@ import { AboutDetails } from "@/components/shared/AboutDetails"
 import { TitlePage } from "@/components/ui/TitlePage"
 import { Titles } from "@/data/titles"
 import { Metadata } from "next"
-import { Button } from "@/components/ui/button"
 import { socialMedia } from "@/data/socialMedia"
 
 import dynamic from "next/dynamic"
