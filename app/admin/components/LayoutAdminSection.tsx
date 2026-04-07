@@ -25,7 +25,7 @@ export const LayoutAdminSection = ({
   className,
 }: Props) => {
   return (
-    <div className={`${maxWidth} ${className} mx-auto px-6 py-10 min-h-screen flex flex-col`}>
+    <div className={`${maxWidth} ${className} mx-auto px-6 lg:py-10 py-6 min-h-screen flex flex-col`}>
 
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">

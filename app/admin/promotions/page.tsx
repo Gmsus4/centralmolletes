@@ -9,6 +9,7 @@ import { LayoutAdminSection } from "../components/LayoutAdminSection"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Tag, Megaphone, TriangleAlert, ArrowRight } from "lucide-react"
+import { EmptyState } from "@/components/ui/EmptyState"
 
 export const metadata: Metadata = {
   title: "Admin | Promociones",
@@ -74,10 +75,14 @@ export default async function PromotionsPage() {
       </Suspense>
 
       {promotions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 gap-3">
-          <Tag className="w-8 h-8 text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">Sin promociones registradas</p>
-        </div>
+        <EmptyState
+          icon={Tag}
+          label="Sin promociones registradas"
+          description="Aún no has creado ninguna promoción. Empieza añadiendo la primera."
+          actionLabel="Nueva promoción"
+          actionHref="/admin/promotions/new"
+          className="min-h-[420px]"
+        />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {promotions.map((promotion) => {

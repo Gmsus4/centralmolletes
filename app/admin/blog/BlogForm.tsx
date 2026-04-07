@@ -403,6 +403,7 @@ export default function BlogForm({ blog }: Props) {
                 id="publishedAt"
                 type="datetime-local"
                 {...register("publishedAt")}
+                className="[color-scheme:light]"
               />
               <FieldError>{errors.publishedAt?.message}</FieldError>
             </Field>

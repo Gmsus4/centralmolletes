@@ -39,6 +39,9 @@ interface AdminFormLayoutProps {
   // Preview
   previewHref?: string
 
+  // OnActive
+  onActivate?: () => Promise<void>
+
   // Duplicate
   onDuplicate?: () => Promise<void>
 
@@ -86,6 +89,7 @@ export function AdminFormLayout({
   deleteDescription,
   previewHref,
   onDuplicate,
+  onActivate,
   children,
 }: AdminFormLayoutProps) {
   const router = useRouter()
@@ -100,6 +104,11 @@ export function AdminFormLayout({
   // 4. Extraer los botones extra a una variable reutilizable
   const ExtraActions = () => (
     <>
+      {onActivate && (
+        <Button type="button" variant="outline" onClick={onActivate} className="cursor-pointer">
+          Activar
+        </Button>
+      )}
       {previewHref && (
         <Button type="button" variant="outline" onClick={() => window.open(previewHref, "_blank")} className="cursor-pointer">
           Ver

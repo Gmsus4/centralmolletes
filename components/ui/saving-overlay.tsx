@@ -15,7 +15,7 @@ export const SavingOverlay = ({ isVisible, mode = "saving" }: SavingOverlayProps
   if (!isVisible) return null
 
   return (
-    <div className="absolute inset-0 z-100 bg-background/80 backdrop-blur-sm rounded-lg flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <svg
           className="animate-spin h-5 w-5 text-muted-foreground"

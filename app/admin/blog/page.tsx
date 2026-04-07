@@ -9,41 +9,39 @@ import type { BlogSection } from "@/lib/validators/blog"
 import BlogFilters from "@/components/blog/BlogFilters"
 import { LayoutAdminSection } from "../components/LayoutAdminSection"
 import { autoPublishScheduled } from "@/lib/blog"
+import { EmptyState } from "@/components/ui/EmptyState"
+import { IconArticle } from "@tabler/icons-react"
 
 export const metadata: Metadata = {
   title: "Admin | Blog",
 }
 
 function readingTime(sections: BlogSection[]): number {
-  const text  = sections.map((s) => ("body" in s ? (s.body ?? "") : "")).join(" ")
+  const text = sections.map((s) => ("body" in s ? (s.body ?? "") : "")).join(" ")
   const words = text.trim().split(/\s+/).filter(Boolean).length
   return Math.max(1, Math.ceil(words / 200))
 }
 
 export default async function AdminBlogPage() {
   await autoPublishScheduled()
-  const raw   = await prisma.blog.findMany({ orderBy: { publishedAt: "desc" } })
+  const raw = await prisma.blog.findMany({ orderBy: { publishedAt: "desc" } })
   const posts = raw.map((p) => {
     const sections = JSON.parse(p.sections) as BlogSection[]
     return {
       ...p,
-      tags:     JSON.parse(p.tags) as string[],
+      tags: JSON.parse(p.tags) as string[],
       sections,
       readMins: readingTime(sections),
     }
   })
 
   const totalPublished = posts.filter((p) => p.status === "published").length
-  const totalDraft     = posts.filter((p) => p.status === "draft").length
+  const totalDraft = posts.filter((p) => p.status === "draft").length
   const totalScheduled = posts.filter((p) => p.status === "scheduled").length
 
   return (
     <>
-      <LayoutAdminSection
-        namePage="Artículos"
-        maxWidth="max-w-6xl"
-        link={{ label: "Nuevo artículo", href: "/admin/blog/new" }}
-      >
+      <LayoutAdminSection namePage="Artículos" maxWidth="max-w-6xl" link={{ label: "Nuevo artículo", href: "/admin/blog/new" }}>
         {/* Contadores por status */}
         <div className="flex items-center gap-2 mt-1 flex-wrap">
           <span className="text-sm text-stone-400">
@@ -72,26 +70,19 @@ export default async function AdminBlogPage() {
         <div className="bg-stone-50">
           <div className="max-w-6xl mx-auto py-6 sm:py-12">
             <Suspense>
-              <Toast message="Artículo guardado correctamente"  type="success" triggerParam="success" />
+              <Toast message="Artículo guardado correctamente" type="success" triggerParam="success" />
               <Toast message="Artículo eliminado correctamente" type="success" triggerParam="deleted" />
             </Suspense>
 
             {posts.length === 0 ? (
-              <div className="py-24 sm:py-32 flex flex-col items-center gap-4 border border-dashed border-stone-200 bg-white mx-0">
-                <div className="w-12 h-12 rounded-full bg-stone-100 grid place-items-center">
-                  <span className="text-stone-400 text-xl">✦</span>
-                </div>
-                <div className="flex flex-col items-center gap-1 text-center px-4">
-                  <p className="text-stone-600 text-sm font-medium">Sin artículos</p>
-                  <p className="text-stone-400 text-xs">Crea tu primer artículo de blog</p>
-                </div>
-                <Link
-                  href="/admin/blog/new"
-                  className="mt-2 text-[10px] uppercase tracking-[0.2em] text-stone-500 hover:text-stone-900 border-b border-stone-300 hover:border-stone-900 pb-px transition-colors"
-                >
-                  Crear primero
-                </Link>
-              </div>
+              <EmptyState
+                icon={IconArticle}
+                label="Tu blog está vacío"
+                description="Aún no has redactado ninguna entrada. Comparte tus conocimientos y conecta con tu audiencia hoy mismo."
+                actionLabel="Nuevo artículo"
+                actionHref="/admin/blog/new"
+                className="min-h-[420px]"
+              />
             ) : (
               <BlogFilters posts={posts} />
             )}

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { MapPin, Pencil, ExternalLink, Images } from "lucide-react"
+import { EmptyState } from "@/components/ui/EmptyState"
 
 export const metadata: Metadata = {
   title: "Admin | Locaciones",
@@ -23,50 +24,30 @@ export default async function AdminLocationsPage() {
   }))
 
   return (
-    <LayoutAdminSection
-      namePage="Sucursales"
-      maxWidth="max-w-6xl"
-      link={{ label: "Nueva sucursal", href: "/admin/locations/new" }}
-    >
+    <LayoutAdminSection namePage="Sucursales" maxWidth="max-w-6xl" link={{ label: "Nueva sucursal", href: "/admin/locations/new" }}>
       <Suspense>
-        <Toast message="Ubicación guardada correctamente"  type="success" triggerParam="success" />
+        <Toast message="Ubicación guardada correctamente" type="success" triggerParam="success" />
         <Toast message="Ubicación eliminada correctamente" type="success" triggerParam="deleted" />
       </Suspense>
 
       {locations.length === 0 ? (
-
-        /* ── Empty state ── */
-        <div className="flex flex-col items-center justify-center gap-4 py-24 border border-dashed rounded-lg">
-          <div className="w-12 h-12 rounded-full bg-muted grid place-items-center">
-            <MapPin className="w-5 h-5 text-muted-foreground" />
-          </div>
-          <div className="flex flex-col items-center gap-1 text-center">
-            <p className="text-sm font-medium text-foreground">Sin sucursales</p>
-            <p className="text-xs text-muted-foreground">Agrega tu primera ubicación</p>
-          </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/admin/locations/new">Crear primera</Link>
-          </Button>
-        </div>
-
+        <EmptyState
+          icon={MapPin}
+          label="Ubicación no configurada"
+          description="Aún no has añadido una dirección física. Ayuda a tus clientes a encontrarte en el mapa."
+          actionLabel="Nuevo sucursal"
+          actionHref="/admin/locations/new"
+          className="min-h-[420px]"
+        />
       ) : (
-
         /* ── Location list ── */
         <div className="flex flex-col gap-3">
           {locations.map((loc) => (
-            <div
-              key={loc.id}
-              className="group flex flex-col sm:flex-row items-stretch border rounded-lg bg-card overflow-hidden hover:shadow-sm transition-shadow duration-200"
-            >
-
+            <div key={loc.id} className="group flex flex-col sm:flex-row items-stretch border rounded-lg bg-card overflow-hidden hover:shadow-sm transition-shadow duration-200">
               {/* Image */}
               <div className="w-full h-40 sm:w-36 sm:h-auto shrink-0 bg-muted overflow-hidden">
                 {loc.image ? (
-                  <img
-                    src={loc.image}
-                    alt={loc.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                  <img src={loc.image} alt={loc.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                   <div className="w-full h-full min-h-[96px] grid place-items-center">
                     <MapPin className="w-6 h-6 text-muted-foreground/30" />
@@ -77,7 +58,6 @@ export default async function AdminLocationsPage() {
               {/* Content */}
               <div className="flex flex-1 flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:px-5 min-w-0">
                 <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-
                   {/* Name + city */}
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold text-foreground">{loc.name}</span>
@@ -87,15 +67,11 @@ export default async function AdminLocationsPage() {
                   </div>
 
                   {/* Address */}
-                  <span className="text-xs text-muted-foreground truncate">
-                    {loc.address}
-                  </span>
+                  <span className="text-xs text-muted-foreground truncate">{loc.address}</span>
 
                   {/* Meta */}
                   <div className="flex items-center gap-3 mt-0.5">
-                    <span className="text-[10px] font-mono text-muted-foreground/50">
-                      /{loc.slug}
-                    </span>
+                    <span className="text-[10px] font-mono text-muted-foreground/50">/{loc.slug}</span>
                     {loc.gallery.length > 0 && (
                       <>
                         <Separator orientation="vertical" className="h-3" />
