@@ -25,7 +25,7 @@ export const LayoutAdminSection = ({
   className,
 }: Props) => {
   return (
-    <div className={`${maxWidth} ${className} mx-auto px-6 lg:py-10 py-6 min-h-screen flex flex-col`}>
+    <div className={`${maxWidth} ${className} mx-auto px-6 lg:py-10 py-6 flex-1 flex flex-col`}>
 
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6">
@@ -58,7 +58,7 @@ export const LayoutAdminSection = ({
       </div>
 
       {/* Footer */}
-      <div className="mt-12 pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div className="pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-2 flex-1 mt-10">
         <span className="font-titleText text-muted-foreground tracking-[0.15em] text-lg">
           Central molletes
         </span>

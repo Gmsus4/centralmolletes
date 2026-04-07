@@ -67,7 +67,7 @@ export default async function AdminBlogPage() {
           )}
         </div>
 
-        <div className="bg-stone-50">
+        <div className="">
           <div className="max-w-6xl mx-auto py-6 sm:py-12">
             <Suspense>
               <Toast message="Artículo guardado correctamente" type="success" triggerParam="success" />

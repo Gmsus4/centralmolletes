@@ -146,9 +146,9 @@ export function AdminFormLayout({
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">{section}</span>
-          </div>
+          </div> */}
           <h1 className="font-titleText text-foreground uppercase text-3xl sm:text-5xl leading-none">{title}</h1>
         </div>
 
