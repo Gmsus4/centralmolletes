@@ -181,12 +181,16 @@ export default function BlogForm({ blog }: Props) {
   }
 
   const handleDuplicate = useDuplicate({
-      apiPath:      "/api/blog",
-      redirectPath: "/admin/blog",
-      getValues,
-      setOverlayMode,
-      setSubmitError,
-      nameField: "title"
+    apiPath:       "/api/blog",
+    redirectPath:  "/admin/blog",
+    nameField:     "title",
+    slugField:     "slug",
+    imageField:    "coverImage",
+    galleryField:  "gallery",
+    sectionsField: "sections",
+    getValues,
+    setOverlayMode,
+    setSubmitError,
   })
 
   // ── Submit ──
@@ -419,7 +423,7 @@ export default function BlogForm({ blog }: Props) {
                 control={control}
                 name="coverImage"
                 render={({ field }) => (
-                  <ImageUpload value={field.value} onChange={field.onChange} folder="blog" />
+                  <ImageUpload value={field.value} onChange={field.onChange} folder="blog/covers" />
                 )}
               />
               <FieldError>{errors.coverImage?.message}</FieldError>
@@ -452,7 +456,7 @@ export default function BlogForm({ blog }: Props) {
                   ))}
                 </div>
               )}
-              <ImageUpload folder="blog" value="" onChange={addToGallery} />
+              <ImageUpload folder="blog/gallery" value="" onChange={addToGallery} />
               <FieldError>{(errors.gallery as { message?: string } | undefined)?.message}</FieldError>
               <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
                 Cada subida agrega una imagen a la galería
@@ -598,7 +602,7 @@ export default function BlogForm({ blog }: Props) {
                             <ImageUpload
                               value={field.value ?? ""}
                               onChange={field.onChange}
-                              folder="blog"
+                              folder="blog/sections"
                             />
                           )}
                         />

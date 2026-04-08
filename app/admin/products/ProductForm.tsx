@@ -107,6 +107,7 @@ export default function ProductForm({ product, existingCategories, existingTags 
   const handleDuplicate = useDuplicate({
     apiPath:      "/api/products",
     redirectPath: "/admin/products",
+    imageField: "img",
     getValues,
     setOverlayMode,
     setSubmitError,
@@ -301,7 +302,7 @@ export default function ProductForm({ product, existingCategories, existingTags 
             <Field data-invalid={!!errors.img}>
               <FieldLabel htmlFor="img">Imagen</FieldLabel>
               <FieldError>{errors.img?.message}</FieldError>
-              <Controller control={control} name="img" render={({ field }) => <ImageUpload value={field.value} onChange={field.onChange} />} />
+              <Controller control={control} name="img" render={({ field }) => <ImageUpload folder="products" value={field.value} onChange={field.onChange} />} />
             </Field>
           </div>
         </div>

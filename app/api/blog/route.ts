@@ -64,7 +64,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const body = await req.json()
 
-  if (!body.slug || !body.title || !body.subtitle || !body.coverImage || !body.category) {
+  if (!body.slug || !body.title || !body.subtitle || !body.category) {
     return NextResponse.json(
       { error: "Faltan campos requeridos: slug, title, subtitle, coverImage, category" },
       { status: 400 }
@@ -85,7 +85,7 @@ export async function POST(req: Request) {
         slug:            body.slug,
         title:           body.title,
         subtitle:        body.subtitle,
-        coverImage:      body.coverImage,
+        coverImage:      body.coverImage ?? "",
         gallery:         JSON.stringify(body.gallery  ?? []),
         category:        body.category,
         tags:            JSON.stringify(body.tags     ?? []),

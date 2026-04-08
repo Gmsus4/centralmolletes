@@ -146,6 +146,8 @@ export default function LocationForm({ location }: Props) {
   const handleDuplicate = useDuplicate({
     apiPath:      "/api/locations",
     redirectPath: "/admin/locations",
+    imageField: "image",
+    galleryField:  "gallery",
     getValues,
     setOverlayMode,
     setSubmitError,
@@ -274,7 +276,7 @@ export default function LocationForm({ location }: Props) {
             {/* Imagen principal */}
             <Field data-invalid={!!errors.image}>
               <FieldLabel>Imágen principal</FieldLabel>
-              <Controller control={control} name="image" render={({ field }) => <ImageUpload value={field.value} onChange={field.onChange} folder="locations" />} />
+              <Controller control={control} name="image" render={({ field }) => <ImageUpload value={field.value} onChange={field.onChange} folder="locations/covers" />} />
             </Field>
 
             {/* Galería */}
@@ -306,7 +308,7 @@ export default function LocationForm({ location }: Props) {
                   ))}
                 </div>
               )}
-              <ImageUpload folder="locations" value="" onChange={addToGallery} />
+              <ImageUpload folder="locations/gallery" value="" onChange={addToGallery} />
             </Field>
           </div>
         </div>

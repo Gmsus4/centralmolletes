@@ -19,6 +19,7 @@ const routeLabels: Record<string, string> = {
   // Contenido
   blog:          "Blog",
   announcements: "Anuncios",
+  reviews: "Reseñas"
 }
 
 export function AdminBreadcrumb() {

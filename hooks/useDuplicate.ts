@@ -2,11 +2,14 @@ import { useRouter } from "next/navigation"
 import { useCallback } from "react"
 
 type Options = {
-  apiPath:      string
-  redirectPath: string
-  nameField?:   string  // "name" por defecto
-  slugField?:   string  // "slug" por defecto, null si no tiene
-  getValues:    () => Record<string, unknown>
+  apiPath:        string
+  redirectPath:   string
+  nameField?:     string
+  slugField?:     string | null
+  imageField?:    string
+  galleryField?:  string
+  sectionsField?: string
+  getValues:      () => Record<string, unknown>
   setOverlayMode: (mode: "duplicating" | null) => void
   setSubmitError: (msg: string) => void
 }
@@ -14,8 +17,11 @@ type Options = {
 export function useDuplicate({
   apiPath,
   redirectPath,
-  nameField  = "name",
-  slugField  = "slug",
+  nameField     = "name",
+  slugField     = "slug",
+  imageField,
+  galleryField,
+  sectionsField,
   getValues,
   setOverlayMode,
   setSubmitError,
@@ -26,6 +32,7 @@ export function useDuplicate({
     setOverlayMode("duplicating")
     const values = getValues()
 
+    // ── Nuevo nombre ──────────────────────────────────────────────────────────
     const currentName = (values[nameField] as string) ?? ""
     const baseName    = currentName.replace(/\s*\(\d+\)$/, "")
 
@@ -48,19 +55,32 @@ export function useDuplicate({
 
     const newName = `${baseName} (${nextNumber})`
 
-    // Solo genera nuevo slug si el modelo tiene slug
-    const slugUpdate = slugField && values[slugField]
-      ? {
-          [slugField]: (values[slugField] as string)
-            .replace(/-\(\d+\)$/, "")
-            .replace(/-\d+$/, "") + `-copia-${nextNumber}`,
-        }
-      : {}
+    // ── Nuevo slug ────────────────────────────────────────────────────────────
+    const slugUpdate =
+      slugField && values[slugField]
+        ? {
+            [slugField]: (values[slugField] as string)
+              .replace(/-\(\d+\)$/, "")
+              .replace(/-\d+$/, "") + `-copia-${nextNumber}`,
+          }
+        : {}
 
+    // ── Imágenes vacías ───────────────────────────────────────────────────────
+    const imageUpdates: Record<string, unknown> = {
+      ...(imageField    && { [imageField]:   "" }),
+      ...(galleryField  && { [galleryField]: [] }),
+      ...(sectionsField && Array.isArray(values[sectionsField]) && {
+        [sectionsField]: (values[sectionsField] as Record<string, unknown>[]).map((section) =>
+          section.type === "image" ? { ...section, image: "" } : section
+        ),
+      }),
+    }
+
+    // ── POST ──────────────────────────────────────────────────────────────────
     const res = await fetch(apiPath, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ ...values, [nameField]: newName, ...slugUpdate }),
+      body:    JSON.stringify({ ...values, [nameField]: newName, ...slugUpdate, ...imageUpdates }),
     })
 
     if (!res.ok) {

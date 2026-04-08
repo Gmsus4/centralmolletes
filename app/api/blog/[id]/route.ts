@@ -106,7 +106,7 @@ export async function PUT(
         slug:            body.slug,
         title:           body.title,
         subtitle:        body.subtitle,
-        coverImage:      body.coverImage,
+        coverImage:      body.coverImage ?? "",
         gallery:         JSON.stringify(body.gallery  ?? []),
         category:        body.category,
         tags:            JSON.stringify(body.tags     ?? []),

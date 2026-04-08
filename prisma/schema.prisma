@@ -228,3 +228,22 @@ model Blog {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+enum ReviewStatus {
+  visible
+  hidden
+}
+
+model Review {
+  id        String       @id @default(cuid())
+  author    String
+  role      String
+  body      String       @db.Text
+  photo     String?
+  rating    Int
+  status    ReviewStatus @default(visible)
+  order     Int          @default(0)
+  
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
