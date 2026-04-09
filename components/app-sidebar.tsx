@@ -12,7 +12,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { GalleryVerticalEndIcon, AudioLinesIcon, TerminalIcon, TerminalSquareIcon, BotIcon, BookOpenIcon, Settings2Icon, FrameIcon, PieChartIcon, MapIcon } from "lucide-react"
-import { IconAddressBook, IconArticle, IconBowlChopsticks, IconCalendarWeek, IconDiscount2, IconMapPin, IconMessageStar, IconSpeakerphone, IconTag } from "@tabler/icons-react"
+import { IconAddressBook, IconArticle, IconBowlChopsticks, IconCalendarWeek, IconDiscount2, IconMapPin, IconMessageStar, IconPhoto, IconSpeakerphone, IconTag, IconWriting } from "@tabler/icons-react"
 import { NavComponent } from "./nav-component"
 
 // This is sample data.
@@ -96,6 +96,22 @@ const data = {
       url: "/admin/reviews",
       icon: (
         <IconMessageStar
+        />
+      ),
+    },
+    {
+      title: "Galería del Sitio",
+      url: "/admin/site-images",
+      icon: (
+        <IconPhoto
+        />
+      ),
+    },
+    {
+      title: "Módulos de Texto",
+      url: "/admin/site-content",
+      icon: (
+        <IconWriting
         />
       ),
     },

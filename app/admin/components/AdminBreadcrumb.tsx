@@ -19,7 +19,9 @@ const routeLabels: Record<string, string> = {
   // Contenido
   blog:          "Blog",
   announcements: "Anuncios",
-  reviews: "Reseñas"
+  reviews: "Reseñas",
+  "site-images": "Galería del Sitio",
+  "site-content": "Módulos de texto"
 }
 
 export function AdminBreadcrumb() {

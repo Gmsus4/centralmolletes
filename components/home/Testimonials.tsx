@@ -1,16 +1,22 @@
 import { getTopReviews } from "@/lib/reviews"
-import { images } from "@/data/images"
+import { getSiteImages } from "@/lib/siteImages"
 import { IconQuote } from "@tabler/icons-react"
 import Image from "next/image"
 
-const decorativeImages = [
-  { src: images.testimonials[0].src, imageFirst: false },
-  { src: images.testimonials[1].src, imageFirst: true },
-  { src: images.testimonials[2].src, imageFirst: false },
-]
+// const decorativeImages = [
+//   { src: images.testimonials[0].src, imageFirst: false },
+//   { src: images.testimonials[1].src, imageFirst: true },
+//   { src: images.testimonials[2].src, imageFirst: false },
+// ]
 
 export const Testimonials = async () => {
-  const testimonials = await getTopReviews()
+  const [testimonials, decorativeImages] = await Promise.all([
+    getTopReviews(),
+    getSiteImages("testimonials"),
+  ])
+  
+  // const testimonials = await getTopReviews()
+  const imageFirstByIndex = [false, true, false]
 
   return (
     <section
@@ -23,14 +29,15 @@ export const Testimonials = async () => {
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
         {testimonials.map((t, i) => {
-          const { src, imageFirst } = decorativeImages[i]
-
+          const dbImage = decorativeImages[i]
+          const src = dbImage?.src ?? ""
+          const imageFirst = imageFirstByIndex[i] ?? []
           return (
             <div
               key={t.id}
               className={`flex gap-4 ${imageFirst ? "lg:flex-col md:flex-row flex-col-reverse" : "lg:flex-col md:flex-row flex-col"}`}
             >
-              {imageFirst && (
+              {imageFirst && dbImage?.src &&(
                 <div className="rounded-radius overflow-hidden flex-1 lg:min-h-96 min-h-60">
                   <Image
                     loading="lazy"
@@ -70,7 +77,7 @@ export const Testimonials = async () => {
                 </blockquote>
               </div>
 
-              {!imageFirst && (
+              {!imageFirst && dbImage?.src && (
                 <div className="rounded-radius overflow-hidden lg:min-h-96 min-h-60 flex-1">
                   <Image
                     loading="lazy"

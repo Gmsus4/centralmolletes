@@ -1,4 +1,5 @@
 import { images } from "@/data/images"
+import { getSiteImages } from "@/lib/siteImages"
 import { IconHeart, IconLeaf, IconSparkles } from "@tabler/icons-react"
 import Image from "next/image"
 
@@ -26,7 +27,8 @@ const benefits: Benefit[] = [
   },
 ]
 
-export const BenefitsPanel = () => {
+export const BenefitsPanel = async() => {
+  const featuresImages = await getSiteImages("features")
   return (
     <section aria-labelledby="benefits-title" className="bg-bg-body py-20 px-6 sm:px-10 lg:px-20">
       <h2 className="text-center xs:text-6xl text-4xl w-2/3 m-auto font-title text-text-titles mb-12 scroll-mt-20">
@@ -43,7 +45,16 @@ export const BenefitsPanel = () => {
           </div>
         ))}
         <div className="rounded-radius w-full overflow-hidden md:col-span-3 col-span-1">
-          <Image className="w-full" width={1200} height={600} quality={90} sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 1200px" src={images.benefitsPanel[0].src} alt="" loading="lazy"/>
+          {
+            featuresImages.length > 0 && (
+              <Image className="w-full" width={1200} height={600} quality={90} sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 1200px" src={featuresImages[0]?.src} alt={featuresImages[0]?.alt} loading="lazy"/>
+            )
+          }
+          {/* {
+            featuresImages.map((f) => (
+              <Image className="w-full" width={1200} height={600} quality={90} sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 1200px" src={f.src} alt={f?.alt} loading="lazy"/>
+            ))
+          } */}
         </div>
       </div>
     </section>

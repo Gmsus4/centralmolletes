@@ -1,4 +1,5 @@
 import { images } from "@/data/images"
+import { getSiteImages } from "@/lib/siteImages"
 import { IconCoffee, IconHeartHandshake, IconMapPin, IconFlame } from "@tabler/icons-react"
 import Image from "next/image"
 
@@ -30,7 +31,8 @@ const features: Feature[] = [
   },
 ]
 
-export const AboutDetails = () => {
+export const AboutDetails = async() => {
+  const aboutImages = await getSiteImages("about")
   return (
     <div className="bg-bg-body xs:min-h-[calc(100dvh-4rem)] md:py-26 py-16 flex flex-col items-center justify-center md:gap-16 gap-12 px-6">
       <div className="relative max-w-7xl">
@@ -59,14 +61,20 @@ export const AboutDetails = () => {
 
           <div className="grid xs:grid-cols-2 grid-cols-1 gap-6">
             <div className="rounded-radius overflow-hidden h-full">
-              <Image priority loading="eager" quality={100} width={800} height={1000} sizes="(max-width: 768px) 100vw, 50vw" src={images.aboutDetails[0].src} alt="Interior de Central Molletes" className="h-full object-cover" />
+              {aboutImages[0]?.src && (
+                <Image priority loading="eager" quality={100} width={800} height={1000} sizes="(max-width: 768px) 100vw, 50vw" src={aboutImages[0].src} alt={aboutImages[0].alt ?? "Interior de Central Molletes"} className="h-full object-cover" />
+              )}
             </div>
             <div className="grid grid-rows-2 gap-6 h-full">
               <div className="rounded-radius overflow-hidden">
-                <Image loading="lazy" width={800} height={1000} sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw" src={images.aboutDetails[1].src} alt="Platillos de Central Molletes" className="h-full object-cover" />
+                {aboutImages[1]?.src && (
+                  <Image loading="lazy" width={800} height={1000} sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw" src={aboutImages[1].src} alt={aboutImages[1].alt ?? "Platillos de Central Molletes"} className="h-full object-cover" />
+                )}
               </div>
               <div className="rounded-radius overflow-hidden">
-                <Image loading="lazy" width={800} height={1000} sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw" src={images.aboutDetails[2].src} alt="Café de especialidad" className="h-full object-cover" />
+                {aboutImages[2]?.src && (
+                  <Image loading="lazy" width={800} height={1000} sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw" src={aboutImages[2].src} alt={aboutImages[2].alt ?? "Café de especialidad"} className="h-full object-cover" />
+                )}
               </div>
             </div>
           </div>
