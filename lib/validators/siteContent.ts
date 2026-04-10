@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export const SITE_CONTENT_SECTIONS = [
   { value: "hero",      label: "Hero",             description: "Título, descripción y botones de la sección principal." },
-  { value: "nosotros",  label: "Nuestra Forma de Trabajar", description: "Título, descripción y los 4 features con ícono." },
+  { value: "about",  label: "Nuestra Forma de Trabajar", description: "Título, descripción y los 4 features con ícono." },
   { value: "benefits",  label: "Lo Que Nos Hace Únicos",    description: "Título y las 3 tarjetas de valores con ícono y descripción." },
   { value: "stats",     label: "Estadísticas",     description: "Números y etiquetas del grid de métricas." },
   { value: "site",      label: "Sitio / Ticker",   description: "Nombre del negocio, tagline del navbar y los items del ticker." },

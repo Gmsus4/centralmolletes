@@ -41,7 +41,7 @@ export const StatsGrid = async() => {
       colSpan: "lg:col-span-1",
       order: "order-2 lg:order-2",
       height: "lg:h-84",
-      image: { src: statsImages[0]?.src, alt: "Chilaquiles de Central Molletes" },
+      image: { src: statsImages[0]?.src, alt: statsImages[0]?.alt },
     },
     {
       type: "stat",
@@ -60,7 +60,7 @@ export const StatsGrid = async() => {
       colSpan: "lg:col-span-1",
       order: "order-3 lg:order-4",
       height: "lg:h-84",
-      image: { src: statsImages[1]?.src, alt: "Hotcakes en Central Molletes" },
+      image: { src: statsImages[1]?.src, alt: statsImages[1]?.alt },
     },
     {
       type: "stat",
@@ -79,7 +79,7 @@ export const StatsGrid = async() => {
       colSpan: "lg:col-span-2",
       order: "order-6 lg:order-6",
       height: "lg:h-84",
-      image: { src: statsImages[2]?.src, alt: "Café de especialidad en Central Molletes" },
+      image: { src: statsImages[2]?.src, alt: statsImages[2]?.alt },
     },
   ]
 

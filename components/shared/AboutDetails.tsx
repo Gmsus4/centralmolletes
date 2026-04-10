@@ -1,4 +1,5 @@
-import { images } from "@/data/images"
+import { getIcon } from "@/lib/getIcon"
+import { getSectionContent } from "@/lib/siteContent"
 import { getSiteImages } from "@/lib/siteImages"
 import { IconCoffee, IconHeartHandshake, IconMapPin, IconFlame } from "@tabler/icons-react"
 import Image from "next/image"
@@ -9,39 +10,41 @@ type Feature = {
   border?: string
 }
 
-const features: Feature[] = [
+export const AboutDetails = async() => {
+  const aboutImages = await getSiteImages("about")
+  const about = await getSectionContent("about")
+
+  const features: Feature[] = [
   {
-    icon: IconCoffee,
-    label: "Café de especialidad",
+    icon: getIcon(about["about.features.icon.1"] ?? "Users"),
+    label: about["about.features.label.1"] ?? "Label 1",
     border: "xs:border-r xs:border-b",
   },
   {
-    icon: IconFlame,
-    label: "Hecho al momento",
+    icon: getIcon(about["about.features.icon.2"]   ?? "Users"),
+    label: about["about.features.label.2"] ?? "Label 2",
     border: "xs:border-b",
   },
   {
-    icon: IconMapPin,
-    label: "Orgullo etzatlense",
+    icon: getIcon(about["about.features.icon.3"]   ?? "Users"),
+    label: about["about.features.label.3"] ?? "Label 3",
     border: "xs:border-r",
   },
   {
-    icon: IconHeartHandshake,
-    label: "Atención con cariño",
+    icon: getIcon(about["about.features.icon.4"]   ?? "Users"),
+    label: about["about.features.label.4"] ?? "Label 4",
   },
 ]
 
-export const AboutDetails = async() => {
-  const aboutImages = await getSiteImages("about")
   return (
     <div className="bg-bg-body xs:min-h-[calc(100dvh-4rem)] md:py-26 py-16 flex flex-col items-center justify-center md:gap-16 gap-12 px-6">
       <div className="relative max-w-7xl">
         <div className="min-h-[600px] grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div className="grid gap-4">
             <div className="grid lg:gap-0 gap-4">
-              <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight">Nuestra Forma <br /> de Trabajar</h2>
+              <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight">{about["about.title"] }</h2>
               <p className="text-base text-text-main/70 leading-relaxed">
-                Desde 2020 despertando Etzatlán con molletes, buen café y mucho cariño. Cada platillo sale de la cocina con el mismo entusiasmo del primer día.
+                {about["about.description"]}
               </p>
             </div>
             <div className="grid grid-cols-1 xs:grid-cols-2 place-items-center pt-4 gap-0 self-start">
@@ -59,25 +62,56 @@ export const AboutDetails = async() => {
             </div>
           </div>
 
-          <div className="grid xs:grid-cols-2 grid-cols-1 gap-6">
-            <div className="rounded-radius overflow-hidden h-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 gap-6 h-auto xs:h-[640px]">
+            {/* Imagen grande izquierda */}
+            <div className="rounded-radius overflow-hidden aspect-[4/3] xs:aspect-auto xs:h-full relative">
               {aboutImages[0]?.src && (
-                <Image priority loading="eager" quality={100} width={800} height={1000} sizes="(max-width: 768px) 100vw, 50vw" src={aboutImages[0].src} alt={aboutImages[0].alt ?? "Interior de Central Molletes"} className="h-full object-cover" />
+                <Image 
+                  fill
+                  priority 
+                  loading="eager" 
+                  quality={100} 
+                  sizes="(max-width: 480px) 100vw, 50vw"
+                  src={aboutImages[0].src} 
+                  alt={aboutImages[0].alt ?? "Interior de Central Molletes"} 
+                  className="object-cover"
+                />
               )}
             </div>
-            <div className="grid grid-rows-2 gap-6 h-full">
-              <div className="rounded-radius overflow-hidden">
+
+            {/* Columna derecha - dos imágenes */}
+            <div className="grid grid-rows-2 gap-6 h-auto xs:h-full">
+              
+              {/* Imagen superior derecha */}
+              <div className="rounded-radius overflow-hidden aspect-[4/3] xs:aspect-auto xs:h-full relative">
                 {aboutImages[1]?.src && (
-                  <Image loading="lazy" width={800} height={1000} sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw" src={aboutImages[1].src} alt={aboutImages[1].alt ?? "Platillos de Central Molletes"} className="h-full object-cover" />
+                  <Image 
+                    fill
+                    loading="lazy" 
+                    sizes="(max-width: 480px) 100vw, 50vw"
+                    src={aboutImages[1].src} 
+                    alt={aboutImages[1].alt ?? "Platillos de Central Molletes"} 
+                    className="object-cover"
+                  />
                 )}
               </div>
-              <div className="rounded-radius overflow-hidden">
+
+              {/* Imagen inferior derecha */}
+              <div className="rounded-radius overflow-hidden aspect-[4/3] xs:aspect-auto xs:h-full relative">
                 {aboutImages[2]?.src && (
-                  <Image loading="lazy" width={800} height={1000} sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw" src={aboutImages[2].src} alt={aboutImages[2].alt ?? "Café de especialidad"} className="h-full object-cover" />
+                  <Image 
+                    fill
+                    loading="lazy" 
+                    sizes="(max-width: 480px) 100vw, 50vw"
+                    src={aboutImages[2].src} 
+                    alt={aboutImages[2].alt ?? "Café de especialidad"} 
+                    className="object-cover"
+                  />
                 )}
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
