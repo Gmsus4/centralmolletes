@@ -1,20 +1,24 @@
 import { Titles } from "@/data/titles"
 import { ButtonCustom } from "../ui/ButtonCustom"
 import Image from "next/image"
+import { getSiteImages } from "@/lib/siteImages"
+import { AdminImageWrapperFill } from "../shared/AdminImageWrapperFill"
 
-export const Hero = () => {
+export const Hero = async() => {
+  const statsImages = await getSiteImages("hero")
   return (
     <div className="bg-bg-dark relative w-full flex flex-col h-dvh overflow-hidden items-center justify-center">
       <div className="grain-overlay" />
-
-      <Image
-        src="/hero.webp"
-        alt="Hero background"
-        fill
-        priority
-        className="object-cover object-[70%_center] sm:object-center"
-        style={{ opacity: 0.25 }}
-      />
+      <AdminImageWrapperFill href={`/admin/site-images/${statsImages[0].id}`}>
+        <Image
+          src={statsImages[0]?.src ?? "/hero.webp"}
+          alt="Hero background"
+          fill
+          priority
+          className="object-cover object-[70%_center] sm:object-center"
+          style={{ opacity: 0.25 }}
+        />
+      </AdminImageWrapperFill>
 
       {/* Glow amarillo central */}
       <div className="glow absolute inset-0 flex items-center justify-center pointer-events-none">

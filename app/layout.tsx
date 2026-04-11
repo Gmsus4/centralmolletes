@@ -5,6 +5,8 @@ import { getCurrentTheme } from "@/lib/theme"
 import prisma from "@/lib/prisma"
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { AdminSignOutWrapper } from "@/components/shared/AdminSignOutWrapper"
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -167,7 +169,12 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <SessionProvider>{children}</SessionProvider>
+        <SessionProvider>
+           <TooltipProvider>
+            {children}
+            <AdminSignOutWrapper />
+           </TooltipProvider>
+        </SessionProvider>
       </body>
     </html>
   )

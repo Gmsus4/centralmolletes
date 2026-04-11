@@ -35,6 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return {
           id:    user.id,
           email: user.email,
+          isAdmin: true
         }
       },
     }),
@@ -42,8 +43,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     jwt({ token, user }) {
       if (user) {
-        token.id    = user.id
+        token.id    = user.id ?? ""
         token.email = user.email
+        token.isAdmin = true  
       }
       return token
     },
@@ -51,6 +53,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token && session.user) {
         session.user.id    = token.id as string
         session.user.email = token.email as string
+        session.user.isAdmin = token.isAdmin as boolean
       }
       return session
     },

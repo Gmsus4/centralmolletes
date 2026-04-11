@@ -5,6 +5,7 @@ import { NavbarServer } from "@/components/shared/NavbarServer"
 import { FooterServer } from "@/components/shared/FooterServer"
 import type { BlogSection } from "@/lib/validators/blog"
 import { autoPublishScheduled } from "@/lib/blog"
+import { TitlePage } from "@/components/ui/TitlePage"
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -53,21 +54,9 @@ export default async function BlogPage() {
     <>
       <NavbarServer />
       <main className="bg-stone-50">
+        <TitlePage title={"Blog Page"} subtitle={"Subtitle Page"} />
         <div className="max-w-5xl mx-auto px-6 py-16">
-          {/* Header */}
-          <div className="flex flex-col gap-3 mb-14">
-            <h1 className="font-title text-center mt-10 text-stone-900 text-5xl sm:text-6xl leading-none">
-              Blog
-            </h1>
-            <p className="text-center text-text-main text-sm">Entre granos de café y letras compartidas</p>
-          </div>
 
-          {/* Divider */}
-          <div className="flex items-center gap-3 mb-12">
-            <span className="flex-1 h-px bg-stone-200" />
-            <span className="w-1 h-1 rounded-full bg-stone-300" />
-            <span className="flex-1 h-px bg-stone-200" />
-          </div>
 
           {posts.length === 0 ? (
             <p className="text-stone-400 text-sm text-center py-24">

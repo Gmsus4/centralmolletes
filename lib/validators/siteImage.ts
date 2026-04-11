@@ -5,6 +5,8 @@ export const SITE_IMAGE_SECTIONS = [
   { value: "about",        label: "Nuestra Forma de Trabajar", description: "Imágenes del apartado que describe la filosofía y el ambiente del café." },
   { value: "stats",        label: "Estadísticas", description: "Imágenes decorativas dentro del grid de métricas (clientes, años, productos)." },
   { value: "features",     label: "Lo Que Nos Hace Únicos", description: "Imagen panorámica grande que aparece bajo las tarjetas de valores del café." },
+  { value: "hero",         label: "Fondo del Hero", description: "Imagen de fondo para la sección principal de bienvenida." },
+  { value: "locations",    label: "Imagen de la Sucursal", description: "Fotografía de la fachada o del interior del establecimiento que ayuda a los clientes a identificar el lugar." },
 ] as const
 
 export type SiteImageSection = (typeof SITE_IMAGE_SECTIONS)[number]["value"]
