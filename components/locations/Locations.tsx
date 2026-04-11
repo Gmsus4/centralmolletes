@@ -42,19 +42,19 @@ export const Locations = async ({ className = "bg-brand-primary py-10", location
           {locations.map((location, index) => {
             const isLast = index === locations.length - 1
 
-            return (
-              <div key={location.id} className={`relative overflow-hidden rounded-radius p-5 flex flex-col justify-end text-text-invert min-h-[180px] group ${isOdd && isLast ? "col-span-2" : "col-span-1"}`}
-                style={{
-                  backgroundImage: `url(${location.image})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              >
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/80 group-hover:bg-black/70 transition" />
+              return (
+                <div
+                  key={location.id}
+                  className={`relative overflow-hidden isolate rounded-radius p-0 flex flex-col justify-end text-text-invert min-h-[180px] group ${isOdd && isLast ? "col-span-2" : "col-span-1"}`}
+                  style={{
+                    backgroundImage: `url(${location.image})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                >
 
                 {/* Content */}
-                <div className="relative z-10 flex flex-col gap-2">
+                <div className="relative z-10 flex flex-col gap-2 rounded-radius p-4 justify-end" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 70%, transparent 100%)" }}>
                   <span className="bg-bg-dark text-text-invert px-2 py-1 mb-2 rounded-md text-[10px] uppercase tracking-wide w-fit">{location.city}</span>
                   <p className="font-semibold text-sm leading-tight">{location.addressMin}</p>
                   <p className="text-xs text-white/80">{location.hours}</p>

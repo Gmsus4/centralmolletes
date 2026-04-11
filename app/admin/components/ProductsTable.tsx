@@ -45,7 +45,7 @@ export function ProductsTable({ products, categories }: Props) {
 
   return (
     <div className="flex flex-col gap-6">
-      { filtered.length === 0 ? (
+      {filtered.length === 0 && products.length === 0 ? (
         <EmptyState
           icon={IconBowlChopsticks}
           label="Menú sin platillos"
@@ -74,7 +74,14 @@ export function ProductsTable({ products, categories }: Props) {
                   Todos
                 </Toggle>
                 {categories.map((cat) => (
-                  <Toggle key={cat} pressed={activeCategory === cat} onPressedChange={() => setActiveCategory(activeCategory === cat ? null : cat)} size="sm" variant="outline" className="cursor-pointer">
+                  <Toggle
+                    key={cat}
+                    pressed={activeCategory === cat}
+                    onPressedChange={() => setActiveCategory(activeCategory === cat ? null : cat)}
+                    size="sm"
+                    variant="outline"
+                    className="cursor-pointer"
+                  >
                     {cat}
                   </Toggle>
                 ))}
@@ -133,7 +140,13 @@ export function ProductsTable({ products, categories }: Props) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {
+                {filtered.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-muted-foreground py-10">
+                      No existen productos con este nombre.
+                    </TableCell>
+                  </TableRow>
+                ) : (
                   filtered.map((product) => (
                     <TableRow key={product.id}>
                       <TableCell className="font-medium">{product.name}</TableCell>
@@ -149,7 +162,7 @@ export function ProductsTable({ products, categories }: Props) {
                       </TableCell>
                     </TableRow>
                   ))
-                }
+                )}
               </TableBody>
             </Table>
           </div>

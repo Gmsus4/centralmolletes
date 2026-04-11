@@ -219,7 +219,7 @@ export default function ProductForm({ product, existingCategories, existingTags 
               <Field data-invalid={!!errors.price}>
                 <FieldLabel htmlFor="price">Precio</FieldLabel>
                 <FieldError>{errors.price?.message}</FieldError>
-                <Input id="price" aria-invalid={!!errors.price} {...register("price", { valueAsNumber: true })} type="number" step="0.01" className={inputClass} />
+                <Input id="price" aria-invalid={!!errors.price} {...register("price", { valueAsNumber: true })} type="number" step="1" className={inputClass} />
                 <FieldDescription>Precio unitario de venta al público (IVA incluido).</FieldDescription>
               </Field>
 

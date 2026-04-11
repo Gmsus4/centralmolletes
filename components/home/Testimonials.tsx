@@ -21,7 +21,7 @@ export const Testimonials = async () => {
   return (
     <section
       aria-labelledby="testimonials-title"
-      className="w-full bg-bg-body/95 xs:min-h-[calc(100dvh-4rem)] md:py-26 py-16 flex flex-col items-center justify-center md:gap-16 gap-12 px-6"
+      className="w-full bg-bg-body xs:min-h-[calc(100dvh-4rem)] md:py-26 py-16 flex flex-col items-center justify-center md:gap-16 gap-12 px-6"
     >
       <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight text-center">
         Nos alegra <br /> el día leerlos
