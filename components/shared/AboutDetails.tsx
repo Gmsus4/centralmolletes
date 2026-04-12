@@ -31,12 +31,12 @@ export const AboutDetails = async () => {
           <div className="grid gap-4">
             <div className="grid lg:gap-0 gap-4">
               <AdminEditWrapper href={`/admin/site-content/${about["about.title"]?.id}`} tooltip="Editar título">
-                <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight hover:opacity-60 transition-opacity">
+                <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight">
                   {about["about.title"]?.value}
                 </h2>
               </AdminEditWrapper>
               <AdminEditWrapper href={`/admin/site-content/${about["about.description"]?.id}`} tooltip="Editar descripción">
-                <p className="text-base text-text-main/70 leading-relaxed hover:opacity-60 transition-opacity">
+                <p className="text-base text-text-main/70 leading-relaxed">
                   {about["about.description"]?.value}
                 </p>
               </AdminEditWrapper>
@@ -47,11 +47,11 @@ export const AboutDetails = async () => {
                 <div key={label} className={`w-full xs:justify-center flex items-center xs:flex-col gap-2 col-span-1 xs:py-6 py-2 xs:border-black/10 ${border ?? ""}`}>
                   <div className="bg-brand-primary rounded-radius w-12 h-12 grid place-items-center">
                     <AdminEditWrapper href={`/admin/site-content/${iconId}`} tooltip="Editar icono">
-                      <Icon className="text-text-titles hover:opacity-60 transition-opacity" />
+                      <Icon className="text-text-titles" />
                     </AdminEditWrapper>
                   </div>
                   <AdminEditWrapper href={`/admin/site-content/${labelId}`} tooltip="Editar texto">
-                    <p className="text-base text-text-main text-center hover:opacity-60 transition-opacity">{label}</p>
+                    <p className="text-base text-text-main text-center">{label}</p>
                   </AdminEditWrapper>
                 </div>
               ))}

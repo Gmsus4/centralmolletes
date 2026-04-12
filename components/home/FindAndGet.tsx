@@ -28,7 +28,7 @@ export const FindAndGet = async ({ categories }: { categories: CategoryItem[] })
         <div className="flex items-center gap-3">
           <span className="w-8 h-px bg-bg-dark/25" />
           <AdminEditWrapper href={`/admin/site-content/${badgeId}`} tooltip="Editar badge">
-            <span className="text-[10px] uppercase tracking-[0.25em] text-text-main/90 hover:opacity-60 transition-opacity">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-text-main/90">
               {badge}
             </span>
           </AdminEditWrapper>
@@ -36,7 +36,7 @@ export const FindAndGet = async ({ categories }: { categories: CategoryItem[] })
         </div>
 
         <AdminEditWrapper href={`/admin/site-content/${titleId}`} tooltip="Editar título">
-          <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight hover:opacity-60 transition-opacity">
+          <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight">
             {title}
           </h2>
         </AdminEditWrapper>
@@ -52,8 +52,8 @@ export const FindAndGet = async ({ categories }: { categories: CategoryItem[] })
           {buttonTxt}
           <span className="w-6 h-px bg-bg-dark/60" />
         </Link>
-        <AdminEditWrapper href={`/admin/site-content/${buttonTxtId}`} tooltip="Editar botón" className="absolute -right-10 top-0">
-          <IconPencilCode className="text-text-main hover:opacity-60 transition-opacity" size={18} />
+        <AdminEditWrapper href={`/admin/site-content/${buttonTxtId}`} tooltip="Editar botón" className="absolute -right-10 top-0" hideWhenNotAdmin>
+          <IconPencilCode className="text-text-main" size={18} />
         </AdminEditWrapper>
       </div>
 

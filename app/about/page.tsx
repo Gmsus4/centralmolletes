@@ -31,7 +31,7 @@ export default function AboutUs() {
     <>
       <NavbarServer />
       <main>
-        <TitlePage title={Titles.aboutUs.title} subtitle={Titles.aboutUs.subtitle} />
+        <TitlePage section="about"/>
         <section aria-labelledby="about-story-title" className="relative bg-bg-body w-full overflow-hidden py-20 px-6 sm:px-10 lg:px-20">
           <div className="relative max-w-7xl mx-auto">
             <div className="flex flex-col lg:flex-row items-center gap-14 lg:gap-20">

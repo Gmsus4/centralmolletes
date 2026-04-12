@@ -9,6 +9,7 @@ export const SITE_CONTENT_SECTIONS = [
   { value: "testimonials",  label: "Título Testimoniales",   description: "Texto principal que encabeza la sección de reseñas de clientes." },
   { value: "locations",     label: "Título de Ubicaciones", description: "Texto que encabeza el apartado de nuestras sucursales." },
   { value: "menu_cta",label: "Título Invitación al Menú", description: "Texto principal de la sección de categorías (ej: ¿Qué se te antoja hoy?)" },
+  { value: "headings", label: "Textos de Cabecera", description: "Configuración global de títulos y subtítulos de las secciones." }
 ] as const
 
 export type SiteContentSection = (typeof SITE_CONTENT_SECTIONS)[number]["value"]

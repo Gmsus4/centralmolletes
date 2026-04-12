@@ -7,6 +7,7 @@ export const SITE_IMAGE_SECTIONS = [
   { value: "features",     label: "Lo Que Nos Hace Únicos", description: "Imagen panorámica grande que aparece bajo las tarjetas de valores del café." },
   { value: "hero",         label: "Fondo del Hero", description: "Imagen de fondo para la sección principal de bienvenida." },
   { value: "locations",    label: "Imagen de la Sucursal", description: "Fotografía de la fachada o del interior del establecimiento que ayuda a los clientes a identificar el lugar." },
+  { value: "inner_header", label: "Cabecera de Páginas Internas", description: "Fondo de las secciones que no son el Home. Se recomienda una imagen con texturas oscuras para legibilidad." },
 ] as const
 
 export type SiteImageSection = (typeof SITE_IMAGE_SECTIONS)[number]["value"]

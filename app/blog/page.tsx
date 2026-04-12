@@ -6,6 +6,7 @@ import { FooterServer } from "@/components/shared/FooterServer"
 import type { BlogSection } from "@/lib/validators/blog"
 import { autoPublishScheduled } from "@/lib/blog"
 import { TitlePage } from "@/components/ui/TitlePage"
+import { MarqueeStrip } from "@/components/ui/MarqueeStrip"
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -54,8 +55,8 @@ export default async function BlogPage() {
     <>
       <NavbarServer />
       <main className="bg-stone-50">
-        <TitlePage title={"Blog Page"} subtitle={"Subtitle Page"} />
-        <div className="max-w-5xl mx-auto px-6 py-16">
+        <TitlePage section="blog" />
+        <div className="max-w-7xl mx-auto px-6 lg:py-16 py-8">
 
 
           {posts.length === 0 ? (
@@ -63,7 +64,7 @@ export default async function BlogPage() {
               Próximamente publicaremos nuestras primeras historias.
             </p>
           ) : (
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {posts.map((post) => (
                 <Link
                   key={post.id}
@@ -118,6 +119,7 @@ export default async function BlogPage() {
           )}
         </div>
       </main>
+      <MarqueeStrip />
       <FooterServer />
     </>
   )

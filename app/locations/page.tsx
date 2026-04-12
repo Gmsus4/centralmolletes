@@ -32,7 +32,7 @@ export default async function LocationsPage() {
         <>
             <NavbarServer />
             <main>
-                <TitlePage title={Titles.locations.title} subtitle={Titles.locations.subtitle} isMarquee={false}/>
+                <TitlePage section="locations" isMarquee={false}/>
                 <div className="bg-bg-body px-6">
                     <Locations className="lg:py-20 py-4" locations={location}/>
                 </div>

@@ -4,21 +4,21 @@ import { navItems } from "@/data/navItems"
 import { IconMenu2, IconX, IconPhoneCall, IconHome } from "@tabler/icons-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 
 interface NavbarProps {
-  phone?: string | null;
-  whatsapp?: string | null;
+  phone?: string | null
+  whatsapp?: string | null
 }
 
-export const revalidate = 3600 
+export const revalidate = 3600
 
-export const Navbar = ({phone, whatsapp}: NavbarProps) => {
+export const Navbar = ({ phone }: NavbarProps) => {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
-  const phoneCall = phone?.replace(/[^0-9]/g, '') ?? ""
+  const phoneCall = phone?.replace(/[^0-9]/g, "") ?? ""
 
   const isActive = (href: string) => pathname === href
   const isHome = pathname === "/"
@@ -29,266 +29,158 @@ export const Navbar = ({phone, whatsapp}: NavbarProps) => {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : ""
-    return () => { document.body.style.overflow = "" }
+    return () => {
+      document.body.style.overflow = ""
+    }
   }, [menuOpen])
 
   return (
     <>
-      <nav
-        aria-label="Navegación principal"
-        className={`
-          fixed top-0 left-0 right-0 z-[1000]
-          transition-all duration-500 ease-out
-          ${scrolled ? "lg:pt-0" : "lg:pt-3"}
-        `}
-      >
-        <div className="max-w-7xl mx-auto sm:px-6 w-full flex items-center justify-center">
-
-          {/* ── DESKTOP NAV ── */}
+      <nav aria-label="Navegación principal" className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-500 ease-out ${scrolled ? "lg:pt-2" : "lg:pt-4"}`}>
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-3 sm:px-5 lg:px-6">
           <div
-            className={`
-              hidden lg:flex items-center
-              bg-brand-primary
-              rounded-full px-2 h-[52px] gap-1
-              transition-all duration-500
-              ${scrolled
-                ? "shadow-[0_4px_32px_rgba(0,0,0,0.25)] scale-[0.98]"
-                : "shadow-[0_2px_16px_rgba(0,0,0,0.12)]"
-              }
-            `}
+            className={`hidden lg:flex items-center gap-1 rounded-full border border-brand-primary/20 bg-brand-primary/95 backdrop-blur-md px-2.5 h-[56px] transition-all duration-500 ${
+              scrolled ? "shadow-[0_10px_40px_rgba(0,0,0,0.18)]" : "shadow-[0_6px_24px_rgba(0,0,0,0.10)]"
+            }`}
           >
-            {/* All nav items */}
             {navItems.map((item) => {
               const active = isActive(item.href)
+
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`
-                    relative px-4 h-9 flex items-center
-                    text-[11px] font-bold uppercase tracking-[0.12em]
-                    rounded-full transition-all duration-200
-                    ${active
-                      ? "bg-brand-contrast text-brand-primary"
-                      : "text-brand-contrast hover:bg-brand-contrast/15 hover:text-brand-contrast"
-                    }
-                  `}
+                  className={`relative flex h-10 items-center rounded-full px-4 text-[11px] font-bold uppercase tracking-[0.14em] transition-all duration-200 ${
+                    active ? "bg-brand-contrast text-brand-primary shadow-[0_2px_10px_rgba(0,0,0,0.08)]" : "text-brand-contrast/85 hover:bg-brand-contrast/12 hover:text-brand-contrast"
+                  }`}
                 >
                   {item.title}
                 </Link>
               )
             })}
 
-            {/* Separator */}
-            <span className="w-px h-5 bg-brand-contrast/20 mx-1" />
+            <span className="mx-1 h-5 w-px bg-brand-contrast/15" />
 
-            {/* Home — último a la derecha */}
             <Link
               href="/"
-              className={`
-                w-9 h-9 flex items-center justify-center rounded-full
-                transition-colors duration-200
-                ${isHome
-                  ? "bg-brand-contrast/20 text-brand-contrast"
-                  : "text-brand-contrast/70 hover:bg-brand-contrast/15 hover:text-brand-contrast"
-                }
-              `}
               title="Inicio"
+              className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 ${
+                isHome ? "bg-brand-contrast/18 text-brand-contrast" : "text-brand-contrast/70 hover:bg-brand-contrast/12 hover:text-brand-contrast"
+              }`}
             >
-              { }
-              <IconHome size={16} />
+              <IconHome size={17} />
             </Link>
           </div>
 
-          {/* ── MOBILE NAV ── */}
-          <div
-            className={`
-              lg:hidden flex items-center flex-1
-              bg-brand-primary
-              px-2 h-[48px]
-            `}
-          >
-            {/* Hamburger */}
+          <div className="flex h-[52px] w-full items-center rounded-b-[20px] border-x border-b border-brand-primary/15 bg-brand-primary/95 px-2.5 backdrop-blur-md lg:hidden">
             <button
               onClick={() => setMenuOpen(true)}
-              className="w-9 h-9 flex items-center justify-center rounded-full text-brand-contrast hover:bg-brand-contrast/15 transition-colors duration-200 cursor-pointer flex-shrink-0"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-brand-contrast transition-colors duration-200 hover:bg-brand-contrast/12"
               aria-label="Abrir menú"
             >
               <IconMenu2 size={20} />
             </button>
 
-            {/* Spacer */}
-            <span className="flex-1" />
+            <div className="flex-1 text-center">
+              <span className="font-title text-lg leading-none text-brand-contrast">Central Molletes</span>
+            </div>
 
-            {/* Home — siempre visible a la derecha */}
             <Link
               href="/"
-              className={`
-                w-9 h-9 flex items-center justify-center rounded-full flex-shrink-0
-                transition-colors duration-200
-                ${isHome
-                  ? "bg-brand-contrast/20 text-brand-contrast"
-                  : "text-brand-contrast/70 hover:bg-brand-contrast/15 hover:text-brand-contrast"
-                }
-              `}
               title="Inicio"
+              className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-200 ${
+                isHome ? "bg-brand-contrast/18 text-brand-contrast" : "text-brand-contrast/75 hover:bg-brand-contrast/12 hover:text-brand-contrast"
+              }`}
             >
               <IconHome size={18} />
             </Link>
           </div>
-
         </div>
       </nav>
 
-      {/* ── MOBILE DRAWER ── */}
-      {/* Backdrop */}
       <div
         onClick={() => setMenuOpen(false)}
-        className={`
-          lg:hidden fixed inset-0 z-[1001] bg-bg-dark/70
-          transition-opacity duration-300
-          ${menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
-        `}
+        className={`fixed inset-0 z-[1001] bg-bg-dark/45 backdrop-blur-[3px] transition-opacity duration-300 lg:hidden ${
+          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
         aria-hidden="true"
       />
 
-      {/* Panel */}
       <div
-        className={`
-          lg:hidden fixed top-0 left-0 bottom-0 z-[1002]
-          w-72 bg-bg-dark
-          flex flex-col overflow-hidden
-          transition-transform duration-300 ease-out
-          ${menuOpen ? "translate-x-0" : "-translate-x-full"}
-        `}
+        className={`fixed inset-y-3 left-3 z-[1002] flex w-[calc(100vw-1.5rem)] max-w-[340px] flex-col overflow-hidden rounded-[2rem] border border-brand-primary/12 bg-brand-primary shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-transform duration-300 ease-out lg:hidden ${
+          menuOpen ? "translate-x-0" : "-translate-x-[105%]"
+        }`}
       >
+        <div className="relative px-5 pt-6 pb-5">
+          <div className="absolute -top-10 -right-8 h-28 w-28 rounded-full bg-brand-contrast/8 blur-2xl" />
+          <div className="absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-brand-contrast/6 blur-xl" />
 
-        {/* ── Header con identidad ── */}
-        <div className="relative flex items-center justify-between px-6 pt-8 pb-7 overflow-hidden">
-          {/* Anillos decorativos (igual que el Hero) */}
-          <div className="absolute -top-10 -left-10 w-44 h-44 rounded-full border border-brand-primary/8 pointer-events-none" />
-          <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full border border-brand-primary/[0.05] pointer-events-none" />
-
-          <div className="relative flex flex-col gap-1">
-            {/* Eyebrow */}
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-px bg-brand-primary/40" />
-              <span className="text-[9px] uppercase tracking-[0.3em] text-brand-primary/50">Cafetería</span>
+          <div className="relative flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-brand-contrast/55">Cafetería</span>
+              <span className="font-title text-3xl leading-none text-brand-contrast">
+                Central
+                <br />
+                Molletes
+              </span>
             </div>
-            {/* Title */}
-            <span
-              className="font-title text-brand-primary leading-none"
-              style={{
-                fontSize: "1.6rem",
-                textShadow: "2px 3px 0 rgba(0,0,0,0.5)",
-                letterSpacing: "0.04em",
-              }}
+
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-contrast/10 text-brand-contrast/70 transition-all duration-200 hover:bg-brand-contrast/18 hover:text-brand-contrast"
+              aria-label="Cerrar menú"
             >
-              Central<br />molletes
-            </span>
+              <IconX size={17} />
+            </button>
           </div>
-
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="relative w-8 h-8 flex items-center justify-center text-brand-primary/40 hover:text-brand-primary border border-brand-primary/15 hover:border-brand-primary/40 rounded-full transition-all duration-200 cursor-pointer self-start mt-1"
-            aria-label="Cerrar menú"
-          >
-            <IconX size={15} />
-          </button>
         </div>
 
-        {/* Separador con punto central */}
-        <div className="flex items-center gap-2 px-6 mb-2">
-          <span className="flex-1 h-px bg-brand-primary/10" />
-          <span className="w-1 h-1 rounded-full bg-brand-primary/20" />
-          <span className="flex-1 h-px bg-brand-primary/10" />
-        </div>
+        <div className="mx-5 h-px bg-brand-contrast/12" />
 
-        {/* ── Nav links ── */}
-        <nav className="flex-1 flex flex-col px-4 pt-3 gap-0.5">
+        <nav className="flex flex-1 flex-col gap-2 px-4 py-4">
           {navItems.map((item, idx) => {
             const Icon = item.icon
             const active = isActive(item.href)
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
-                className={`
-                  group relative flex items-center gap-4 px-4 py-3.5
-                  transition-all duration-150 rounded-radius overflow-hidden
-                  ${active
-                    ? "bg-brand-primary/10"
-                    : "hover:bg-brand-primary/[0.06]"
-                  }
-                `}
+                className={`group flex items-center gap-4 rounded-[1.25rem] px-4 py-3.5 transition-all duration-150 ${
+                  active ? "bg-brand-contrast text-brand-primary" : "text-brand-contrast/78 hover:bg-brand-contrast/10 hover:text-brand-contrast"
+                }`}
               >
-                {/* Línea activa izquierda */}
-                <span className={`
-                  absolute left-0 top-2 bottom-2 w-[2px] rounded-full
-                  transition-all duration-200
-                  ${active ? "bg-brand-primary" : "bg-transparent group-hover:bg-brand-primary/30"}
-                `} />
-
-                {/* Número de orden */}
-                <span className={`
-                  text-[10px] font-mono w-4 text-right flex-shrink-0
-                  transition-colors duration-150
-                  ${active ? "text-brand-primary/60" : "text-brand-primary/20 group-hover:text-brand-primary/40"}
-                `}>
+                <span className={`w-5 shrink-0 text-[10px] font-mono ${active ? "text-brand-primary/55" : "text-brand-contrast/30 group-hover:text-brand-contrast/50"}`}>
                   {String(idx + 1).padStart(2, "0")}
                 </span>
 
-                {/* Título */}
-                <span className={`
-                  flex-1 text-[13px] font-bold uppercase tracking-[0.1em]
-                  transition-colors duration-150
-                  ${active ? "text-brand-primary" : "text-brand-primary/50 group-hover:text-brand-primary/80"}
-                `}>
-                  {item.title}
-                </span>
+                <span className="flex-1 text-[13px] font-bold uppercase tracking-[0.12em]">{item.title}</span>
 
-                {/* Ícono */}
-                <Icon
-                  width={18} height={18}
-                  className={`flex-shrink-0 transition-colors duration-150
-                    ${active ? "text-brand-primary" : "text-brand-primary/20 group-hover:text-brand-primary/50"}
-                  `}
-                />
+                <Icon width={18} height={18} className={active ? "text-brand-primary" : "text-brand-contrast/35 group-hover:text-brand-contrast/65"} />
               </Link>
             )
           })}
         </nav>
 
-        {/* ── CTA ── */}
-        <div className="px-4 pb-12 pt-5">
-          <div className="flex items-center gap-2 mb-3 px-1">
-            <span className="flex-1 h-px bg-brand-primary/10" />
-            <span className="text-[8px] uppercase tracking-[0.25em] text-brand-primary/25">contacto</span>
-            <span className="flex-1 h-px bg-brand-primary/10" />
-          </div>
-          <Link
-            href={`tel:${phoneCall}`}
-            onClick={() => setMenuOpen(false)}
-            className="
-              flex items-center justify-center gap-2.5
-              w-full py-3.5 rounded-radius
-              bg-brand-primary text-brand-contrast
-              text-[10px] font-bold uppercase tracking-[0.2em]
-              hover:opacity-90 active:scale-[0.98] active:opacity-75
-              transition-all duration-150
-            "
-          >
-            <IconPhoneCall size={15} />
-            <p className="text-text-main">
-              { phone } 
-            </p>
-          </Link>
-        </div>
+        {phone && (
+          <div className="px-4 pb-4 pt-1">
+            <div className="rounded-[1.5rem] bg-brand-contrast/8 p-3">
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-brand-contrast/45">Contacto</p>
 
+              <Link
+                href={`tel:${phoneCall}`}
+                onClick={() => setMenuOpen(false)}
+                className="flex w-full items-center justify-center gap-2.5 rounded-[1.15rem] bg-brand-contrast px-4 py-3 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-primary transition-all duration-150 hover:opacity-92 active:scale-[0.98]"
+              >
+                <IconPhoneCall size={15} />
+                <span>{phone}</span>
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </>
   )

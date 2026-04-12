@@ -41,7 +41,7 @@ export const BenefitsPanel = async () => {
 
         <div className="flex flex-col items-center text-center gap-3">
           <AdminEditWrapper href={`/admin/site-content/${benefitsContent["benefits.title"]?.id}`} tooltip="Editar título">
-            <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight max-w-md hover:opacity-60 transition-opacity">
+            <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight max-w-md">
               {benefitsContent["benefits.title"]?.value ?? "El corazón de lo que hacemos"}
             </h2>
           </AdminEditWrapper>
@@ -55,17 +55,17 @@ export const BenefitsPanel = async () => {
                 <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-text-titles/10" />
                 <div className="relative z-10 w-12 h-12 rounded-radius bg-bg-body/25 grid place-items-center">
                   <AdminEditWrapper href={`/admin/site-content/${iconId}`} tooltip="Editar icono">
-                    <Icon className="text-text-titles hover:opacity-60 transition-opacity" />
+                    <Icon className="text-text-titles" />
                   </AdminEditWrapper>
                 </div>
               </div>
               <div className="h-px w-full bg-black/6" />
               <div className="flex flex-col gap-2 px-6 py-5 bg-bg-body flex-1">
-                <AdminEditWrapper href={`/admin/site-content/${titleId}`} tooltip="Editar título">
-                  <p className="text-base font-semibold text-text-titles hover:opacity-60 transition-opacity">{title}</p>
+                <AdminEditWrapper href={`/admin/site-content/${titleId}`} tooltip="Editar título" side="left">
+                  <p className="text-base font-semibold text-text-titles">{title}</p>
                 </AdminEditWrapper>
-                <AdminEditWrapper href={`/admin/site-content/${descId}`} tooltip="Editar descripción">
-                  <p className="text-sm text-text-main/65 leading-relaxed hover:opacity-60 transition-opacity">{description}</p>
+                <AdminEditWrapper href={`/admin/site-content/${descId}`} tooltip="Editar descripción" side="left">
+                  <p className="text-sm text-text-main/65 leading-relaxed">{description}</p>
                 </AdminEditWrapper>
               </div>
             </div>
@@ -80,13 +80,13 @@ export const BenefitsPanel = async () => {
             <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/20 pointer-events-none" />
             <div className="absolute inset-0 flex items-end justify-between p-8 md:p-12 pointer-events-none">
               <div className="flex flex-col gap-2 max-w-xs pointer-events-auto">
-                <AdminEditWrapper href={`/admin/site-content/${benefitsContent["benefits.image.content.title"]?.id}`} tooltip="Editar texto">
-                  <p className="text-[11px] tracking-[0.16em] uppercase text-white/55 font-medium hover:opacity-60 transition-opacity">
+                <AdminEditWrapper href={`/admin/site-content/${benefitsContent["benefits.image.content.title"]?.id}`} tooltip="Editar texto" side="left">
+                  <p className="text-[11px] tracking-[0.16em] uppercase text-white/55 font-medium">
                     {benefitsContent["benefits.image.content.title"]?.value}
                   </p>
                 </AdminEditWrapper>
-                <AdminEditWrapper href={`/admin/site-content/${benefitsContent["benefits.image.content.subtitle"]?.id}`} tooltip="Editar texto">
-                  <p className="font-title text-white text-2xl md:text-3xl leading-snug hover:opacity-60 transition-opacity">
+                <AdminEditWrapper href={`/admin/site-content/${benefitsContent["benefits.image.content.subtitle"]?.id}`} tooltip="Editar texto" side="left">
+                  <p className="font-title text-white text-2xl md:text-3xl leading-snug">
                     {benefitsContent["benefits.image.content.subtitle"]?.value}
                   </p>
                 </AdminEditWrapper>

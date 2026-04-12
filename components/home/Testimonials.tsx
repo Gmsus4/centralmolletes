@@ -23,7 +23,7 @@ export const Testimonials = async () => {
       className="w-full bg-bg-body xs:min-h-[calc(100dvh-4rem)] md:py-26 py-16 flex flex-col items-center justify-center md:gap-16 gap-12 px-6"
     >
       <AdminEditWrapper href={`/admin/site-content/${content["testimonials.title"]?.id}`} tooltip="Editar título">
-        <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight text-center hover:opacity-60 transition-opacity">
+        <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight text-center">
           {content["testimonials.title"]?.value ?? "Nos alegra el día leerlos"}
         </h2>
       </AdminEditWrapper>
@@ -70,7 +70,7 @@ export const Testimonials = async () => {
                       <span className="text-text-main">—</span>
                       <span className="text-text-muted font-semibold font-titleText">{t.role}</span>
                     </div>
-                    <AdminEditWrapper href={`/admin/reviews/${t.id}`} tooltip="Editar reseña" className="shrink-0">
+                    <AdminEditWrapper href={`/admin/reviews/${t.id}`} tooltip="Editar reseña" className="shrink-0" hideWhenNotAdmin>
                       <IconPencilCode className="text-text-main hover:opacity-60 transition-opacity" size={18} />
                     </AdminEditWrapper>
                   </footer>

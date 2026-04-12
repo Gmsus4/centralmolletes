@@ -7,18 +7,18 @@ import Link from "next/link"
 type Props = {
   href: string
   children: React.ReactNode
-  className?: string  // 👈 agrega esto
+  className?: string
 }
 
 export const AdminImageWrapper = ({ href, children, className }: Props) => {
   const isAdmin = useIsAdmin()
 
-  if (!isAdmin) return <div className={className}>{children}</div>
+  if (!isAdmin) return <div className={className ?? "w-full h-full"}>{children}</div>
 
   return (
-    <Link href={href} className={className}>
+    <Link href={href} className={className ?? "w-full h-full"}>
       <div className="relative group w-full h-full overflow-hidden">
-        <div className="[&_img]:transition-all h-full [&_img]:duration-300 [&_img]:group-hover:brightness-50">
+        <div className="[&_img]:transition-all h-full w-full [&_img]:duration-300 [&_img]:group-hover:brightness-50">
           {children}
         </div>
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">

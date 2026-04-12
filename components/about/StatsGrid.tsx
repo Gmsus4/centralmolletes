@@ -91,22 +91,19 @@ export const StatsGrid = async () => {
         >
           {item.type === "stat" && item.stat ? (
             <>
-              <AdminEditWrapper href={`/admin/site-content/${item.stat.iconTopId}`} tooltip="Editar icono" className="absolute top-4 right-4">
-                <item.stat.iconTop className="text-brand-contrast hover:opacity-60 transition-opacity" size={32} />
+              <AdminEditWrapper href={`/admin/site-content/${item.stat.iconTopId}`} tooltip="Editar icono" className="absolute top-4 right-4 inline-flex" side="left">
+                <item.stat.iconTop className="text-brand-contrast" size={32} />
               </AdminEditWrapper>
-              <AdminEditWrapper href={`/admin/site-content/${item.stat.iconBottomId}`} tooltip="Editar icono" className="absolute bottom-4 left-4">
-                <item.stat.iconBottom className="text-brand-contrast hover:opacity-60 transition-opacity" size={32} />
+
+              <AdminEditWrapper href={`/admin/site-content/${item.stat.iconBottomId}`} tooltip="Editar icono" className="absolute bottom-4 left-4 inline-flex" side="right">
+                <item.stat.iconBottom className="text-brand-contrast" size={32} />
               </AdminEditWrapper>
               <div className="grid gap-1">
                 <AdminEditWrapper href={`/admin/site-content/${item.stat.valueId}`} tooltip="Editar valor">
-                  <span className="block text-center text-5xl md:text-7xl font-medium text-text-main hover:opacity-60 transition-opacity">
-                    {item.stat.value}
-                  </span>
+                  <span className="block text-center text-5xl md:text-7xl font-medium text-text-main">{item.stat.value}</span>
                 </AdminEditWrapper>
                 <AdminEditWrapper href={`/admin/site-content/${item.stat.labelId}`} tooltip="Editar texto">
-                  <h3 className="text-center lg:text-2xl text-xl text-text-titles font-title font-bold hover:opacity-60 transition-opacity">
-                    {item.stat.label}
-                  </h3>
+                  <h3 className="text-center lg:text-2xl text-xl text-text-titles font-title font-bold">{item.stat.label}</h3>
                 </AdminEditWrapper>
               </div>
             </>

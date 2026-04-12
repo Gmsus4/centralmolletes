@@ -1,8 +1,8 @@
 import { ContactPage } from "@/components/contact/Contact";
 import { FooterServer } from "@/components/shared/FooterServer";
 import { NavbarServer } from "@/components/shared/NavbarServer";
+import { MarqueeStrip } from "@/components/ui/MarqueeStrip";
 import { TitlePage } from "@/components/ui/TitlePage";
-import { Titles } from "@/data/titles";
 import prisma from "@/lib/prisma";
 import { Metadata } from "next";
 import { Suspense } from "react";
@@ -36,8 +36,9 @@ export default async function Contact(){
             <Suspense >
                 <NavbarServer />
             </Suspense>
-            <TitlePage title={Titles.contact.title} subtitle={Titles.contact.subtitle}/>
+            <TitlePage section="contact"/>
             <ContactPage contact={contact} horarios={horarios}/>
+            <MarqueeStrip />
             <FooterServer />
         </>
     )
