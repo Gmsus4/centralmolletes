@@ -167,8 +167,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     <>
       <NavbarServer />
 
-      <main className="relative min-h-screen overflow-hidden bg-[#050505] text-white">
-        <section className="relative isolate min-h-screen overflow-hidden">
+      <main className="relative min-h-dvh overflow-hidden bg-[#050505] text-white">
+        <section className="relative isolate min-h-dvh overflow-hidden">
           <Image src={product.img} alt={product.name} fill priority sizes="100vw" className="object-cover" />
 
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.18)_0%,rgba(0,0,0,0.48)_26%,rgba(0,0,0,0.78)_58%,rgba(0,0,0,0.94)_100%)]" />
@@ -177,7 +177,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
           {/* <ShareButton title={product.name} description={product.desc} /> */}
 
-          <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl items-end px-5 pb-8 pt-28 sm:px-8 lg:px-16 lg:pb-14">
+          <div className="relative z-10 mx-auto flex min-h-dvh max-w-7xl items-end px-5 pb-8 pt-28 sm:px-8 lg:px-16 lg:pb-14">
             <div className="w-full">
               <div className="max-w-3xl">
                 <div className="mb-5 flex flex-wrap items-center gap-3">
