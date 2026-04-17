@@ -13,8 +13,8 @@ export const EditButton = ({productId}: EditButtonProps) => {
   return (
     <>  
       {isAdmin && (
-        <ButtonCustom className="absolute z-50 bottom-4 right-18" isFilled={false} url={`/admin/products/${productId}`}>
-          <IconEdit className="text-darkWarm" />
+        <ButtonCustom className="absolute z-50 top-2 right-2 !rounded-full !outline-text-invert/30" isFilled={true} url={`/admin/products/${productId}`}>
+          <IconEdit className="text-text-invert" />
         </ButtonCustom>
       )}
     </>

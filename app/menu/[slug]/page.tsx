@@ -1,31 +1,35 @@
-import type { Metadata }        from "next"
-import { unstable_cache }       from "next/cache"
-import prisma                   from "@/lib/prisma"
-import { notFound }             from "next/navigation"
-import Link                     from "next/link"
-import Image                    from "next/image"
-import { BackButton }           from "@/components/ui/BackButton"
-import { ShareButton }          from "@/components/ui/ShareButton"
-import { EditButton }           from "@/components/ui/EditButton"
-import { FooterServer }         from "@/components/shared/FooterServer"
-import { NavbarServer }         from "@/components/shared/NavbarServer"
-import { Locations }            from "@/components/locations/Locations"
-import { tagColors }            from "@/lib/tagColors"
-import { getCategoryExtras }    from "@/data/menuCategoryExtra"
-import { IconArrowNarrowRight } from "@tabler/icons-react"
-import ExtrasBadge from "@/components/ui/ExtrasBadge"
+import type { Metadata } from "next"
+import { unstable_cache } from "next/cache"
+import prisma from "@/lib/prisma"
+import { notFound } from "next/navigation"
+import Link from "next/link"
+import Image from "next/image"
+import { ShareButton } from "@/components/ui/ShareButton"
+import { EditButton } from "@/components/ui/EditButton"
+import { FooterServer } from "@/components/shared/FooterServer"
+import { NavbarServer } from "@/components/shared/NavbarServer"
+import { Locations } from "@/components/locations/Locations"
+import { tagColors } from "@/lib/tagColors"
+import { getCategoryExtras } from "@/data/menuCategoryExtra"
+import { IconArrowLeft, IconArrowNarrowRight } from "@tabler/icons-react"
 
 export const revalidate = 3600
-
-// ── Helpers ──
 
 function parseList(value: string): string[] {
   if (!value) return []
   try {
     const parsed = JSON.parse(value)
-    return Array.isArray(parsed) ? parsed : value.split(",").map((s) => s.trim()).filter(Boolean)
+    return Array.isArray(parsed)
+      ? parsed
+      : value
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
   } catch {
-    return value.split(",").map((s) => s.trim()).filter(Boolean)
+    return value
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
   }
 }
 
@@ -47,303 +51,349 @@ function parseProduct(p: {
 }) {
   return {
     ...p,
-    category:    p.category.name,
-    tag:         p.tag ?? undefined,
+    category: p.category.name,
+    tag: p.tag ?? undefined,
     ingredients: parseList(p.ingredients),
-    allergens:   parseList(p.allergens),
+    allergens: parseList(p.allergens),
   }
 }
 
-// ── Caché del producto ──
-const getProduct = unstable_cache(
-  async (slug: string) =>
-    prisma.product.findUnique({
-      where:   { slug },
-      include: { category: true },
-    }),
-  ["menu-product"],
-  { revalidate: 3600, tags: ["products"] }
-)
+const getProduct = unstable_cache(async (slug: string) => prisma.product.findUnique({ where: { slug }, include: { category: true } }), ["menu-product"], { revalidate: 3600, tags: ["products"] })
 
-// ── Caché de locaciones ──
-const getLocations = unstable_cache(
-  async () => prisma.location.findMany({ orderBy: [{ createdAt: "desc" }] }),
-  ["locations-list"],
-  { revalidate: 3600, tags: ["locations"] }
-)
+const getLocations = unstable_cache(async () => prisma.location.findMany({ orderBy: [{ createdAt: "desc" }] }), ["locations-list"], { revalidate: 3600, tags: ["locations"] })
 
-// ── Caché de promoción activa para un producto ──
 const getActivePromotion = unstable_cache(
   async (productId: string) =>
     prisma.promotion.findFirst({
       where: {
         isActive: true,
-        type:     "DISCOUNT",
+        type: "DISCOUNT",
         startsAt: { lte: new Date() },
-        endsAt:   { gte: new Date() },
+        endsAt: { gte: new Date() },
         products: { some: { id: productId } },
       },
       orderBy: { discount: "desc" },
     }),
   ["product-promotion"],
-  { revalidate: 300, tags: ["promotions"] } // 5 min — cambian más seguido
+  { revalidate: 300, tags: ["promotions"] },
 )
 
-// ── Caché de productos relacionados ──
 const getRelatedProducts = unstable_cache(
   async (categoryId: string, excludeSlug: string) =>
     prisma.product.findMany({
-      where:   { categoryId, slug: { not: excludeSlug } },
+      where: { categoryId, slug: { not: excludeSlug } },
       include: { category: true },
-      take:    3,
+      take: 3,
     }),
   ["related-products"],
-  { revalidate: 3600, tags: ["products"] }
+  { revalidate: 3600, tags: ["products"] },
 )
 
-// ── generateStaticParams ──
 export async function generateStaticParams() {
-  const products = await prisma.product.findMany({
-    select: { slug: true },
-  })
+  const products = await prisma.product.findMany({ select: { slug: true } })
   return products.map((p) => ({ slug: p.slug }))
 }
 
-// ── Metadata ──
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const raw      = await getProduct(slug) // ← usa caché, no query directa
+  const raw = await getProduct(slug)
   if (!raw) return {}
 
   const product = parseProduct(raw)
 
   return {
-    title:        product.name,
+    title: product.name,
     metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? "https://centralmolletes.netlify.app/"),
-    description:  product.desc,
+    description: product.desc,
     openGraph: {
-      title:       product.name,
+      title: product.name,
       description: product.desc,
       images: [{ url: product.img, width: 1200, height: 630, alt: product.name }],
-      type:   "website",
+      type: "website",
       locale: "es_MX",
     },
     twitter: {
-      card:        "summary_large_image",
-      title:       product.name,
+      card: "summary_large_image",
+      title: product.name,
       description: product.desc,
-      images:      [product.img],
+      images: [product.img],
     },
   }
 }
 
-// ── Página ──
-export default async function ProductPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}) {
+function SectionTitle({ title }: { title: string }) {
+  return (
+    <div className="mb-4 flex items-center gap-4">
+      <span className="h-px w-10 bg-white/18" />
+      <h2 className="font-title text-2xl text-white sm:text-3xl">{title}</h2>
+    </div>
+  )
+}
+
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-
-  const [raw, locations] = await Promise.all([
-    getProduct(slug),
-    getLocations(),
-  ])
-
+  const [raw, locations] = await Promise.all([getProduct(slug), getLocations()])
   if (!raw) notFound()
 
-  const [activePromotion, relatedRaw] = await Promise.all([
-    getActivePromotion(raw.id),
-    getRelatedProducts(raw.categoryId, slug),
-  ])
+  const [activePromotion, relatedRaw] = await Promise.all([getActivePromotion(raw.id), getRelatedProducts(raw.categoryId, slug)])
 
-  // Precios del producto principal
-  const discount      = activePromotion?.discount ?? null
-  const finalPrice    = discount ? Math.round(raw.price * (1 - discount / 100)) : raw.price
+  const discount = activePromotion?.discount ?? null
+  const finalPrice = discount ? Math.round(raw.price * (1 - discount / 100)) : raw.price
   const originalPrice = discount ? raw.price : null
-  const product       = { ...parseProduct(raw), price: finalPrice }
+  const product = { ...parseProduct(raw), price: finalPrice }
 
-  // Precios de productos relacionados — en paralelo
   const relatedWithPrices = await Promise.all(
     relatedRaw.map(async (rel) => {
-      const promo      = await getActivePromotion(rel.id)
-      const relDiscount = promo?.discount ?? null
+      const promo = await getActivePromotion(rel.id)
+      const d = promo?.discount ?? null
+
       return {
         ...parseProduct(rel),
-        originalPrice: relDiscount ? rel.price : null,
-        price: relDiscount ? Math.round(rel.price * (1 - relDiscount / 100)) : rel.price,
+        originalPrice: d ? rel.price : null,
+        price: d ? Math.round(rel.price * (1 - d / 100)) : rel.price,
       }
-    })
+    }),
   )
+
+  const metaItems = [
+    { label: "Presentacion", value: product.weight, icon: "📦" },
+    { label: "Tiempo", value: product.prepTime, icon: "⏱" },
+    { label: "Alergenos", value: product.allergens.join(", ") || "Ninguno", icon: "⚠️" },
+  ]
+
+  const extras = getCategoryExtras(product.category) ?? []
 
   return (
     <>
       <NavbarServer />
-      <main className="relative bg-bg-body min-h-screen w-full overflow-hidden">
-        <div className="relative max-w-7xl mx-auto px-6 sm:px-10 lg:px-20 mt-16 py-2 lg:py-12">
-          <div className="flex flex-col lg:flex-row relative gap-12 lg:gap-20 items-stretch">
-            <BackButton label="Volver a productos" />
 
-            <div className="w-full flex-1 relative lg:w-2/5">
-              <ShareButton title={product.name} description={product.desc} />
-              <EditButton productId={raw.id} />
-              <div className="relative w-full h-72 lg:h-full min-h-[400px] rounded-3xl overflow-hidden drop-shadow-2xl z-10">
-                <Image
-                  src={product.img}
-                  alt={product.name}
-                  fill priority quality={100}
-                  sizes="100vw"
-                  className="object-cover"
-                />
-                {discount && (
-                  <span className="text-[10px] uppercase tracking-[0.2em] font-bold px-4 py-2 bg-bg-dark text-text-invert absolute right-4 top-4 rounded-full">
-                    -{discount}%
+      <main className="relative min-h-screen overflow-hidden bg-[#050505] text-white">
+        <section className="relative isolate min-h-screen overflow-hidden">
+          <Image src={product.img} alt={product.name} fill priority sizes="100vw" className="object-cover" />
+
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.18)_0%,rgba(0,0,0,0.48)_26%,rgba(0,0,0,0.78)_58%,rgba(0,0,0,0.94)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_34%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#050505] to-transparent" />
+
+          {/* <ShareButton title={product.name} description={product.desc} /> */}
+
+          <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl items-end px-5 pb-8 pt-28 sm:px-8 lg:px-16 lg:pb-14">
+            <div className="w-full">
+              <div className="max-w-3xl">
+                <div className="mb-5 flex flex-wrap items-center gap-3">
+                  <span className="rounded-full border border-white/18 bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-white backdrop-blur-md">
+                    {product.category}
                   </span>
-                )}
+
+                  {product.tag && <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] ${tagColors[product.tag]}`}>{product.tag}</span>}
+
+                  {discount && (
+                    <span className="rounded-full border border-white/25 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-black shadow-[0_0_28px_rgba(255,255,255,0.22)]">
+                      -{discount}% off
+                    </span>
+                  )}
+                </div>
+
+                <h1 className="font-title text-5xl leading-[0.9] tracking-tight text-white drop-shadow-[0_0_24px_rgba(255,255,255,0.12)] sm:text-6xl lg:text-7xl xl:text-8xl">{product.name}</h1>
+
+                <div className="mt-6 flex flex-wrap items-end gap-x-4 gap-y-2">
+                  {originalPrice && <span className="font-title text-2xl text-white/35 line-through sm:text-3xl">${originalPrice}</span>}
+                  <span className="font-title text-5xl font-bold text-white drop-shadow-[0_0_24px_rgba(255,255,255,0.18)] sm:text-6xl">${product.price}</span>
+                  <span className="pb-2 text-sm uppercase tracking-[0.18em] text-white/55">MXN</span>
+                </div>
+
+                <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-[15px]">{product.descLong}</p>
+              </div>
+
+              {/* Desktop: panel integrado sobre la foto */}
+              <div className="mt-6 hidden rounded-[26px] border  border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl shadow-[0_14px_50px_rgba(0,0,0,0.22)] lg:grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start lg:gap-4">
+                  <EditButton productId={raw.id} />
+                <div className="grid gap-3">
+                  {metaItems.map((item) => (
+                    <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.04] px-3.5 py-3">
+                      <div className="flex items-center gap-2.5">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.07] text-sm text-white">{item.icon}</span>
+                        <div className="min-w-0">
+                          <p className="text-[9px] uppercase tracking-[0.2em] text-white/42">{item.label}</p>
+                          <p className="truncate text-sm text-white">{item.value}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-4 border-l border-white/10 pl-4">
+                  {product.ingredients.length > 0 && (
+                    <div>
+                      <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.24em] text-white/42">Ingredientes</p>
+                      <div className="flex flex-wrap gap-2">
+                        {product.ingredients.map((ing) => (
+                          <span
+                            key={ing}
+                            className="rounded-full border border-white/12 bg-white/[0.05] px-3.5 py-1.5 text-[11px] font-medium text-white/92 transition-all duration-200 hover:border-white/24 hover:bg-white/[0.09]"
+                          >
+                            {ing}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {extras.length > 0 && (
+                    <div>
+                      <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.24em] text-white/42">Extras</p>
+
+                      <div className="space-y-2">
+                        {extras.map((block) => (
+                          <div key={block.title} className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3">
+                            <div className="flex flex-col gap-1 xl:flex-row xl:items-baseline xl:justify-between">
+                              <h3 className="text-sm font-semibold text-white">{block.title}</h3>
+                              {block.note && <p className="text-xs italic text-white/58">{block.note}</p>}
+                            </div>
+
+                            <div className="mt-1 space-y-1">
+                              {block.extras.map((extra) => (
+                                <div key={extra.label} className="text-xs leading-relaxed text-white/84 sm:text-sm">
+                                  <span>{extra.label}</span>
+                                  {extra.price ? <span className="ml-1 text-white">+${extra.price}</span> : null}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
+          </div>
+        </section>
 
-            <div className="flex-1 flex flex-col gap-6">
-              <div className="anim-tag flex items-center gap-2 flex-wrap">
-                <span className="text-[10px] uppercase tracking-[0.25em] text-text-main/90 font-semibold">
-                  {product.category}
-                </span>
-                {product.tag && (
-                  <>
-                    <span className="text-text-main">·</span>
-                    <span className={`text-[9px] font-bold text-text-main pt-1.5 uppercase tracking-widest px-2.5 py-1 rounded-full ${tagColors[product.tag]}`}>
-                      {product.tag}
-                    </span>
-                  </>
-                )}
-              </div>
-
-              <h1 className="anim-title font-title text-5xl sm:text-6xl lg:text-7xl text-text-titles leading-tight">
-                {product.name}
-              </h1>
-
-              <div className="anim-price flex items-baseline gap-3 flex-wrap">
-                {originalPrice && (
-                  <span className="font-title text-2xl text-text-main/40 line-through">
-                    ${originalPrice}
-                  </span>
-                )}
-                <span className="shimmer-price font-title text-4xl font-bold">${product.price}</span>
-                <span className="text-text-main/80 text-sm">MXN</span>
-              </div>
-
-              <div className="h-px w-full bg-bg-dark/15" />
-
-              <p className="anim-desc text-text-main/90 text-sm sm:text-base leading-relaxed">
-                {product.descLong}
-              </p>
-
-              <div className="anim-meta grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {[
-                  { label: "Presentación",     value: product.weight },
-                  { label: "Tiempo de pedido", value: product.prepTime },
-                  { label: "Alérgenos",        value: product.allergens.join(", ") || "Ninguno" },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    className="flex flex-col gap-1 p-3 rounded-primarySize border border-border-color/20 bg-transparent"
-                  >
-                    <span className="text-[9px] uppercase tracking-widest text-text-main/70 font-semibold">
-                      {item.label}
-                    </span>
-                    <span className="text-text-main text-xs font-medium">{item.value}</span>
+        <section className="relative z-20 px-5 py-6 sm:px-8 lg:hidden">
+          <div className="mx-auto max-w-7xl">
+            <div className="rounded-[26px] border border-white/10 bg-white/[0.04] p-3 backdrop-blur-xl shadow-[0_14px_50px_rgba(0,0,0,0.22)] sm:p-4">
+              <div className="grid gap-2 sm:grid-cols-3 sm:gap-3">
+                {metaItems.map((item) => (
+                  <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2.5 sm:px-3.5 sm:py-3">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.07] text-sm text-white sm:h-9 sm:w-9">{item.icon}</span>
+                      <div className="min-w-0">
+                        <p className="text-[8px] uppercase tracking-[0.2em] text-white/42 sm:text-[9px]">{item.label}</p>
+                        <p className="truncate text-xs text-white sm:text-sm">{item.value}</p>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              <div className="anim-meta flex flex-wrap gap-2">
-                {product.ingredients.map((ing) => (
-                  <span
-                    key={ing}
-                    className="text-[10px] text-text-main border border-border-color/25 rounded-radius px-3 py-1"
-                  >
-                    {ing}
-                  </span>
-                ))}
-              </div>
+              <div className="mt-4 space-y-4 border-t border-white/10 pt-4">
+                {product.ingredients.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.24em] text-white/42">Ingredientes</p>
+                    <div className="flex flex-wrap gap-2">
+                      {product.ingredients.map((ing) => (
+                        <span
+                          key={ing}
+                          className="rounded-full border border-white/12 bg-white/[0.05] px-3 py-1.5 text-[10px] font-medium text-white/92 transition-all duration-200 hover:border-white/24 hover:bg-white/[0.09] sm:px-3.5 sm:text-[11px]"
+                        >
+                          {ing}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-              {getCategoryExtras(product.category)?.map((block) => (
-                <ExtrasBadge key={block.title} title={block.title} extras={block.extras} note={block.note} />
+                {extras.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.24em] text-white/42">Extras</p>
+
+                    <div className="space-y-2">
+                      {extras.map((block) => (
+                        <div key={block.title} className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3">
+                          <div className="flex flex-col gap-1">
+                            <h3 className="text-sm font-semibold text-white">{block.title}</h3>
+                            {block.note && <p className="text-xs italic text-white/58">{block.note}</p>}
+                          </div>
+
+                          <div className="mt-1 space-y-1">
+                            {block.extras.map((extra) => (
+                              <div key={extra.label} className="text-xs leading-relaxed text-white/84 sm:text-sm">
+                                <span>{extra.label}</span>
+                                {extra.price ? <span className="ml-1 text-white">+${extra.price}</span> : null}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {relatedWithPrices.length > 0 && (
+          <section className="relative mx-auto max-w-7xl px-5 py-6 sm:px-8 lg:px-16 lg:pb-24 lg:pt-14">
+            <SectionTitle title="Tambien te puede gustar" />
+
+            <div className="flex gap-4 overflow-x-auto pb-3 -mx-5 px-5 scrollbar-none sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3">
+              {relatedWithPrices.map((rel) => (
+                <Link
+                  key={rel.slug}
+                  href={`/menu/${rel.slug}`}
+                  className="group relative flex w-[78vw] shrink-0 flex-col overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.04] p-3 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.06] sm:w-auto"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[24px]">
+                    <Image
+                      fill
+                      src={rel.img}
+                      alt={rel.name}
+                      sizes="(max-width: 640px) 78vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,rgba(0,0,0,0.18)_34%,rgba(0,0,0,0.84)_100%)]" />
+
+                    {rel.tag && <span className={`absolute left-3 top-3 rounded-full px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.2em] ${tagColors[rel.tag]}`}>{rel.tag}</span>}
+
+                    <div className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white opacity-0 backdrop-blur-md transition-all duration-300 group-hover:opacity-100">
+                      <IconArrowNarrowRight className="h-4 w-4" />
+                    </div>
+
+                    <div className="absolute inset-x-0 bottom-0 p-4">
+                      <p className="line-clamp-2 text-sm leading-relaxed text-white/78">{rel.desc}</p>
+                    </div>
+                  </div>
+
+                  <div className="px-2 pb-2 pt-4">
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-white/42">{rel.category}</p>
+
+                    <div className="mt-1 flex items-start justify-between gap-3">
+                      <h3 className="text-lg leading-snug text-white transition-colors duration-200 group-hover:text-white/88">{rel.name}</h3>
+
+                      <div className="shrink-0 text-right">
+                        {rel.originalPrice && <span className="block font-title text-sm text-white/35 line-through">${rel.originalPrice}</span>}
+                        <span className="font-title text-xl text-white">${rel.price}</span>
+                        <span className="ml-1 text-[11px] uppercase tracking-[0.15em] text-white/45">MXN</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
               ))}
             </div>
-          </div>
+          </section>
+        )}
 
-          {relatedWithPrices.length > 0 && (
-            <div className="pt-10">
-              <div className="flex items-center gap-3 mb-8 anim-section-title">
-                <span className="h-px w-8 bg-darkWarm/50" />
-                <h2 className="font-title text-3xl text-darkWarm">También te puede gustar</h2>
-              </div>
-              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-6">
-                {relatedWithPrices.map((rel) => (
-                  <Link key={rel.slug} href={`/menu/${rel.slug}`} className="rel-card group relative flex flex-col">
-                    <div className="relative overflow-hidden rounded-radius w-full bg-brand-primary h-56 flex items-center justify-center">
-                      <Image
-                        fill
-                        sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw"
-                        src={rel.img}
-                        alt={rel.name}
-                        className="group-hover:scale-105 h-full transition-transform duration-500 w-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-bg-dark/95 via-bg-dark/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-radius" />
-                      {rel.tag && (
-                        <span className={`absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest px-2.5 py-1.5 rounded-full ${tagColors[rel.tag]}`}>
-                          {rel.tag}
-                        </span>
-                      )}
-                      <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                        <p className="text-bg-body/90 text-xs leading-relaxed line-clamp-2">{rel.descLong}</p>
-                      </div>
-                      <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-bg-dark/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-y-1 group-hover:translate-y-0">
-                        <IconArrowNarrowRight className="text-brand-primary w-4 h-4" />
-                      </div>
-                    </div>
-                    <div className="pt-3 px-1">
-                      <span className="text-[9px] uppercase tracking-[0.18em] text-text-main/50 font-semibold">
-                        {rel.category}
-                      </span>
-                      <div className="flex items-baseline justify-between gap-2 mt-0.5">
-                        <h3 className="text-xl text-text-titles leading-snug transition-colors duration-200">
-                          {rel.name}
-                        </h3>
-                        <div className="flex items-baseline gap-3 flex-wrap">
-                          {rel.originalPrice && (
-                            <span className="font-title text-sm text-text-main/60 line-through">
-                              ${rel.originalPrice}
-                            </span>
-                          )}
-                          <span className="shimmer-price font-title text-lg font-bold">${rel.price}</span>
-                          <span className="text-text-main/80 text-sm">MXN</span>
-                        </div>
-                      </div>
-                      <div className="mt-2 h-px bg-bg-dark/10 relative overflow-hidden">
-                        <div className="absolute inset-y-0 left-0 w-0 group-hover:w-full bg-brand-contrast/50 transition-all duration-500 ease-out" />
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-6 sm:px-10 lg:px-20">
-          <div className="flex items-center gap-3 mb-8 anim-section-title">
-            <span className="h-px w-8 bg-text-main/50" />
-            <h2 className="font-title text-3xl text-text-titles">Nuestras sucursales</h2>
+        <section className="relative mx-auto max-w-7xl px-5 pb-8 sm:px-8 lg:px-16">
+          <SectionTitle title="Nuestras sucursales" />
+          <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm sm:p-6">
+            <Locations className="bg-transparent" locations={locations} />
           </div>
-          <Locations className="bg-bg-body pb-20" locations={locations} />
-        </div>
+        </section>
       </main>
+
       <FooterServer />
     </>
   )
