@@ -15,13 +15,13 @@ type Feature = {
 
 export const AboutDetails = async () => {
   const aboutImages = await getSiteImages("about")
-  const about = await getSectionContentWithIds("about")
+  const methodology = await getSectionContentWithIds("methodology")
 
   const features: Feature[] = [
-    { icon: getIcon(about["about.features.icon.1"]?.value ?? "Users"), iconId: about["about.features.icon.1"]?.id, label: about["about.features.label.1"]?.value ?? "Label 1", labelId: about["about.features.label.1"]?.id, border: "xs:border-r xs:border-b" },
-    { icon: getIcon(about["about.features.icon.2"]?.value ?? "Users"), iconId: about["about.features.icon.2"]?.id, label: about["about.features.label.2"]?.value ?? "Label 2", labelId: about["about.features.label.2"]?.id, border: "xs:border-b" },
-    { icon: getIcon(about["about.features.icon.3"]?.value ?? "Users"), iconId: about["about.features.icon.3"]?.id, label: about["about.features.label.3"]?.value ?? "Label 3", labelId: about["about.features.label.3"]?.id, border: "xs:border-r" },
-    { icon: getIcon(about["about.features.icon.4"]?.value ?? "Users"), iconId: about["about.features.icon.4"]?.id, label: about["about.features.label.4"]?.value ?? "Label 4", labelId: about["about.features.label.4"]?.id },
+    { icon: getIcon(methodology["methodology.features.icon.1"]?.value ?? "Users"), iconId: methodology["methodology.features.icon.1"]?.id, label: methodology["methodology.features.label.1"]?.value ?? "Label 1", labelId: methodology["methodology.features.label.1"]?.id, border: "xs:border-r xs:border-b" },
+    { icon: getIcon(methodology["methodology.features.icon.2"]?.value ?? "Users"), iconId: methodology["methodology.features.icon.2"]?.id, label: methodology["methodology.features.label.2"]?.value ?? "Label 2", labelId: methodology["methodology.features.label.2"]?.id, border: "xs:border-b" },
+    { icon: getIcon(methodology["methodology.features.icon.3"]?.value ?? "Users"), iconId: methodology["methodology.features.icon.3"]?.id, label: methodology["methodology.features.label.3"]?.value ?? "Label 3", labelId: methodology["methodology.features.label.3"]?.id, border: "xs:border-r" },
+    { icon: getIcon(methodology["methodology.features.icon.4"]?.value ?? "Users"), iconId: methodology["methodology.features.icon.4"]?.id, label: methodology["methodology.features.label.4"]?.value ?? "Label 4", labelId: methodology["methodology.features.label.4"]?.id },
   ]
 
   return (
@@ -30,14 +30,14 @@ export const AboutDetails = async () => {
         <div className="min-h-[600px] grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div className="grid gap-4">
             <div className="grid lg:gap-0 gap-4">
-              <AdminEditWrapper href={`/admin/site-content/${about["about.title"]?.id}`} tooltip="Editar título">
+              <AdminEditWrapper href={`/admin/site-content/${methodology["methodology.title"]?.id}`} tooltip="Editar título">
                 <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight">
-                  {about["about.title"]?.value}
+                  {methodology["methodology.title"]?.value}
                 </h2>
               </AdminEditWrapper>
-              <AdminEditWrapper href={`/admin/site-content/${about["about.description"]?.id}`} tooltip="Editar descripción">
+              <AdminEditWrapper href={`/admin/site-content/${methodology["methodology.description"]?.id}`} tooltip="Editar descripción">
                 <p className="text-base text-text-main/70 leading-relaxed">
-                  {about["about.description"]?.value}
+                  {methodology["methodology.description"]?.value}
                 </p>
               </AdminEditWrapper>
             </div>

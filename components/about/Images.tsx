@@ -1,5 +1,4 @@
-import { images } from "@/data/images"
-import Image from "next/image"
+
 
 export const Images = () => {
   return (

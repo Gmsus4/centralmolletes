@@ -91,13 +91,19 @@ export const StatsGrid = async () => {
         >
           {item.type === "stat" && item.stat ? (
             <>
-              <AdminEditWrapper href={`/admin/site-content/${item.stat.iconTopId}`} tooltip="Editar icono" className="absolute top-4 right-4 inline-flex" side="left">
-                <item.stat.iconTop className="text-brand-contrast" size={32} />
-              </AdminEditWrapper>
+              {/* Icono top-right */}
+              <span className="absolute top-4 right-4 inline-flex">
+                <AdminEditWrapper href={`/admin/site-content/${item.stat.iconTopId}`} tooltip="Editar icono" side="left">
+                  <item.stat.iconTop className="text-brand-contrast" size={32} />
+                </AdminEditWrapper>
+              </span>
 
-              <AdminEditWrapper href={`/admin/site-content/${item.stat.iconBottomId}`} tooltip="Editar icono" className="absolute bottom-4 left-4 inline-flex" side="right">
-                <item.stat.iconBottom className="text-brand-contrast" size={32} />
-              </AdminEditWrapper>
+              {/* Icono bottom-left */}
+              <span className="absolute bottom-4 left-4 inline-flex">
+                <AdminEditWrapper href={`/admin/site-content/${item.stat.iconBottomId}`} tooltip="Editar icono" side="right">
+                  <item.stat.iconBottom className="text-brand-contrast" size={32} />
+                </AdminEditWrapper>
+              </span>
               <div className="grid gap-1">
                 <AdminEditWrapper href={`/admin/site-content/${item.stat.valueId}`} tooltip="Editar valor">
                   <span className="block text-center text-5xl md:text-7xl font-medium text-text-main">{item.stat.value}</span>

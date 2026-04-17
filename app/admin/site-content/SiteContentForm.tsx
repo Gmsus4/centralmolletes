@@ -106,10 +106,8 @@ export default function SiteContentForm({ siteContent }: Props) {
 
       <form id="site-content-form" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
-
           {/* ── LEFT — metadata ── */}
           <div className="flex flex-col gap-5">
-
             {/* Sección */}
             <Field data-invalid={!!errors.section}>
               <FieldLabel>Sección de la página</FieldLabel>
@@ -141,67 +139,6 @@ export default function SiteContentForm({ siteContent }: Props) {
                 )}
               />
               <FieldError>{errors.section?.message}</FieldError>
-            </Field>
-
-            {/* Tipo */}
-            <Field data-invalid={!!errors.type}>
-              <FieldLabel>Tipo de campo</FieldLabel>
-              <Controller
-                control={control}
-                name="type"
-                render={({ field }) => (
-                  <div className="flex gap-2">
-                    {SITE_CONTENT_TYPES.map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => field.onChange(t)}
-                        className={`flex-1 py-2 text-[10px] uppercase tracking-[0.2em] font-semibold border transition-colors cursor-pointer ${
-                          field.value === t
-                            ? "bg-stone-900 text-white border-stone-900"
-                            : "bg-white text-stone-500 border-stone-200 hover:border-stone-400"
-                        }`}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              />
-              <FieldError>{errors.type?.message}</FieldError>
-            </Field>
-
-            {/* Key */}
-            <Field data-invalid={!!errors.key}>
-              <FieldLabel htmlFor="key">Key</FieldLabel>
-              <Input
-                id="key"
-                {...register("key")}
-                placeholder="hero.title"
-                aria-invalid={!!errors.key}
-                className="font-mono text-sm"
-                // En edición la key no debería cambiar fácilmente
-                readOnly={isEditing}
-              />
-              <FieldError>{errors.key?.message}</FieldError>
-              <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
-                Solo minúsculas, números, puntos y guiones. No se puede cambiar después.
-              </span>
-            </Field>
-
-            {/* Label */}
-            <Field data-invalid={!!errors.label}>
-              <FieldLabel htmlFor="label">Etiqueta legible</FieldLabel>
-              <Input
-                id="label"
-                {...register("label")}
-                placeholder="Título principal del hero"
-                aria-invalid={!!errors.label}
-              />
-              <FieldError>{errors.label?.message}</FieldError>
-              <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
-                Solo para identificarlo en el admin, no aparece en el sitio
-              </span>
             </Field>
           </div>
 
@@ -250,8 +187,68 @@ export default function SiteContentForm({ siteContent }: Props) {
               />
               <FieldError>{errors.value?.message}</FieldError>
             </Field>
-          </div>
 
+                        {/* Tipo */}
+            <Field data-invalid={!!errors.type}>
+              <FieldLabel>Tipo de campo</FieldLabel>
+              <Controller
+                control={control}
+                name="type"
+                render={({ field }) => (
+                  <div className="flex gap-2">
+                    {SITE_CONTENT_TYPES.map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => field.onChange(t)}
+                        className={`flex-1 py-2 text-[10px] uppercase tracking-[0.2em] font-semibold border transition-colors cursor-pointer ${
+                          field.value === t
+                            ? "bg-stone-900 text-white border-stone-900"
+                            : "bg-white text-stone-500 border-stone-200 hover:border-stone-400"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              />
+              <FieldError>{errors.type?.message}</FieldError>
+            </Field>
+
+            {/* Key */}
+            <Field data-invalid={!!errors.key}>
+              <FieldLabel htmlFor="key">Key</FieldLabel>
+              <Input
+                id="key"
+                {...register("key")}
+                placeholder="hero.title"
+                aria-invalid={!!errors.key}
+                className="font-mono text-sm"
+                // En edición la key no debería cambiar fácilmente
+                // readOnly={isEditing}
+              />
+              <FieldError>{errors.key?.message}</FieldError>
+              <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+                Solo minúsculas, números, puntos y guiones. No se puede cambiar después.
+              </span>
+            </Field>
+
+            {/* Label */}
+            <Field data-invalid={!!errors.label}>
+              <FieldLabel htmlFor="label">Etiqueta legible</FieldLabel>
+              <Input
+                id="label"
+                {...register("label")}
+                placeholder="Título principal del hero"
+                aria-invalid={!!errors.label}
+              />
+              <FieldError>{errors.label?.message}</FieldError>
+              <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+                Solo para identificarlo en el admin, no aparece en el sitio
+              </span>
+            </Field>
+          </div>
         </div>
       </form>
     </AdminFormLayout>

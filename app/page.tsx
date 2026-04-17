@@ -5,6 +5,7 @@ import { FindAndGetServer } from "@/components/home/FindAndGetServer";
 import { NavbarServer } from "@/components/shared/NavbarServer";
 import { BottomBar } from "@/components/ui/BottomBar";
 import { Metadata } from "next";
+import { AdminSignOutWrapper } from "@/components/shared/AdminSignOutWrapper";
 
 export const metadata: Metadata = {
   title: "Central Molletes — Cafetería en Etzatlán, Jalisco",
@@ -29,6 +30,7 @@ const FooterServer        = dynamic(() => import("@/components/shared/FooterServ
 export default function Home() {
   return (
     <div>
+        <AdminSignOutWrapper />
         <NavbarServer />
         <main>
           <Hero />
