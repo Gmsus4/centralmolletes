@@ -52,7 +52,6 @@ const ADMIN_SECTIONS: Section[] = [
     tips: [
       "Para editar un producto existente, haz clic en su nombre o en el ícono de edición.",
       "Puedes reordenar los productos dentro de una categoría arrastrándolos.",
-    //   "Si desactivas un producto, deja de mostrarse en el menú pero no se elimina.",
     ],
   },
   {
@@ -272,53 +271,53 @@ function SectionAccordion({ section }: { section: Section }) {
   const Icon = section.icon
 
   return (
-    <div className="border border-border rounded-radius-lg overflow-hidden bg-white">
+    <div className="border border-border rounded-lg overflow-hidden bg-card">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center cursor-pointer gap-3 p-4 text-left hover:bg-muted/40 transition-colors"
       >
         <div
-          className="w-9 h-9 rounded-radius flex items-center justify-center shrink-0"
+          className="w-9 h-9 rounded-md flex items-center justify-center shrink-0"
           style={{ background: section.color }}
         >
           <Icon size={17} color={section.iconColor} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-text-titles">{section.title}</p>
-          <p className="text-xs text-text-muted truncate">{section.desc.slice(0, 70)}…</p>
+          <p className="text-sm font-medium text-foreground">{section.title}</p>
+          <p className="text-xs text-muted-foreground truncate">{section.desc.slice(0, 70)}…</p>
         </div>
         <IconChevronDown
           size={16}
-          className={`text-text-muted shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`text-muted-foreground shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       {open && (
         <div className="border-t border-border px-4 pb-4 pt-3">
-          <p className="text-xs text-text-muted leading-relaxed mb-4">{section.desc}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed mb-4">{section.desc}</p>
 
-          <p className="text-[11px] font-medium text-text-muted uppercase tracking-widest mb-2">Paso a paso</p>
+          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-widest mb-2">Paso a paso</p>
           <div className="flex flex-col gap-1.5 mb-4">
             {section.steps.map((step, i) => (
-              <div key={i} className="border border-border rounded-radius overflow-hidden">
+              <div key={i} className="border border-border rounded-md overflow-hidden">
                 <button
                   onClick={() => setOpenStep(openStep === i ? null : i)}
                   className="w-full flex items-center gap-3 p-2.5 text-left hover:bg-muted/30 transition-colors"
                 >
-                  <span className="text-[10px] font-medium min-w-[20px] h-5 rounded-full bg-muted text-text-muted flex items-center justify-center shrink-0">
+                  <span className="text-[10px] font-medium min-w-[20px] h-5 rounded-full bg-muted text-muted-foreground flex items-center justify-center shrink-0">
                     {i + 1}
                   </span>
-                  <span className="text-xs text-text-main flex-1">{step.text}</span>
+                  <span className="text-xs text-foreground flex-1">{step.text}</span>
                   {step.detail && (
                     <IconChevronRight
                       size={13}
-                      className={`text-text-muted shrink-0 transition-transform ${openStep === i ? "rotate-90" : ""}`}
+                      className={`text-muted-foreground shrink-0 transition-transform ${openStep === i ? "rotate-90" : ""}`}
                     />
                   )}
                 </button>
                 {openStep === i && step.detail && (
                   <div className="px-3 pb-2.5 pt-0">
-                    <p className="text-xs text-text-muted leading-relaxed pl-8 border-l-2 border-brand-primary/30 ml-2.5">
+                    <p className="text-xs text-muted-foreground leading-relaxed pl-8 border-l-2 border-border ml-2.5">
                       {step.detail}
                     </p>
                   </div>
@@ -329,14 +328,14 @@ function SectionAccordion({ section }: { section: Section }) {
 
           {section.tips && section.tips.length > 0 && (
             <>
-              <p className="text-[11px] font-medium text-text-muted uppercase tracking-widest mb-2">Consejos</p>
+              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-widest mb-2">Consejos</p>
               <div className="flex flex-col gap-1.5">
                 {section.tips.map((tip, i) => (
                   <div key={i} className="flex gap-2.5 items-start">
-                    <div className="mt-1 shrink-0 w-4 h-4 rounded-full bg-brand-primary/10 flex items-center justify-center">
-                      <IconCheck size={9} color="#B8860B" />
+                    <div className="mt-1 shrink-0 w-4 h-4 rounded-full bg-green-100 dark:bg-green-950 flex items-center justify-center">
+                      <IconCheck size={9} className="text-green-700 dark:text-green-400" />
                     </div>
-                    <p className="text-xs text-text-muted leading-relaxed">{tip}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{tip}</p>
                   </div>
                 ))}
               </div>
@@ -353,58 +352,58 @@ function ToolCard({ tool }: { tool: Tool }) {
   const Icon = tool.icon
 
   return (
-    <div className="border border-border rounded-radius-lg overflow-hidden bg-white">
+    <div className="border border-border rounded-lg overflow-hidden bg-card">
       <button
         onClick={() => setOpen(!open)}
         className="w-full cursor-pointer flex items-center gap-3 p-4 text-left hover:bg-muted/40 transition-colors"
       >
         <div
-          className="w-9 h-9 rounded-radius flex items-center justify-center shrink-0"
+          className="w-9 h-9 rounded-md flex items-center justify-center shrink-0"
           style={{ background: tool.color }}
         >
           <Icon size={17} color={tool.iconColor} />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <p className="text-sm font-medium text-text-titles">{tool.name}</p>
-            <span className="text-[10px] bg-muted text-text-muted rounded-full px-2 py-0.5">{tool.role}</span>
+            <p className="text-sm font-medium text-foreground">{tool.name}</p>
+            <span className="text-[10px] bg-muted text-muted-foreground rounded-full px-2 py-0.5">{tool.role}</span>
           </div>
-          <p className="text-xs text-text-muted truncate">{tool.desc.slice(0, 65)}…</p>
+          <p className="text-xs text-muted-foreground truncate">{tool.desc.slice(0, 65)}…</p>
         </div>
         <IconChevronDown
           size={16}
-          className={`text-text-muted shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`text-muted-foreground shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       {open && (
         <div className="border-t border-border px-4 pb-4 pt-3">
-          <p className="text-xs text-text-muted leading-relaxed mb-4">{tool.desc}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed mb-4">{tool.desc}</p>
 
-          <p className="text-[11px] font-medium text-text-muted uppercase tracking-widest mb-2">Cómo acceder</p>
+          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-widest mb-2">Cómo acceder</p>
           <div className="flex flex-col gap-1.5 mb-4">
             {tool.howToAccess.map((step, i) => (
               <div key={i} className="flex gap-2.5 items-start">
-                <span className="text-[10px] font-medium min-w-[18px] h-[18px] rounded-full bg-muted text-text-muted flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-[10px] font-medium min-w-[18px] h-[18px] rounded-full bg-muted text-muted-foreground flex items-center justify-center shrink-0 mt-0.5">
                   {i + 1}
                 </span>
-                <p className="text-xs text-text-muted leading-relaxed">{step}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{step}</p>
               </div>
             ))}
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 bg-muted/60 rounded-radius px-2.5 py-1.5">
-              <IconShieldCheck size={13} color="#3B6D11" />
-              <p className="text-[11px] text-text-muted">
-                Compartir como: <span className="font-medium text-text-main">{tool.shareAs}</span>
+            <div className="flex items-center gap-2 bg-muted/60 rounded-md px-2.5 py-1.5">
+              <IconShieldCheck size={13} className="text-green-700 dark:text-green-400" />
+              <p className="text-[11px] text-muted-foreground">
+                Compartir como: <span className="font-medium text-foreground">{tool.shareAs}</span>
               </p>
             </div>
             <a
               href={tool.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs text-brand-primary hover:underline"
+              className="flex items-center gap-1 text-xs text-foreground hover:text-muted-foreground underline underline-offset-2 transition-colors"
             >
               Abrir <IconExternalLink size={11} />
             </a>
@@ -431,9 +430,9 @@ export default function AdminHelpPage() {
     <div className="p-6 lg:p-8 max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <p className="text-xs font-medium text-text-muted uppercase tracking-widest mb-1">Centro de ayuda</p>
-        <h1 className="text-2xl font-medium text-text-titles mb-2">Guía del panel de administración</h1>
-        <p className="text-sm text-text-muted leading-relaxed max-w-2xl">
+        <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-1">Centro de ayuda</p>
+        <h1 className="text-2xl font-medium text-foreground mb-2">Guía del panel de administración</h1>
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
           Aquí encontrarás todo lo necesario para gestionar el sitio de forma autónoma:
           cómo usar cada sección, para qué sirven las herramientas externas y cómo
           manejar los accesos de forma segura.
@@ -441,17 +440,17 @@ export default function AdminHelpPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 bg-muted rounded-radius mb-6 w-fit">
+      <div className="flex gap-1 p-1 bg-muted rounded-lg mb-6 w-fit">
         {TABS.map((tab) => {
           const Icon = tab.icon
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm transition-all cursor-pointer ${
                 activeTab === tab.id
-                  ? "bg-white text-text-titles font-medium shadow-sm"
-                  : "text-text-muted hover:text-text-main"
+                  ? "bg-background text-foreground font-medium shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon size={15} />
@@ -464,7 +463,7 @@ export default function AdminHelpPage() {
       {/* Tab: Secciones */}
       {activeTab === "sections" && (
         <div>
-          <p className="text-xs text-text-muted mb-4 leading-relaxed">
+          <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
             Haz clic en cualquier sección para ver su descripción completa, los pasos a seguir y consejos de uso.
             Cada paso tiene un detalle adicional que puedes expandir.
           </p>
@@ -479,14 +478,14 @@ export default function AdminHelpPage() {
       {/* Tab: Herramientas */}
       {activeTab === "tools" && (
         <div>
-          <p className="text-xs text-text-muted mb-4 leading-relaxed">
+          <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
             El sitio depende de cuatro servicios externos. Aquí se explica para qué sirve cada uno,
             cómo acceder y con qué nivel de permisos es seguro compartir el acceso.
           </p>
 
           {/* Architecture overview */}
-          <div className="bg-muted/50 border border-border rounded-radius-lg p-4 mb-4">
-            <p className="text-xs font-medium text-text-titles mb-3">Cómo se conectan entre sí</p>
+          <div className="bg-muted/50 border border-border rounded-lg p-4 mb-4">
+            <p className="text-xs font-medium text-foreground mb-3">Cómo se conectan entre sí</p>
             <div className="flex items-center gap-2 flex-wrap">
               {[
                 { name: "Tú", desc: "editas en el admin" },
@@ -497,13 +496,13 @@ export default function AdminHelpPage() {
               ].map((node, i, arr) => (
                 <div key={node.name} className="flex items-center gap-2">
                   <div className="text-center">
-                    <div className="bg-white border border-border rounded-radius px-3 py-1.5 text-xs font-medium text-text-titles">
+                    <div className="bg-background border border-border rounded-md px-3 py-1.5 text-xs font-medium text-foreground">
                       {node.name}
                     </div>
-                    <p className="text-[10px] text-text-muted mt-1">{node.desc}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">{node.desc}</p>
                   </div>
                   {i < arr.length - 1 && (
-                    <IconChevronRight size={14} className="text-text-muted shrink-0 mb-4" />
+                    <IconChevronRight size={14} className="text-muted-foreground shrink-0 mb-4" />
                   )}
                 </div>
               ))}
@@ -521,19 +520,19 @@ export default function AdminHelpPage() {
       {/* Tab: Credenciales */}
       {activeTab === "credentials" && (
         <div className="flex flex-col gap-4">
-          <p className="text-xs text-text-muted leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Cómo compartir accesos de forma segura sin exponer las claves del proyecto.
             La regla es simple: invita personas a través de las plataformas, nunca compartas las variables de entorno directamente.
           </p>
 
           {/* Regla de oro */}
-          <div className="bg-brand-primary/10 border border-brand-primary/30 rounded-radius-lg p-4">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 dark:bg-amber-950 dark:border-amber-800">
             <div className="flex items-start gap-3">
-              <IconInfoCircle size={18} color="#B8860B" className="shrink-0 mt-0.5" />
+              <IconInfoCircle size={18} className="text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-text-titles mb-1">La regla de oro</p>
-                <p className="text-xs text-text-muted leading-relaxed">
-                  Nunca compartes el archivo <code className="bg-black/5 px-1 py-0.5 rounded text-[11px]">.env</code> ni
+                <p className="text-sm font-medium text-foreground mb-1">La regla de oro</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Nunca compartes el archivo <code className="bg-black/5 dark:bg-white/10 px-1 py-0.5 rounded text-[11px]">.env</code> ni
                   las variables de entorno por chat, email o WhatsApp. En su lugar, invitas a las personas
                   directamente desde cada plataforma con el rol adecuado. Así puedes revocar el acceso en
                   cualquier momento sin cambiar ninguna clave.
@@ -543,12 +542,12 @@ export default function AdminHelpPage() {
           </div>
 
           {/* Qué SÍ compartir */}
-          <div className="bg-white border border-border rounded-radius-lg p-4">
+          <div className="border border-border rounded-lg p-4 bg-card">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-6 h-6 rounded-full bg-[#EAF3DE] flex items-center justify-center shrink-0">
-                <IconCheck size={13} color="#3B6D11" />
+              <div className="w-6 h-6 rounded-full bg-green-100 dark:bg-green-950 flex items-center justify-center shrink-0">
+                <IconCheck size={13} className="text-green-700 dark:text-green-400" />
               </div>
-              <p className="text-sm font-medium text-text-titles">Qué sí puedes compartir</p>
+              <p className="text-sm font-medium text-foreground">Qué sí puedes compartir</p>
             </div>
             <div className="flex flex-col gap-3">
               {[
@@ -578,15 +577,15 @@ export default function AdminHelpPage() {
                   how: "Cloudinary → Settings → Users → Invite User → rol: Media Library User.",
                 },
               ].map((item) => (
-                <div key={item.title} className="border border-border rounded-radius p-3">
+                <div key={item.title} className="border border-border rounded-md p-3">
                   <div className="flex items-start gap-2 mb-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#639922] mt-1.5 shrink-0" />
-                    <p className="text-xs font-medium text-text-titles">{item.title}</p>
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-600 dark:bg-green-500 mt-1.5 shrink-0" />
+                    <p className="text-xs font-medium text-foreground">{item.title}</p>
                   </div>
-                  <p className="text-xs text-text-muted leading-relaxed mb-1.5 pl-3.5">{item.desc}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed mb-1.5 pl-3.5">{item.desc}</p>
                   <div className="ml-3.5 bg-muted/60 rounded px-2.5 py-1.5">
-                    <p className="text-[11px] text-text-muted leading-relaxed">
-                      <span className="font-medium text-text-main">Cómo hacerlo: </span>{item.how}
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                      <span className="font-medium text-foreground">Cómo hacerlo: </span>{item.how}
                     </p>
                   </div>
                 </div>
@@ -595,12 +594,12 @@ export default function AdminHelpPage() {
           </div>
 
           {/* Qué NO compartir */}
-          <div className="bg-white border border-border rounded-radius-lg p-4">
+          <div className="border border-border rounded-lg p-4 bg-card">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-6 h-6 rounded-full bg-[#FCEBEB] flex items-center justify-center shrink-0">
-                <IconX size={13} color="#A32D2D" />
+              <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-950 flex items-center justify-center shrink-0">
+                <IconX size={13} className="text-red-700 dark:text-red-400" />
               </div>
-              <p className="text-sm font-medium text-text-titles">Qué nunca debes compartir</p>
+              <p className="text-sm font-medium text-foreground">Qué nunca debes compartir</p>
             </div>
             <div className="flex flex-col gap-2">
               {[
@@ -625,13 +624,13 @@ export default function AdminHelpPage() {
                   risk: "Contiene todas las claves anteriores juntas. Nunca debe subirse a GitHub ni enviarse por ningún medio.",
                 },
               ].map((item) => (
-                <div key={item.key} className="flex gap-3 items-start border border-[#F7C1C1] bg-[#FCEBEB]/30 rounded-radius px-3 py-2.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#E24B4A] mt-1.5 shrink-0" />
+                <div key={item.key} className="flex gap-3 items-start border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 rounded-md px-3 py-2.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" />
                   <div>
-                    <p className="text-xs font-medium text-text-titles mb-0.5">
-                      <code className="bg-black/5 px-1 py-0.5 rounded text-[11px]">{item.key}</code>
+                    <p className="text-xs font-medium text-foreground mb-0.5">
+                      <code className="bg-black/5 dark:bg-white/10 px-1 py-0.5 rounded text-[11px]">{item.key}</code>
                     </p>
-                    <p className="text-xs text-text-muted leading-relaxed">{item.risk}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{item.risk}</p>
                   </div>
                 </div>
               ))}
@@ -639,11 +638,11 @@ export default function AdminHelpPage() {
           </div>
 
           {/* Si se filtra una clave */}
-          <div className="border border-[#EF9F27]/40 bg-[#FAEEDA]/40 rounded-radius-lg p-4">
+          <div className="border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <IconAlertTriangle size={17} color="#854F0B" className="shrink-0 mt-0.5" />
+              <IconAlertTriangle size={17} className="text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-text-titles mb-1.5">¿Qué hacer si se filtró una clave?</p>
+                <p className="text-sm font-medium text-foreground mb-1.5">¿Qué hacer si se filtró una clave?</p>
                 <div className="flex flex-col gap-1.5">
                   {[
                     "Neon: ve a Settings → Connection string → Regenerate password. La URL anterior deja de funcionar.",
@@ -653,10 +652,10 @@ export default function AdminHelpPage() {
                     "GitHub token: ve a Settings → Developer settings → Personal access tokens → revoca el token comprometido.",
                   ].map((step, i) => (
                     <div key={i} className="flex gap-2.5 items-start">
-                      <span className="text-[10px] font-medium min-w-[18px] h-[18px] rounded-full bg-[#EF9F27]/20 text-[#633806] flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="text-[10px] font-medium min-w-[18px] h-[18px] rounded-full bg-amber-200 dark:bg-amber-900 text-amber-800 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5">
                         {i + 1}
                       </span>
-                      <p className="text-xs text-[#633806] leading-relaxed">{step}</p>
+                      <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">{step}</p>
                     </div>
                   ))}
                 </div>
@@ -665,8 +664,8 @@ export default function AdminHelpPage() {
           </div>
 
           {/* Buenas prácticas */}
-          <div className="bg-white border border-border rounded-radius-lg p-4">
-            <p className="text-sm font-medium text-text-titles mb-3">Buenas prácticas generales</p>
+          <div className="border border-border rounded-lg p-4 bg-card">
+            <p className="text-sm font-medium text-foreground mb-3">Buenas prácticas generales</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {[
                 "Usa contraseñas únicas para cada plataforma, nunca repitas la misma.",
@@ -677,10 +676,10 @@ export default function AdminHelpPage() {
                 "Revisa periódicamente quién tiene acceso a cada plataforma y elimina accesos innecesarios.",
               ].map((tip, i) => (
                 <div key={i} className="flex gap-2.5 items-start">
-                  <div className="w-4 h-4 rounded-full bg-[#EAF3DE] flex items-center justify-center shrink-0 mt-0.5">
-                    <IconCheck size={9} color="#3B6D11" />
+                  <div className="w-4 h-4 rounded-full bg-green-100 dark:bg-green-950 flex items-center justify-center shrink-0 mt-0.5">
+                    <IconCheck size={9} className="text-green-700 dark:text-green-400" />
                   </div>
-                  <p className="text-xs text-text-muted leading-relaxed">{tip}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{tip}</p>
                 </div>
               ))}
             </div>
