@@ -22,8 +22,7 @@ export const ShareButton = ({ title, description }: ShareButtonProps) => {
       label: "WhatsApp",
       icon: <IconBrandWhatsapp size={24} />,
       getHref: () => {
-        const { encodedUrl, encodedText } = getShareData()
-        // return `https://wa.me/?text=${encodedText}%20${encodedUrl}`
+        const { encodedUrl } = getShareData()
         return `https://wa.me/?text=${encodedUrl}`
       },
     },
@@ -65,32 +64,34 @@ export const ShareButton = ({ title, description }: ShareButtonProps) => {
   }
 
   return (
-    <div className="fab fab-flower absolute right-4 bottom-4 transition-colors ease-in-out">
-      <div tabIndex={0} role="button" className="bg-brand-primary rounded-full w-12 h-12 grid place-items-center cursor-pointer">
-        <IconShare size={20} className="text-text-main"/>
-      </div>
-      <button className="fab-main-action bg-brand-primary rounded-full w-12 h-12 grid place-items-center cursor-pointer">
-        <IconShare size={20} className="text-text-main"/>
-      </button>
-      {shareLinks.map((link) => (
-        <button
-            key={link.label}
-            onClick={(e) => {
-                e.preventDefault()
-                window.open(link.getHref(), "_blank", "noopener,noreferrer")
-            }}
-            className="btn btn-circle btn-lg bg-brand-primary text-text-main border-none group"
-            >
-            <span className="transition-transform duration-200 group-hover:scale-125">
-                {link.icon}
-            </span>
+    <div className="relative w-12 h-12">
+      <div className="fab fab-flower absolute right-0 bottom-0 transition-colors ease-in-out z-50">
+        <div tabIndex={0} role="button" className="bg-brand-primary rounded-full w-12 h-12 grid place-items-center cursor-pointer shadow-md">
+          <IconShare size={20} className="text-text-main"/>
+        </div>
+        <button className="fab-main-action bg-brand-primary rounded-full w-12 h-12 grid place-items-center cursor-pointer shadow-md">
+          <IconShare size={20} className="text-text-main"/>
         </button>
-      ))}
-      <button onClick={copyUrl} className="btn btn-circle btn-lg bg-brand-primary text-text-main border-none group">
-        <span className="transition-transform duration-200 group-hover:scale-125">
-            {copied ? <IconCheck size={24} /> : <IconLink size={24} />}
-        </span>
-      </button>
+        {shareLinks.map((link) => (
+          <button
+              key={link.label}
+              onClick={(e) => {
+                  e.preventDefault()
+                  window.open(link.getHref(), "_blank", "noopener,noreferrer")
+              }}
+              className="btn btn-circle btn-lg bg-brand-primary text-text-main border-none group shadow-md"
+              >
+              <span className="transition-transform duration-200 group-hover:scale-125">
+                  {link.icon}
+              </span>
+          </button>
+        ))}
+        <button onClick={copyUrl} className="btn btn-circle btn-lg bg-brand-primary text-text-main border-none group shadow-md">
+          <span className="transition-transform duration-200 group-hover:scale-125">
+              {copied ? <IconCheck size={24} /> : <IconLink size={24} />}
+          </span>
+        </button>
+      </div>
     </div>
   )
 }

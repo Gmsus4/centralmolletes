@@ -20,8 +20,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { IconBrandWhatsapp, IconBrowser, IconBulb, IconExternalLink, IconSchool, IconWorld } from "@tabler/icons-react"
 import { ChevronsUpDownIcon, SparklesIcon, BadgeCheckIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
 import { signOut } from "next-auth/react"
+import Link from "next/link"
 
 export function NavUser({
   user,
@@ -75,17 +77,17 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <SparklesIcon
-                />
-                Upgrade to Pro
+                <Link href="https://wa.me/523322364324" className="flex items-center gap-1 cursor-pointer">
+                  <IconBrandWhatsapp /> Soporte
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheckIcon
-                />
-                Account
+                <Link href="/" className="flex items-center gap-2 cursor-pointer">
+                  <IconWorld /> Ver sitio
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCardIcon
@@ -93,9 +95,10 @@ export function NavUser({
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <BellIcon
-                />
-                Notifications
+                <Link href="/admin/help" className="flex items-center gap-2 cursor-pointer">
+                  <IconSchool />
+                  Guía
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

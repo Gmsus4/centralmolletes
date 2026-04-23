@@ -1,17 +1,18 @@
+// app/menu/[slug]/page.tsx
 import type { Metadata } from "next"
 import { unstable_cache } from "next/cache"
 import prisma from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { ShareButton } from "@/components/ui/ShareButton"
 import { EditButton } from "@/components/ui/EditButton"
 import { FooterServer } from "@/components/shared/FooterServer"
 import { NavbarServer } from "@/components/shared/NavbarServer"
-import { Locations } from "@/components/locations/Locations"
+import { Locations, LocationsCards } from "@/components/locations/Locations"
 import { tagColors } from "@/lib/tagColors"
 import { getCategoryExtras } from "@/data/menuCategoryExtra"
-import { IconArrowLeft, IconArrowNarrowRight } from "@tabler/icons-react"
+import { BackButton } from "@/components/ui/BackButton"
+import { ShareButton } from "@/components/ui/ShareButton"
 
 export const revalidate = 3600
 
@@ -59,9 +60,7 @@ function parseProduct(p: {
 }
 
 const getProduct = unstable_cache(async (slug: string) => prisma.product.findUnique({ where: { slug }, include: { category: true } }), ["menu-product"], { revalidate: 3600, tags: ["products"] })
-
 const getLocations = unstable_cache(async () => prisma.location.findMany({ orderBy: [{ createdAt: "desc" }] }), ["locations-list"], { revalidate: 3600, tags: ["locations"] })
-
 const getActivePromotion = unstable_cache(
   async (productId: string) =>
     prisma.promotion.findFirst({
@@ -77,7 +76,6 @@ const getActivePromotion = unstable_cache(
   ["product-promotion"],
   { revalidate: 300, tags: ["promotions"] },
 )
-
 const getRelatedProducts = unstable_cache(
   async (categoryId: string, excludeSlug: string) =>
     prisma.product.findMany({
@@ -98,9 +96,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const raw = await getProduct(slug)
   if (!raw) return {}
-
   const product = parseProduct(raw)
-
   return {
     title: product.name,
     metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? "https://centralmolletes.netlify.app/"),
@@ -112,22 +108,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       type: "website",
       locale: "es_MX",
     },
-    twitter: {
-      card: "summary_large_image",
-      title: product.name,
-      description: product.desc,
-      images: [product.img],
-    },
+    twitter: { card: "summary_large_image", title: product.name, description: product.desc, images: [product.img] },
   }
-}
-
-function SectionTitle({ title }: { title: string }) {
-  return (
-    <div className="mb-4 flex items-center gap-4">
-      <span className="h-px w-10 bg-white/18" />
-      <h2 className="font-title text-2xl text-white sm:text-3xl">{title}</h2>
-    </div>
-  )
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -146,7 +128,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     relatedRaw.map(async (rel) => {
       const promo = await getActivePromotion(rel.id)
       const d = promo?.discount ?? null
-
       return {
         ...parseProduct(rel),
         originalPrice: d ? rel.price : null,
@@ -156,9 +137,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   )
 
   const metaItems = [
-    { label: "Presentacion", value: product.weight, icon: "📦" },
+    { label: "Presentación", value: product.weight, icon: "📦" },
     { label: "Tiempo", value: product.prepTime, icon: "⏱" },
-    { label: "Alergenos", value: product.allergens.join(", ") || "Ninguno", icon: "⚠️" },
+    { label: "Alérgenos", value: product.allergens.join(", ") || "Ninguno", icon: "⚠️" },
   ]
 
   const extras = getCategoryExtras(product.category) ?? []
@@ -166,234 +147,169 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <NavbarServer />
+      <main className="min-h-screen bg-bg-body text-text-main relative">
+        <div className="grid grid-cols-1 lg:grid-cols-12">
+          
+          {/* ── COLUMNA IZQUIERDA: IMAGEN ── */}
+          <div className="relative w-full h-[60vh] lg:h-dvh 2xl:col-span-9 xl:col-span-8 lg:col-span-7 lg:sticky col-span-12 lg:top-0 bg-bg-dark/5">
+            <Image 
+              src={product.img} 
+              alt={product.name} 
+              fill 
+              priority 
+              sizes="(max-width: 1024px) 100vw, 66vw"
+              className="object-cover" 
+            />
+            {/* Overlay sutil */}
+            <div className="absolute inset-0 bg-black/5" />
+            
+            {/* Back Button */}
+            <div className="absolute left-6 top-6 z-50 sm:left-10 sm:top-10">
+              <BackButton />
+            </div>
 
-      <main className="relative min-h-screen overflow-hidden bg-[#050505] text-white">
-        <section className="relative isolate min-h-screen overflow-hidden">
-          <Image src={product.img} alt={product.name} fill priority sizes="100vw" className="object-cover" />
+            {/* Acciones flotantes sobre la imagen */}
+            <div className="absolute right-6 bottom-6 z-50 sm:right-10 sm:bottom-10 flex flex-row items-end gap-3">
+              {/* ─────── Share Button ─────── */}
+              <ShareButton title={product.name} description="¡Tienes que probar este platillo de Central de Molletes!" />
 
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.18)_0%,rgba(0,0,0,0.48)_26%,rgba(0,0,0,0.78)_58%,rgba(0,0,0,0.94)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_34%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#050505] to-transparent" />
+              {/* Edit Button */}
+              <EditButton productId={raw.id} />
+            </div>
+          </div>
 
-          {/* <ShareButton title={product.name} description={product.desc} /> */}
-
-          <div className="relative z-10 mx-auto flex min-h-dvh max-w-7xl items-end px-5 pb-8 pt-28 sm:px-8 lg:px-16 lg:pb-14">
-            <div className="w-full">
-              <div className="max-w-3xl">
-                <div className="mb-5 flex flex-wrap items-center gap-3">
-                  <span className="rounded-full border border-white/18 bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-white backdrop-blur-md">
-                    {product.category}
-                  </span>
-
-                  {product.tag && <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] ${tagColors[product.tag]}`}>{product.tag}</span>}
-
+          {/* ── COLUMNA DERECHA: INFORMACIÓN ── */}
+          <div className="col-span-12 2xl:col-span-3 xl:col-span-4 lg:col-span-5 bg-white flex flex-col relative z-10 border-l border-black/10 pb-10 lg:pb-0 lg:pt-16 pt-0">
+            
+            <div className="flex flex-col px-6 py-6 sm:px-8 lg:p-10 xl:p-12">
+              
+              {/* CATEGORY & TAGS */}
+              <div className="flex flex-row items-center justify-between mb-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+                  {product.category}
+                </p>
+                <div className="flex flex-row gap-2">
                   {discount && (
-                    <span className="rounded-full border border-white/25 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-black shadow-[0_0_28px_rgba(255,255,255,0.22)]">
-                      -{discount}% off
+                    <span className="bg-[#111111] rounded-radius px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white">
+                      -{discount}%
+                    </span>
+                  )}
+                  {product.tag && (
+                    <span className="border border-black rounded-radius px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-black">
+                      {product.tag}
                     </span>
                   )}
                 </div>
-
-                <h1 className="font-title text-5xl leading-[0.9] tracking-tight text-white drop-shadow-[0_0_24px_rgba(255,255,255,0.12)] sm:text-6xl lg:text-7xl xl:text-8xl">{product.name}</h1>
-
-                <div className="mt-6 flex flex-wrap items-end gap-x-4 gap-y-2">
-                  {originalPrice && <span className="font-title text-2xl text-white/35 line-through sm:text-3xl">${originalPrice}</span>}
-                  <span className="font-title text-5xl font-bold text-white drop-shadow-[0_0_24px_rgba(255,255,255,0.18)] sm:text-6xl">${product.price}</span>
-                  <span className="pb-2 text-sm uppercase tracking-[0.18em] text-white/55">MXN</span>
-                </div>
-
-                <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-[15px]">{product.descLong}</p>
               </div>
 
-              {/* Desktop: panel integrado sobre la foto */}
-              <div className="mt-6 hidden rounded-[26px] border  border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl shadow-[0_14px_50px_rgba(0,0,0,0.22)] lg:grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start lg:gap-4">
-                  <EditButton productId={raw.id} />
-                <div className="grid gap-3">
-                  {metaItems.map((item) => (
-                    <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.04] px-3.5 py-3">
-                      <div className="flex items-center gap-2.5">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.07] text-sm text-white">{item.icon}</span>
-                        <div className="min-w-0">
-                          <p className="text-[9px] uppercase tracking-[0.2em] text-white/42">{item.label}</p>
-                          <p className="truncate text-sm text-white">{item.value}</p>
+              <div className="flex flex-col">  
+                {/* TITLE */}
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-text-titles font-title italic tracking-tighter leading-[0.95] mb-2">
+                  {product.name}
+                </h1>
+
+                {/* PRICE */}
+                <div className="flex flex-row items-baseline gap-3 mb-6 mt-6">
+                  <span className="text-2xl sm:text-5xl font-bold tracking-tight text-text-titles">${product.price}</span>
+                  {originalPrice && <span className="text-base font-medium text-text-muted line-through">${originalPrice}</span>}
+                </div>
+              </div>    
+
+              {/* DESCRIPTION */}
+              <p className="text-text-main text-sm sm:text-base font-medium leading-relaxed">
+                {product.descLong}
+              </p>
+            </div>
+
+            {/* ── LISTA DE DETALLES Y EXTRAS (Estilo Acordeón a ancho completo) ── */}
+            <div className="flex flex-col border-t border-black/10 mt-auto">
+              
+              {/* EXTRAS */}
+              {extras.map((extra, idx) => (
+                <div key={`extra-${idx}`} className="flex flex-col px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b border-black/10">
+                  <p className="text-xs font-bold uppercase tracking-widest text-text-titles mb-4">{extra.title}</p>
+                  <div className="flex flex-col gap-3">
+                    {extra.extras.map((option, oIdx) => (
+                      <div key={oIdx} className="flex justify-between items-center group cursor-pointer">
+                        <div className="flex items-center gap-3">
+                          <div className="w-4 h-4 border border-black/30 rounded-full group-hover:border-black transition-colors flex items-center justify-center">
+                            {/* Un punto interno sutil al hacer hover */}
+                            <div className="w-1.5 h-1.5 bg-black rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
+                          <span className="text-sm font-medium text-text-titles">{option.label}</span>
                         </div>
+                        {option.price && <span className="text-xs text-text-muted font-bold">+${option.price}</span>}
                       </div>
-                    </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {/* INGREDIENTES */}
+              {product.ingredients.length > 0 && (
+                <div className="flex flex-col gap-2 px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b border-black/10 hover:bg-black/5 transition-colors cursor-default">
+                  <p className="text-xs font-bold uppercase tracking-widest text-text-titles">Ingredientes</p>
+                  <p className="text-sm text-text-main font-medium leading-relaxed">
+                    {product.ingredients.join(" • ")}
+                  </p>
+                </div>
+              )}
+
+              {/* ALÉRGENOS */}
+              {product.allergens.length > 0 && (
+                <div className="flex flex-col gap-2 px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b border-black/10 hover:bg-red-50 transition-colors cursor-default">
+                  <p className="text-xs font-bold uppercase tracking-widest text-red-600">Alérgenos</p>
+                  <p className="text-sm text-red-900 font-medium leading-relaxed">
+                    {product.allergens.join(", ")}
+                  </p>
+                </div>
+              )}
+
+              {/* TIEMPO DE PREP */}
+              <div className="flex justify-between items-center px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b border-black/10 hover:bg-black/5 transition-colors cursor-default">
+                <span className="text-xs font-bold uppercase tracking-widest text-text-titles">Tiempo de Prep.</span>
+                <span className="text-sm font-bold text-text-titles">{product.prepTime}</span>
+              </div>
+
+              {/* PRESENTACIÓN */}
+              <div className="flex justify-between items-center px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b border-black/10 hover:bg-black/5 transition-colors cursor-default">
+                <span className="text-xs font-bold uppercase tracking-widest text-text-titles">Presentación</span>
+                <span className="text-sm font-bold text-text-titles">{product.weight}</span>
+              </div>
+
+            </div>
+
+            {/* PRODUCTOS RELACIONADOS (También te puede gustar) */}
+            {relatedWithPrices.length > 0 && (
+              <div className="bg-bg-dark/5 pt-8 pb-10 px-6 sm:px-8 lg:px-10 xl:px-12">
+                <h2 className="text-xl font-black uppercase italic tracking-tight text-text-titles mb-4">También te puede gustar</h2>
+                <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
+                  {relatedWithPrices.map((related, idx) => (
+                    <Link href={`/menu/${related.slug}`} className="group flex flex-col bg-white rounded-radius border border-black/10 overflow-hidden" key={idx}>
+                      <div className="relative w-full aspect-square border-b border-black/10 bg-bg-dark/5">
+                        <Image src={related.img} alt={related.name} fill sizes="(max-width: 640px) 50vw, 20vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                      </div>
+                      <div className="p-2.5 flex flex-col gap-0.5">
+                        <span className="text-text-titles font-bold text-[10px] uppercase leading-tight line-clamp-1 group-hover:underline decoration-black/30 underline-offset-2">{related.name}</span>
+                        <span className="text-text-muted text-[11px] font-bold">${related.price}</span>
+                      </div>
+                    </Link>
                   ))}
                 </div>
-
-                <div className="space-y-4 border-l border-white/10 pl-4">
-                  {product.ingredients.length > 0 && (
-                    <div>
-                      <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.24em] text-white/42">Ingredientes</p>
-                      <div className="flex flex-wrap gap-2">
-                        {product.ingredients.map((ing) => (
-                          <span
-                            key={ing}
-                            className="rounded-full border border-white/12 bg-white/[0.05] px-3.5 py-1.5 text-[11px] font-medium text-white/92 transition-all duration-200 hover:border-white/24 hover:bg-white/[0.09]"
-                          >
-                            {ing}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {extras.length > 0 && (
-                    <div>
-                      <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.24em] text-white/42">Extras</p>
-
-                      <div className="space-y-2">
-                        {extras.map((block) => (
-                          <div key={block.title} className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3">
-                            <div className="flex flex-col gap-1 xl:flex-row xl:items-baseline xl:justify-between">
-                              <h3 className="text-sm font-semibold text-white">{block.title}</h3>
-                              {block.note && <p className="text-xs italic text-white/58">{block.note}</p>}
-                            </div>
-
-                            <div className="mt-1 space-y-1">
-                              {block.extras.map((extra) => (
-                                <div key={extra.label} className="text-xs leading-relaxed text-white/84 sm:text-sm">
-                                  <span>{extra.label}</span>
-                                  {extra.price ? <span className="ml-1 text-white">+${extra.price}</span> : null}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+              </div>
+            )}
+            
+            {/* SUCURSALES (En la columna derecha) */}
+            <div className="bg-white py-10 px-6 sm:px-8 lg:px-10 xl:px-12 border-t border-black/10">
+              <h2 className="text-xl font-black uppercase italic tracking-tight text-text-titles mb-6">Nuestras Sucursales</h2>
+              <div className="rounded-radius border border-black/5">
+                <LocationsCards className="bg-transparent" locations={locations} />
               </div>
             </div>
           </div>
-        </section>
+        </div>
 
-        <section className="relative z-20 px-5 py-6 sm:px-8 lg:hidden">
-          <div className="mx-auto max-w-7xl">
-            <div className="rounded-[26px] border border-white/10 bg-white/[0.04] p-3 backdrop-blur-xl shadow-[0_14px_50px_rgba(0,0,0,0.22)] sm:p-4">
-              <div className="grid gap-2 sm:grid-cols-3 sm:gap-3">
-                {metaItems.map((item) => (
-                  <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2.5 sm:px-3.5 sm:py-3">
-                    <div className="flex items-center gap-2.5">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.07] text-sm text-white sm:h-9 sm:w-9">{item.icon}</span>
-                      <div className="min-w-0">
-                        <p className="text-[8px] uppercase tracking-[0.2em] text-white/42 sm:text-[9px]">{item.label}</p>
-                        <p className="truncate text-xs text-white sm:text-sm">{item.value}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-4 space-y-4 border-t border-white/10 pt-4">
-                {product.ingredients.length > 0 && (
-                  <div>
-                    <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.24em] text-white/42">Ingredientes</p>
-                    <div className="flex flex-wrap gap-2">
-                      {product.ingredients.map((ing) => (
-                        <span
-                          key={ing}
-                          className="rounded-full border border-white/12 bg-white/[0.05] px-3 py-1.5 text-[10px] font-medium text-white/92 transition-all duration-200 hover:border-white/24 hover:bg-white/[0.09] sm:px-3.5 sm:text-[11px]"
-                        >
-                          {ing}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {extras.length > 0 && (
-                  <div>
-                    <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.24em] text-white/42">Extras</p>
-
-                    <div className="space-y-2">
-                      {extras.map((block) => (
-                        <div key={block.title} className="rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3">
-                          <div className="flex flex-col gap-1">
-                            <h3 className="text-sm font-semibold text-white">{block.title}</h3>
-                            {block.note && <p className="text-xs italic text-white/58">{block.note}</p>}
-                          </div>
-
-                          <div className="mt-1 space-y-1">
-                            {block.extras.map((extra) => (
-                              <div key={extra.label} className="text-xs leading-relaxed text-white/84 sm:text-sm">
-                                <span>{extra.label}</span>
-                                {extra.price ? <span className="ml-1 text-white">+${extra.price}</span> : null}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {relatedWithPrices.length > 0 && (
-          <section className="relative mx-auto max-w-7xl px-5 py-6 sm:px-8 lg:px-16 lg:pb-24 lg:pt-14">
-            <SectionTitle title="Tambien te puede gustar" />
-
-            <div className="flex gap-4 overflow-x-auto pb-3 -mx-5 px-5 scrollbar-none sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3">
-              {relatedWithPrices.map((rel) => (
-                <Link
-                  key={rel.slug}
-                  href={`/menu/${rel.slug}`}
-                  className="group relative flex w-[78vw] shrink-0 flex-col overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.04] p-3 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.06] sm:w-auto"
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-[24px]">
-                    <Image
-                      fill
-                      src={rel.img}
-                      alt={rel.name}
-                      sizes="(max-width: 640px) 78vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-
-                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,rgba(0,0,0,0.18)_34%,rgba(0,0,0,0.84)_100%)]" />
-
-                    {rel.tag && <span className={`absolute left-3 top-3 rounded-full px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.2em] ${tagColors[rel.tag]}`}>{rel.tag}</span>}
-
-                    <div className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white opacity-0 backdrop-blur-md transition-all duration-300 group-hover:opacity-100">
-                      <IconArrowNarrowRight className="h-4 w-4" />
-                    </div>
-
-                    <div className="absolute inset-x-0 bottom-0 p-4">
-                      <p className="line-clamp-2 text-sm leading-relaxed text-white/78">{rel.desc}</p>
-                    </div>
-                  </div>
-
-                  <div className="px-2 pb-2 pt-4">
-                    <p className="text-[10px] uppercase tracking-[0.22em] text-white/42">{rel.category}</p>
-
-                    <div className="mt-1 flex items-start justify-between gap-3">
-                      <h3 className="text-lg leading-snug text-white transition-colors duration-200 group-hover:text-white/88">{rel.name}</h3>
-
-                      <div className="shrink-0 text-right">
-                        {rel.originalPrice && <span className="block font-title text-sm text-white/35 line-through">${rel.originalPrice}</span>}
-                        <span className="font-title text-xl text-white">${rel.price}</span>
-                        <span className="ml-1 text-[11px] uppercase tracking-[0.15em] text-white/45">MXN</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-
-        <section className="relative mx-auto max-w-7xl px-5 pb-8 sm:px-8 lg:px-16">
-          <SectionTitle title="Nuestras sucursales" />
-          <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-4 backdrop-blur-sm sm:p-6">
-            <Locations className="bg-transparent" locations={locations} />
-          </div>
-        </section>
       </main>
-
       <FooterServer />
     </>
   )

@@ -11,8 +11,8 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { GalleryVerticalEndIcon, AudioLinesIcon, TerminalIcon, TerminalSquareIcon, BotIcon, BookOpenIcon, Settings2Icon, FrameIcon, PieChartIcon, MapIcon } from "lucide-react"
-import { IconAddressBook, IconArticle, IconBowlChopsticks, IconCalendarWeek, IconDiscount2, IconMapPin, IconMessageStar, IconPhoto, IconSpeakerphone, IconTag, IconWriting } from "@tabler/icons-react"
+import { DatabaseIcon, HomeIcon } from "lucide-react"
+import { IconAddressBook, IconArticle, IconBowlChopsticks, IconBrandGithub, IconBrandVercelFilled, IconCalendarWeek, IconDiscount2, IconImageInPicture, IconMapPin, IconMessageStar, IconPalette, IconPhoto, IconSpeakerphone, IconTag, IconWriting } from "@tabler/icons-react"
 import { NavComponent } from "./nav-component"
 
 // This is sample data.
@@ -24,28 +24,68 @@ const data = {
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Central molletes",
       logo: (
-        <GalleryVerticalEndIcon
-        />
+        <HomeIcon />
       ),
-      plan: "Enterprise",
+      url: "/"
     },
     {
-      name: "Acme Corp.",
+      name: "Cloudinary",
       logo: (
-        <AudioLinesIcon
-        />
+        <IconImageInPicture />
       ),
-      plan: "Startup",
+      url: "https://cloudinary.com"
     },
     {
-      name: "Evil Corp.",
+      name: "Neon",
       logo: (
-        <TerminalIcon
+        <DatabaseIcon
         />
       ),
-      plan: "Free",
+      url: "https://neon.com"
+    },
+    {
+      name: "Vercel",
+      logo: (
+        <IconBrandVercelFilled
+        />
+      ),
+      url: "https://vercel.com"
+    },
+    {
+      name: "GitHub",
+      logo: (
+        <IconBrandGithub
+        />
+      ),
+      url: "https://github.com"
+    },
+  ],
+  navMenu: [
+    {
+      title: "Productos",
+      url: "/admin/products",
+      icon: (
+        <IconBowlChopsticks
+        />
+      ),
+    },
+    {
+      title: "Categorías",
+      url: "/admin/categories",
+      icon: (
+        <IconTag
+        />
+      ),
+    },
+    {
+      title: "Promociones",
+      url: "/admin/promotions",
+      icon: (
+        <IconDiscount2
+        />
+      ),
     },
   ],
   navInfo: [
@@ -107,6 +147,8 @@ const data = {
         />
       ),
     },
+  ],
+  navAdvanced: [
     {
       title: "Módulos de Texto",
       url: "/admin/site-content",
@@ -115,29 +157,11 @@ const data = {
         />
       ),
     },
-  ],
-  navMenu: [
     {
-      title: "Productos",
-      url: "/admin/products",
+      title: "Tema",
+      url: "/admin/theme",
       icon: (
-        <IconBowlChopsticks
-        />
-      ),
-    },
-    {
-      title: "Categorías",
-      url: "/admin/categories",
-      icon: (
-        <IconTag
-        />
-      ),
-    },
-    {
-      title: "Promociones",
-      url: "/admin/promotions",
-      icon: (
-        <IconDiscount2
+        <IconPalette
         />
       ),
     },
@@ -154,8 +178,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavComponent items={data.navMenu} title="Menú"/>
         <NavComponent items={data.navInfo} title="Información"/>
         <NavComponent items={data.navContent} title="Contenido"/>
-        {/* <NavComponent items={data.navContent} title="Ajustes"/> */}
-        {/* <NavProjects projects={data.projects} /> */}
+        <NavComponent items={data.navAdvanced} title="Avanzado"/>
+
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

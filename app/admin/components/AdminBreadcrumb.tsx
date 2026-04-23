@@ -21,6 +21,8 @@ const routeLabels: Record<string, string> = {
   announcements: "Anuncios",
   reviews: "Reseñas",
   "site-images": "Galería del Sitio",
+  // Avanzado
+  theme: "Temas",
   "site-content": "Módulos de texto"
 }
 
