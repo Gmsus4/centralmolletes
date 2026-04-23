@@ -8,8 +8,7 @@ import Image from "next/image"
 import { EditButton } from "@/components/ui/EditButton"
 import { FooterServer } from "@/components/shared/FooterServer"
 import { NavbarServer } from "@/components/shared/NavbarServer"
-import { Locations, LocationsCards } from "@/components/locations/Locations"
-import { tagColors } from "@/lib/tagColors"
+import { LocationsCards } from "@/components/locations/Locations"
 import { getCategoryExtras } from "@/data/menuCategoryExtra"
 import { BackButton } from "@/components/ui/BackButton"
 import { ShareButton } from "@/components/ui/ShareButton"
@@ -164,9 +163,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <div className="absolute inset-0 bg-black/5" />
             
             {/* Back Button */}
-            <div className="absolute left-6 top-6 z-50 sm:left-10 sm:top-10">
+            {/* <div className="absolute left-6 top-6 z-50 sm:left-10 sm:top-10">
               <BackButton />
-            </div>
+            </div> */}
 
             {/* Acciones flotantes sobre la imagen */}
             <div className="absolute right-6 bottom-6 z-50 sm:right-10 sm:bottom-10 flex flex-row items-end gap-3">

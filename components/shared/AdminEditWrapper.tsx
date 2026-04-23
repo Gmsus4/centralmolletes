@@ -42,7 +42,7 @@ export const AdminEditWrapper = ({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Link href={href} className={className}>
+        <Link href={href} className={className} target="_blank">
           {childWithHover}
         </Link>
       </TooltipTrigger>

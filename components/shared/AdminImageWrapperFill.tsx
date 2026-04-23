@@ -18,6 +18,7 @@ export const AdminImageWrapperFill = ({ href, children }: Props) => {
     <div className="absolute inset-0">
       {children}
       <Link
+        target="_blank"
         href={href}
         className="absolute bottom-4 right-4 z-10 flex items-center gap-2 px-3 py-2 rounded-radius bg-bg-dark/80 backdrop-blur-sm text-white hover:bg-bg-dark transition-colors duration-200"
       >

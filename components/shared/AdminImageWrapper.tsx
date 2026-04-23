@@ -16,7 +16,7 @@ export const AdminImageWrapper = ({ href, children, className }: Props) => {
   if (!isAdmin) return <div className={className ?? "w-full h-full"}>{children}</div>
 
   return (
-    <Link href={href} className={className ?? "w-full h-full"}>
+    <Link href={href} className={className ?? "w-full h-full"} target="_blank">
       <div className="relative group w-full h-full overflow-hidden">
         <div className="[&_img]:transition-all h-full w-full [&_img]:duration-300 [&_img]:group-hover:brightness-50">
           {children}

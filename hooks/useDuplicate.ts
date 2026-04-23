@@ -90,7 +90,8 @@ export function useDuplicate({
       return
     }
 
-    router.push(redirectPath)
+    // router.push(redirectPath)
+    router.back()
     router.refresh()
   }, [getValues, router])
 }

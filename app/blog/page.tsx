@@ -7,6 +7,9 @@ import type { BlogSection } from "@/lib/validators/blog"
 import { autoPublishScheduled } from "@/lib/blog"
 import { TitlePage } from "@/components/ui/TitlePage"
 import { MarqueeStrip } from "@/components/ui/MarqueeStrip"
+import { AdminEditWrapper } from "@/components/shared/AdminEditWrapper"
+import { PencilIcon } from "lucide-react"
+import { IconPencilCode } from "@tabler/icons-react"
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -66,54 +69,66 @@ export default async function BlogPage() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {posts.map((post) => (
-                <Link
-                  key={post.id}
-                  href={`/blog/${post.slug}`}
-                  className="group flex flex-col bg-white border rounded-radius border-stone-200 hover:border-stone-300 transition-colors duration-200 overflow-hidden"
-                >
-                  {/* Cover */}
-                  <div className="aspect-[4/3] overflow-hidden bg-stone-100">
-                    {post.coverImage ? (
-                      <img
-                        src={post.coverImage}
-                        alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-stone-100" />
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex flex-col gap-2 p-5 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[9px] uppercase tracking-[0.2em] text-stone-400 bg-stone-100 px-2 py-0.5">
-                        {post.category}
-                      </span>
-                      <span className="text-[10px] text-stone-300">
-                        {new Date(post.publishedAt).toLocaleDateString("es-MX", {
-                          day: "numeric", month: "short", year: "numeric",
-                        })}
-                      </span>
-                      <span className="text-[10px] text-stone-300">
-                        {post.readMins} min de lectura
-                      </span>
+                <div key={post.id} className="relative">
+                  <AdminEditWrapper
+                    href={`/admin/blog/${post.id}`}
+                    tooltip="Editar blog"
+                    side="top"
+                    className="absolute top-2 right-2 z-10"
+                  >
+                    <div className="bg-white/90 backdrop-blur-sm border border-stone-200 rounded p-1.5 shadow-sm hover:!opacity-100">
+                      <IconPencilCode className="text-text-main hover:opacity-60 transition-opacity" size={18} />
                     </div>
-                    <h2 className="font-medium text-stone-900 leading-snug group-hover:text-stone-600 transition-colors">
-                      {post.title}
-                    </h2>
-                    <p className="text-xs text-stone-400 line-clamp-2 flex-1">{post.subtitle}</p>
-                    {post.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {post.tags.slice(0, 3).map((tag) => (
-                          <span key={tag} className="text-[9px] uppercase tracking-[0.15em] text-stone-300">
-                            #{tag}
-                          </span>
-                        ))}
+                  </AdminEditWrapper>
+                  <Link
+                    key={post.id}
+                    href={`/blog/${post.slug}`}
+                    className="group flex flex-col bg-white border rounded-radius border-stone-200 hover:border-stone-300 transition-colors duration-200 overflow-hidden"
+                  >
+                    {/* Cover */}
+                    <div className="aspect-[4/3] overflow-hidden bg-stone-100">
+                      {post.coverImage ? (
+                        <img
+                          src={post.coverImage}
+                          alt={post.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-stone-100" />
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex flex-col gap-2 p-5 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[9px] uppercase tracking-[0.2em] text-stone-400 bg-stone-100 px-2 py-0.5">
+                          {post.category}
+                        </span>
+                        <span className="text-[10px] text-stone-300">
+                          {new Date(post.publishedAt).toLocaleDateString("es-MX", {
+                            day: "numeric", month: "short", year: "numeric",
+                          })}
+                        </span>
+                        <span className="text-[10px] text-stone-300">
+                          {post.readMins} min de lectura
+                        </span>
                       </div>
-                    )}
-                  </div>
-                </Link>
+                      <h2 className="font-medium text-stone-900 leading-snug group-hover:text-stone-600 transition-colors">
+                        {post.title}
+                      </h2>
+                      <p className="text-xs text-stone-400 line-clamp-2 flex-1">{post.subtitle}</p>
+                      {post.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {post.tags.slice(0, 3).map((tag) => (
+                            <span key={tag} className="text-[9px] uppercase tracking-[0.15em] text-stone-300">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                </div>
               ))}
             </div>
           )}

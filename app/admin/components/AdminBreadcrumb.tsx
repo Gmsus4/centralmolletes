@@ -23,7 +23,9 @@ const routeLabels: Record<string, string> = {
   "site-images": "Galería del Sitio",
   // Avanzado
   theme: "Temas",
-  "site-content": "Módulos de texto"
+  "site-content": "Módulos de texto",
+
+  help: "Guía"
 }
 
 export function AdminBreadcrumb() {

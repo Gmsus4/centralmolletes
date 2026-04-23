@@ -440,24 +440,28 @@ export default function AdminHelpPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 bg-muted rounded-lg mb-6 w-fit">
-        {TABS.map((tab) => {
-          const Icon = tab.icon
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm transition-all cursor-pointer ${
-                activeTab === tab.id
-                  ? "bg-background text-foreground font-medium shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon size={15} />
-              {tab.label}
-            </button>
-          )
-        })}
+      <div className="mb-6">
+        {/* Mobile: scroll horizontal */}
+        <div className="flex gap-1 p-1 bg-muted rounded-lg overflow-x-auto scrollbar-none w-full sm:w-fit">
+          {TABS.map((tab) => {
+            const Icon = tab.icon
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-all cursor-pointer whitespace-nowrap flex-shrink-0 ${
+                  activeTab === tab.id
+                    ? "bg-background text-foreground font-medium shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon size={15} />
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden text-xs">{tab.label}</span>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* Tab: Secciones */}
