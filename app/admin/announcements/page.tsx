@@ -25,10 +25,10 @@ const TYPE_META: Record<
     badge: string
   }
 > = {
-  PROMO: { label: "Promoción", icon: Megaphone, badge: "bg-violet-50 text-violet-700 border-violet-200" },
-  INFO: { label: "Información", icon: Info, badge: "bg-sky-50 text-sky-700 border-sky-200" },
-  WARNING: { label: "Aviso", icon: TriangleAlert, badge: "bg-amber-50 text-amber-700 border-amber-200" },
-  CLOSED: { label: "Cerrado", icon: XCircle, badge: "bg-rose-50 text-rose-700 border-rose-200" },
+  PROMO:   { label: "Promoción",   icon: Megaphone,    badge: "bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950 dark:text-violet-400 dark:border-violet-800" },
+  INFO:    { label: "Información", icon: Info,          badge: "bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950 dark:text-sky-400 dark:border-sky-800" },
+  WARNING: { label: "Aviso",       icon: TriangleAlert, badge: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800" },
+  CLOSED:  { label: "Cerrado",     icon: XCircle,       badge: "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950 dark:text-rose-400 dark:border-rose-800" },
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ export default async function AnnouncementsPage() {
               <Link
                 key={announcement.id}
                 href={`/admin/announcements/${announcement.id}`}
-                className="group flex flex-col gap-4 p-5 border rounded-lg bg-card hover:shadow-md transition-all duration-200"
+                className="group flex flex-col gap-4 p-5 border border-border rounded-lg bg-card hover:shadow-md transition-all duration-200"
               >
                 {/* Top row: tipo + status */}
                 <div className="flex items-center justify-between gap-2">

@@ -9,6 +9,9 @@ import { AdminFormLayout } from "../components/AdminFormLayout"
 import { useDuplicate } from "@/hooks/useDuplicate"
 import { useFormOverlay } from "@/hooks/useFormOverlay"
 import { SavingOverlay } from "@/components/ui/saving-overlay"
+import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/input"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -36,15 +39,6 @@ type Theme = {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const inputClass = `
-  w-full bg-white
-  border border-stone-300 focus:border-stone-700
-  px-4 py-2.5
-  text-stone-900 text-sm placeholder:text-stone-400
-  outline-none transition-colors duration-200
-`
-const labelClass = "text-[10px] uppercase tracking-[0.25em] text-stone-600 font-medium"
-
 const RADIUS_PRESETS = ["0px", "4px", "8px", "12px", "16px", "9999px"]
 
 const FONT_TITLE_OPTIONS = [
@@ -67,73 +61,64 @@ const FONT_BODY_OPTIONS = [
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   <div className="flex items-center gap-3 mb-4">
-    <span className="text-[10px] uppercase tracking-[0.3em] text-stone-400">{children}</span>
-    <span className="flex-1 h-px bg-stone-100" />
+    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">{children}</span>
+    <Separator className="flex-1" />
   </div>
 )
 
-function DeleteButton({ onConfirm }: { onConfirm: () => void }) {
-  const [confirm, setConfirm] = useState(false)
-
-  if (confirm) {
-    return (
-      <div className="flex items-center gap-3">
-        <span className="text-[10px] uppercase tracking-[0.2em] text-stone-500">¿Confirmar?</span>
-        <button
-          type="button"
-          onClick={onConfirm}
-          className="text-[10px] uppercase tracking-[0.2em] text-red-500 hover:text-red-700 border-b border-red-400 pb-px transition-colors duration-200 cursor-pointer"
-        >
-          Sí, eliminar
-        </button>
-        <button
-          type="button"
-          onClick={() => setConfirm(false)}
-          className="text-[10px] uppercase tracking-[0.2em] text-stone-500 border-b border-stone-400 pb-px transition-colors duration-200 cursor-pointer"
-        >
-          No
-        </button>
-      </div>
-    )
-  }
-
+function ColorInput({
+  label,
+  value,
+  onChange,
+  error,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  error?: string
+}) {
   return (
-    <button
-      type="button"
-      onClick={() => setConfirm(true)}
-      className="text-[10px] uppercase tracking-[0.2em] text-stone-400 hover:text-red-500 border-b border-stone-300 hover:border-red-500 pb-px transition-colors duration-200 cursor-pointer"
-    >
-      Eliminar
-    </button>
-  )
-}
-
-function ColorInput({ label, value, onChange, error }: { label: string; value: string; onChange: (v: string) => void; error?: string }) {
-  return (
-    <div className="flex flex-col gap-2 p-3 border border-stone-200 bg-stone-50">
-      <span className="text-[9px] uppercase tracking-[0.25em] text-stone-400">{label}</span>
+    <div className="flex flex-col gap-2 p-3 border border-border bg-muted/30">
+      <span className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground">{label}</span>
       <div className="flex gap-2 items-center">
-        <input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="w-8 h-8 border border-stone-300 cursor-pointer flex-shrink-0" />
         <input
+          type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="border border-stone-300 focus:border-stone-700 px-2 py-1 text-xs w-full outline-none bg-white text-stone-900 font-mono transition-colors"
+          className="w-8 h-8 border border-border cursor-pointer flex-shrink-0 bg-background"
+        />
+        <Input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-7 px-2 text-xs font-mono"
         />
       </div>
-      {error && <span className="text-red-500 text-[10px]">{error}</span>}
+      {error && <span className="text-destructive text-[10px]">{error}</span>}
     </div>
   )
 }
 
-function RadiusInput({ label, value, presets, onChange, error }: { label: string; value: string; presets: string[]; onChange: (v: string) => void; error?: string }) {
+function RadiusInput({
+  label,
+  value,
+  presets,
+  onChange,
+  error,
+}: {
+  label: string
+  value: string
+  presets: string[]
+  onChange: (v: string) => void
+  error?: string
+}) {
   return (
-    <div className="flex flex-col gap-2 p-3 border border-stone-200 bg-stone-50">
-      <span className="text-[9px] uppercase tracking-[0.25em] text-stone-400">{label}</span>
-      <input
+    <div className="flex flex-col gap-2 p-3 border border-border bg-muted/30">
+      <span className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground">{label}</span>
+      <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="8px"
-        className="border border-stone-300 focus:border-stone-700 px-2 py-1.5 text-xs w-full outline-none bg-white text-stone-900 font-mono transition-colors"
+        className="h-7 px-2 text-xs font-mono"
       />
       <div className="flex gap-1 flex-wrap">
         {presets.map((p) => (
@@ -142,7 +127,9 @@ function RadiusInput({ label, value, presets, onChange, error }: { label: string
             type="button"
             onClick={() => onChange(p)}
             className={`text-[9px] px-1.5 py-0.5 border transition-colors cursor-pointer ${
-              value === p ? "border-stone-700 bg-stone-900 text-white" : "border-stone-200 text-stone-500 hover:border-stone-400"
+              value === p
+                ? "border-foreground bg-foreground text-background"
+                : "border-border text-muted-foreground hover:border-foreground/40"
             }`}
             style={{ borderRadius: p === "9999px" ? "9999px" : "3px" }}
           >
@@ -151,22 +138,37 @@ function RadiusInput({ label, value, presets, onChange, error }: { label: string
         ))}
       </div>
       <div className="flex items-center gap-2">
-        <div className="w-7 h-7 bg-stone-300 border border-stone-400" style={{ borderRadius: value }} />
-        <span className="text-[9px] text-stone-400">preview</span>
+        <div
+          className="w-7 h-7 bg-muted border border-border"
+          style={{ borderRadius: value }}
+        />
+        <span className="text-[9px] text-muted-foreground">preview</span>
       </div>
-      {error && <span className="text-red-500 text-[10px]">{error}</span>}
+      {error && <span className="text-destructive text-[10px]">{error}</span>}
     </div>
   )
 }
 
-function FontSelect({ label, value, options, onChange, error }: { label: string; value: string; options: { value: string; label: string }[]; onChange: (v: string) => void; error?: string }) {
+function FontSelect({
+  label,
+  value,
+  options,
+  onChange,
+  error,
+}: {
+  label: string
+  value: string
+  options: { value: string; label: string }[]
+  onChange: (v: string) => void
+  error?: string
+}) {
   return (
-    <div className="flex flex-col gap-2 p-3 border border-stone-200 bg-stone-50">
-      <span className="text-[9px] uppercase tracking-[0.25em] text-stone-400">{label}</span>
+    <div className="flex flex-col gap-2 p-3 border border-border bg-muted/30">
+      <span className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="border border-stone-300 focus:border-stone-700 px-2 py-1.5 text-xs w-full outline-none bg-white text-stone-900 transition-colors cursor-pointer"
+        className="border border-border focus:border-foreground/40 px-2 py-1.5 text-xs w-full outline-none bg-background text-foreground transition-colors cursor-pointer rounded-none"
         style={{ fontFamily: value }}
       >
         {options.map((f) => (
@@ -175,10 +177,10 @@ function FontSelect({ label, value, options, onChange, error }: { label: string;
           </option>
         ))}
       </select>
-      <span className="text-sm" style={{ fontFamily: value }}>
+      <span className="text-sm text-foreground" style={{ fontFamily: value }}>
         The quick brown fox
       </span>
-      {error && <span className="text-red-500 text-[10px]">{error}</span>}
+      {error && <span className="text-destructive text-[10px]">{error}</span>}
     </div>
   )
 }
@@ -198,7 +200,6 @@ export default function ThemeForm({ theme }: { theme?: Theme }) {
     control,
     watch,
     getValues,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ThemeFormValues>({
     resolver: zodResolver(ThemeSchema),
@@ -224,16 +225,15 @@ export default function ThemeForm({ theme }: { theme?: Theme }) {
     },
   })
 
-  // watch para el preview en tiempo real
   const colors = watch()
 
   const handleDuplicate = useDuplicate({
-      apiPath:      "/api/theme",
-      redirectPath: "/admin/theme",
-      getValues,
-      setOverlayMode,
-      setSubmitError,
-      nameField: "name"
+    apiPath: "/api/theme",
+    redirectPath: "/admin/theme",
+    getValues,
+    setOverlayMode,
+    setSubmitError,
+    nameField: "name",
   })
 
   const onSubmit = async (data: ThemeFormValues) => {
@@ -294,99 +294,111 @@ export default function ThemeForm({ theme }: { theme?: Theme }) {
       onDelete={isEditing ? handleDelete : undefined}
       deleteTitle="¿Eliminar tema?"
       deleteDescription="Esta acción no se puede deshacer. El tema será eliminado permanentemente."
-      // previewHref={isEditing ? `/blog/${watch("slug")}` : undefined}
       onDuplicate={isEditing ? handleDuplicate : undefined}
       onActivate={isEditing ? handleActivate : undefined}
     >
       <SavingOverlay isVisible={isVisible} mode={overlayMode ?? "saving"} />
-      <div className="">
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 lg:items-start">
-          {/* ── Left: Form ── */}
-          <form id="theme-form" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-7 flex-1 min-w-0">
-            {/* Nombre */}
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Nombre del theme</label>
-              <input {...register("name")} placeholder="Mi tema oscuro…" className={inputClass} />
-              {errors.name && <span className="text-red-500 text-xs">{errors.name.message}</span>}
-            </div>
+      <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 lg:items-start">
+        {/* ── Left: Form ── */}
+        <form id="theme-form" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-7 flex-1 min-w-0">
+          {/* Nombre */}
+          <Field data-invalid={!!errors.name}>
+            <FieldLabel htmlFor="name">Nombre del tema</FieldLabel>
+            <Input id="name" {...register("name")} placeholder="Mi tema oscuro…" />
+            <FieldError>{errors.name?.message}</FieldError>
+          </Field>
 
-            {/* Colores */}
-            <div>
-              <SectionTitle>Colores</SectionTitle>
-              <div className="grid grid-cols-2 gap-3">
-                {(
-                  [
-                    ["bgBody", "Fondo general"],
-                    ["bgDark", "Fondo oscuro"],
-                    ["textMain", "Texto base"],
-                    ["textTitles", "Títulos"],
-                    ["textMuted", "Texto muted"],
-                    ["textInvert", "Texto invertido"],
-                    ["brandPrimary", "Brand primary"],
-                    ["brandPrimaryHover", "Primary hover"],
-                    ["brandContrast", "Brand contrast"],
-                    ["brandContrastHover", "Contrast hover"],
-                    ["borderColor", "Border"],
-                    ["statusError", "Error"],
-                    ["shadowColor", "Sombra"],
-                  ] as [keyof ThemeFormValues, string][]
-                ).map(([field, label]) => (
-                  <Controller
-                    key={field}
-                    control={control}
-                    name={field}
-                    render={({ field: f }) => <ColorInput label={label} value={f.value as string} onChange={f.onChange} error={errors[field]?.message} />}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Radius */}
-            <div>
-              <SectionTitle>Radius</SectionTitle>
-              <div className="grid grid-cols-2 gap-3">
+          {/* Colores */}
+          <div>
+            <SectionTitle>Colores</SectionTitle>
+            <div className="grid grid-cols-2 gap-3">
+              {(
+                [
+                  ["bgBody", "Fondo general"],
+                  ["bgDark", "Fondo oscuro"],
+                  ["textMain", "Texto base"],
+                  ["textTitles", "Títulos"],
+                  ["textMuted", "Texto muted"],
+                  ["textInvert", "Texto invertido"],
+                  ["brandPrimary", "Brand primary"],
+                  ["brandPrimaryHover", "Primary hover"],
+                  ["brandContrast", "Brand contrast"],
+                  ["brandContrastHover", "Contrast hover"],
+                  ["borderColor", "Border"],
+                  ["statusError", "Error"],
+                  ["shadowColor", "Sombra"],
+                ] as [keyof ThemeFormValues, string][]
+              ).map(([field, label]) => (
                 <Controller
+                  key={field}
                   control={control}
-                  name="radius"
-                  render={({ field: f }) => <RadiusInput label="Radio base" value={f.value} presets={RADIUS_PRESETS} onChange={f.onChange} error={errors.radius?.message} />}
+                  name={field}
+                  render={({ field: f }) => (
+                    <ColorInput
+                      label={label}
+                      value={f.value as string}
+                      onChange={f.onChange}
+                      error={errors[field]?.message}
+                    />
+                  )}
                 />
-                <Controller
-                  control={control}
-                  name="radiusFull"
-                  render={({ field: f }) => <RadiusInput label="Radio full" value={f.value} presets={["0px", "9999px"]} onChange={f.onChange} error={errors.radiusFull?.message} />}
-                />
-              </div>
+              ))}
             </div>
+          </div>
 
-            {/* Tipografía */}
-            <div>
-              <SectionTitle>Tipografía</SectionTitle>
-              <div className="grid grid-cols-2 gap-3">
-                <Controller
-                  control={control}
-                  name="fontTitle"
-                  render={({ field: f }) => <FontSelect label="Título" value={f.value} options={FONT_TITLE_OPTIONS} onChange={f.onChange} error={errors.fontTitle?.message} />}
-                />
-                <Controller
-                  control={control}
-                  name="fontBody"
-                  render={({ field: f }) => <FontSelect label="Cuerpo" value={f.value} options={FONT_BODY_OPTIONS} onChange={f.onChange} error={errors.fontBody?.message} />}
-                />
-              </div>
+          {/* Radius */}
+          <div>
+            <SectionTitle>Radius</SectionTitle>
+            <div className="grid grid-cols-2 gap-3">
+              <Controller
+                control={control}
+                name="radius"
+                render={({ field: f }) => (
+                  <RadiusInput label="Radio base" value={f.value} presets={RADIUS_PRESETS} onChange={f.onChange} error={errors.radius?.message} />
+                )}
+              />
+              <Controller
+                control={control}
+                name="radiusFull"
+                render={({ field: f }) => (
+                  <RadiusInput label="Radio full" value={f.value} presets={["0px", "9999px"]} onChange={f.onChange} error={errors.radiusFull?.message} />
+                )}
+              />
             </div>
+          </div>
 
-            {/* Mobile preview */}
-            <div className="lg:hidden">
-              <SectionTitle>Preview</SectionTitle>
-              <ThemePreview colors={colors} />
+          {/* Tipografía */}
+          <div>
+            <SectionTitle>Tipografía</SectionTitle>
+            <div className="grid grid-cols-2 gap-3">
+              <Controller
+                control={control}
+                name="fontTitle"
+                render={({ field: f }) => (
+                  <FontSelect label="Título" value={f.value} options={FONT_TITLE_OPTIONS} onChange={f.onChange} error={errors.fontTitle?.message} />
+                )}
+              />
+              <Controller
+                control={control}
+                name="fontBody"
+                render={({ field: f }) => (
+                  <FontSelect label="Cuerpo" value={f.value} options={FONT_BODY_OPTIONS} onChange={f.onChange} error={errors.fontBody?.message} />
+                )}
+              />
             </div>
-          </form>
+          </div>
 
-          {/* ── Right: Sticky preview ── */}
-          <div className="hidden lg:block w-80 xl:w-96 flex-shrink-0 sticky top-8 self-start">
+          {/* Mobile preview */}
+          <div className="lg:hidden">
             <SectionTitle>Preview</SectionTitle>
             <ThemePreview colors={colors} />
           </div>
+        </form>
+
+        {/* ── Right: Sticky preview ── */}
+        <div className="hidden lg:block w-80 xl:w-96 flex-shrink-0 sticky top-8 self-start">
+          <SectionTitle>Preview</SectionTitle>
+          <ThemePreview colors={colors} />
         </div>
       </div>
     </AdminFormLayout>
@@ -394,6 +406,9 @@ export default function ThemeForm({ theme }: { theme?: Theme }) {
 }
 
 // ─── ThemePreview ─────────────────────────────────────────────────────────────
+// El preview usa inline styles deliberadamente ya que renderiza
+// el tema del cliente (colores arbitrarios), no el tema del admin.
+// No aplicar variables semánticas aquí.
 
 type PreviewColors = {
   bgBody: string
@@ -442,35 +457,9 @@ function ThemePreview({ colors }: { colors: PreviewColors }) {
       </div>
 
       {/* ── HERO ── */}
-      <div
-        style={{ background: bgDark, padding: "22px 16px 18px", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 8 }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 190,
-            height: 190,
-            borderRadius: "50%",
-            border: `1px solid ${brandPrimary}18`,
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 270,
-            height: 270,
-            borderRadius: "50%",
-            border: `1px solid ${brandPrimary}0c`,
-            pointerEvents: "none",
-          }}
-        />
+      <div style={{ background: bgDark, padding: "22px 16px 18px", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: 8 }}>
+        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 190, height: 190, borderRadius: "50%", border: `1px solid ${brandPrimary}18`, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 270, height: 270, borderRadius: "50%", border: `1px solid ${brandPrimary}0c`, pointerEvents: "none" }} />
         <div style={{ display: "flex", alignItems: "center", gap: 5, position: "relative" }}>
           <span style={{ width: 12, height: 1, background: `${brandPrimary}70` }} />
           <span style={{ fontSize: 7, textTransform: "uppercase", letterSpacing: "0.3em", color: `${brandPrimary}90` }}>Cafetería</span>
@@ -488,34 +477,8 @@ function ThemePreview({ colors }: { colors: PreviewColors }) {
           <span style={{ flex: 1, height: 1, background: `${brandPrimary}25` }} />
         </div>
         <div style={{ display: "flex", gap: 6, position: "relative" }}>
-          <span
-            style={{
-              border: `1px solid ${brandPrimary}`,
-              color: brandPrimary,
-              borderRadius: radiusFull,
-              fontSize: 8,
-              padding: "3px 9px",
-              fontWeight: 600,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-            }}
-          >
-            Explorar menú
-          </span>
-          <span
-            style={{
-              backgroundColor: brandPrimary,
-              border: `1px solid ${textInvert}25`,
-              color: bgDark,
-              borderRadius: radiusFull,
-              fontSize: 8,
-              padding: "3px 9px",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-            }}
-          >
-            Ubicaciones
-          </span>
+          <span style={{ border: `1px solid ${brandPrimary}`, color: brandPrimary, borderRadius: radiusFull, fontSize: 8, padding: "3px 9px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>Explorar menú</span>
+          <span style={{ backgroundColor: brandPrimary, border: `1px solid ${textInvert}25`, color: bgDark, borderRadius: radiusFull, fontSize: 8, padding: "3px 9px", letterSpacing: "0.08em", textTransform: "uppercase" }}>Ubicaciones</span>
         </div>
       </div>
 
@@ -523,20 +486,7 @@ function ThemePreview({ colors }: { colors: PreviewColors }) {
       <div style={{ background: bgBody, padding: "12px 14px", display: "flex", flexDirection: "column", gap: 7 }}>
         <div style={{ display: "flex", gap: 5 }}>
           {["Día", "Noche"].map((t, i) => (
-            <span
-              key={t}
-              style={{
-                fontSize: 8,
-                padding: "3px 8px",
-                textTransform: "uppercase",
-                letterSpacing: "0.15em",
-                fontWeight: 600,
-                border: `1px solid ${i === 0 ? borderColor : `${borderColor}30`}`,
-                borderRadius: radius,
-                background: i === 0 ? brandContrast : "transparent",
-                color: i === 0 ? brandPrimary : `${textMain}60`,
-              }}
-            >
+            <span key={t} style={{ fontSize: 8, padding: "3px 8px", textTransform: "uppercase", letterSpacing: "0.15em", fontWeight: 600, border: `1px solid ${i === 0 ? borderColor : `${borderColor}30`}`, borderRadius: radius, background: i === 0 ? brandContrast : "transparent", color: i === 0 ? brandPrimary : `${textMain}60` }}>
               {t}
             </span>
           ))}

@@ -29,7 +29,7 @@ export default async function AdminSiteImagesPage() {
   return (
     <LayoutAdminSection namePage="Imágenes del sitio" maxWidth="max-w-6xl" link={{ label: "Nueva imagen", href: "/admin/site-images/new" }}>
       <div className="flex items-center gap-2 mt-1">
-        <span className="text-sm text-stone-400">
+        <span className="text-sm text-muted-foreground">
           {images.length} {images.length === 1 ? "imagen" : "imágenes"}
         </span>
       </div>
@@ -55,22 +55,22 @@ export default async function AdminSiteImagesPage() {
               <div key={group.value}>
                 {/* Encabezado de sección */}
                 <div className="flex items-center gap-3 mb-1">
-                  <span className="text-[10px] uppercase tracking-[0.3em] text-stone-500 font-semibold">{group.label}</span>
-                  <span className="flex-1 h-px bg-stone-200" />
-                  <span className="text-[10px] text-stone-400">{group.images.length}</span>
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-semibold">{group.label}</span>
+                  <span className="flex-1 h-px bg-border" />
+                  <span className="text-[10px] text-muted-foreground">{group.images.length}</span>
                   <Link
                     href={`/admin/site-images/new?section=${group.value}`}
-                    className="text-[9px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-700 border border-stone-200 hover:border-stone-400 px-2.5 py-1 transition-colors"
+                    className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground border border-border hover:border-foreground/40 px-2.5 py-1 transition-colors"
                   >
                     + Agregar
                   </Link>
                 </div>
-                <p className="text-[11px] text-stone-400 mb-4">{group.description}</p>
+                <p className="text-[11px] text-muted-foreground mb-4">{group.description}</p>
 
                 {group.images.length === 0 ? (
-                  <p className="text-[11px] text-stone-300 italic py-4 border border-dashed border-stone-200 text-center">
+                  <p className="text-[11px] text-muted-foreground italic py-4 border border-dashed border-border text-center">
                     Sin imágenes en esta sección.{" "}
-                    <Link href={`/admin/site-images/new?section=${group.value}`} className="underline underline-offset-2 hover:text-stone-500 transition-colors">
+                    <Link href={`/admin/site-images/new?section=${group.value}`} className="underline underline-offset-2 hover:text-foreground transition-colors">
                       Agregar
                     </Link>
                   </p>

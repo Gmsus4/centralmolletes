@@ -20,9 +20,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { IconBrandWhatsapp, IconBrowser, IconBulb, IconExternalLink, IconSchool, IconWorld } from "@tabler/icons-react"
-import { ChevronsUpDownIcon, SparklesIcon, BadgeCheckIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
+import { IconBrandWhatsapp, IconMoon, IconSchool, IconSun, IconWorld } from "@tabler/icons-react"
+import { ChevronsUpDownIcon, LogOutIcon } from "lucide-react"
 import { signOut } from "next-auth/react"
+import { useTheme } from "next-themes"
 import Link from "next/link"
 
 export function NavUser({
@@ -35,7 +36,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
-
+  const { theme, setTheme } = useTheme()
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -76,7 +77,7 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link href="https://wa.me/523322364324" className="flex items-center gap-1 cursor-pointer">
                   <IconBrandWhatsapp /> Soporte
                 </Link>
@@ -84,17 +85,16 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link href="/" className="flex items-center gap-2 cursor-pointer">
                   <IconWorld /> Ver sitio
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon
-                />
-                Billing
+              <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="cursor-pointer">
+                {theme === "dark" ? <IconSun size={16} /> : <IconMoon size={16} />}
+                {theme === "dark" ? "Tema claro" : "Tema oscuro"}
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link href="/admin/help" className="flex items-center gap-2 cursor-pointer">
                   <IconSchool />
                   Guía

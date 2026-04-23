@@ -30,7 +30,7 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <Empty className={cn("rounded-2xl border bg-white", className)}>
+    <Empty className={cn("rounded-2xl border bg-background", className)}>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <Icon />

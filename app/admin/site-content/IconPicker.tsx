@@ -180,13 +180,13 @@ export function IconPicker({ value, onChange }: Props) {
   return (
     <div className="flex flex-col gap-3">
       {SelectedIcon && (
-        <div className="flex items-center gap-3 px-4 py-3 border border-stone-200 bg-stone-50">
-          <SelectedIcon size={22} className="text-amber-600 shrink-0" />
+        <div className="flex items-center gap-3 px-4 py-3 border border-border bg-muted">
+          <SelectedIcon size={22} className="text-amber-600 dark:text-amber-400 shrink-0" />
           <div>
-            <p className="text-[12px] font-semibold text-stone-700">
+            <p className="text-[12px] font-semibold text-foreground">
               {ICON_CATALOG.find((i) => i.key === value)?.label ?? value}
             </p>
-            <p className="text-[10px] font-mono text-stone-400">{value}</p>
+            <p className="text-[10px] font-mono text-muted-foreground">{value}</p>
           </div>
         </div>
       )}
@@ -205,8 +205,8 @@ export function IconPicker({ value, onChange }: Props) {
             onClick={() => setCat(c.value)}
             className={`text-[9px] uppercase tracking-[0.15em] px-2.5 py-1 border transition-colors cursor-pointer ${
               cat === c.value
-                ? "bg-stone-900 text-white border-stone-900"
-                : "bg-white text-stone-500 border-stone-200 hover:border-stone-400"
+                ? "bg-foreground text-background border-foreground"
+                : "bg-background text-muted-foreground border-border hover:border-foreground/40"
             }`}
           >
             {c.label}
@@ -227,14 +227,14 @@ export function IconPicker({ value, onChange }: Props) {
               title={icon.label}
               className={`flex flex-col items-center gap-1.5 py-3 px-1 border text-center transition-colors cursor-pointer ${
                 isSelected
-                  ? "bg-stone-900 border-stone-900 text-white"
-                  : "bg-white border-stone-200 text-stone-500 hover:border-stone-400 hover:text-stone-700"
+                  ? "bg-foreground border-foreground text-background"
+                  : "bg-background border-border text-muted-foreground hover:border-foreground/40 hover:bg-accent"
               }`}
             >
               <Icon size={18} />
               <span
                 className={`text-[9px] leading-tight truncate w-full text-center ${
-                  isSelected ? "text-stone-300" : "text-stone-400"
+                  isSelected ? "text-background/70" : "text-muted-foreground"
                 }`}
               >
                 {icon.label.split("/")[0].trim()}
@@ -243,13 +243,13 @@ export function IconPicker({ value, onChange }: Props) {
           )
         })}
         {filtered.length === 0 && (
-          <p className="col-span-full text-[11px] text-stone-300 italic text-center py-6">
+          <p className="col-span-full text-[11px] text-muted-foreground italic text-center py-6">
             Sin resultados para &ldquo;{search}&rdquo;
           </p>
         )}
       </div>
 
-      <p className="text-[9px] uppercase tracking-[0.15em] text-stone-300 text-right">
+      <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground text-right">
         {filtered.length} de {ICON_CATALOG.length} íconos
       </p>
     </div>

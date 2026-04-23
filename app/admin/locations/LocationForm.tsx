@@ -26,6 +26,7 @@ import { AdminFormLayout } from "../components/AdminFormLayout"
 import { useFormOverlay } from "@/hooks/useFormOverlay"
 import { SavingOverlay } from "@/components/ui/saving-overlay"
 import { useDuplicate } from "@/hooks/useDuplicate"
+import { Separator } from "@/components/ui/separator"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -48,23 +49,12 @@ type Props = {
   location?: Location
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
-const inputClass = `
-  w-full bg-white
-  border border-stone-300 focus:border-stone-700
-  px-4 py-2.5
-  text-stone-900 text-sm placeholder:text-stone-400
-  outline-none transition-colors duration-200
-`
-const labelClass = "text-[10px] uppercase tracking-[0.25em] text-stone-600 font-medium"
-
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   <div className="flex items-center gap-3 mb-5">
-    <span className="text-[10px] uppercase tracking-[0.3em] text-stone-400">{children}</span>
-    <span className="flex-1 h-px bg-stone-100" />
+    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">{children}</span>
+    <Separator className="flex-1" />
   </div>
 )
 
@@ -178,7 +168,7 @@ export default function LocationForm({ location }: Props) {
         setSubmitError(message)
       }
       setOverlayMode(null)
-      return // ← quita el router.push de error, ya no es necesario
+      return
     }
 
     router.push("/admin/locations?success=true")
@@ -204,7 +194,6 @@ export default function LocationForm({ location }: Props) {
       onDelete={isEditing ? handleDelete : undefined}
       deleteTitle="¿Eliminar sucursal?"
       deleteDescription="Esta acción no se puede deshacer. La sucursal será eliminada permanentemente."
-      // previewHref={isEditing ? `/locations/${watch("slug")}` : undefined}
       onDuplicate={isEditing ? handleDuplicate : undefined}
     >
       <SavingOverlay isVisible={isVisible} mode={overlayMode ?? "saving"} />
@@ -217,43 +206,43 @@ export default function LocationForm({ location }: Props) {
             <Field data-invalid={!!errors.name}>
               <FieldLabel htmlFor="name">Nombre</FieldLabel>
               <FieldError>{errors.name?.message}</FieldError>
-              <Input id="name" aria-invalid={!!errors.name} {...register("name")} placeholder="Central Molletes Cafetería" className={inputClass} />
+              <Input id="name" aria-invalid={!!errors.name} {...register("name")} placeholder="Central Molletes Cafetería" />
             </Field>
 
             <Field data-invalid={!!errors.slug}>
               <FieldLabel htmlFor="slug">Slug</FieldLabel>
               <FieldError>{errors.slug?.message}</FieldError>
-              <Input id="slug" aria-invalid={!!errors.slug} {...register("slug")} placeholder="etzatlán" className={inputClass} />
+              <Input id="slug" aria-invalid={!!errors.slug} {...register("slug")} placeholder="etzatlán" />
             </Field>
 
             <Field data-invalid={!!errors.city}>
               <FieldLabel htmlFor="city">Ciudad</FieldLabel>
               <FieldError>{errors.city?.message}</FieldError>
-              <Input id="city" aria-invalid={!!errors.city} {...register("city")} placeholder="Etzatlán " className={inputClass} />
+              <Input id="city" aria-invalid={!!errors.city} {...register("city")} placeholder="Etzatlán" />
             </Field>
 
             <Field data-invalid={!!errors.address}>
               <FieldLabel htmlFor="address">Dirección completa</FieldLabel>
               <FieldError>{errors.address?.message}</FieldError>
-              <Input id="address" aria-invalid={!!errors.address} {...register("address")} placeholder="Ocampo 63, Centro, 46500 Etzatlán, Jal." className={inputClass} />
+              <Input id="address" aria-invalid={!!errors.address} {...register("address")} placeholder="Ocampo 63, Centro, 46500 Etzatlán, Jal." />
             </Field>
 
             <Field data-invalid={!!errors.addressMin}>
               <FieldLabel htmlFor="addressMin">Dirección corta</FieldLabel>
               <FieldError>{errors.addressMin?.message}</FieldError>
-              <Input id="addressMin" aria-invalid={!!errors.addressMin} {...register("addressMin")} placeholder="Ocampo 63, Centro" className={inputClass} />
+              <Input id="addressMin" aria-invalid={!!errors.addressMin} {...register("addressMin")} placeholder="Ocampo 63, Centro" />
             </Field>
 
             <Field data-invalid={!!errors.phone}>
               <FieldLabel htmlFor="phone">Teléfono</FieldLabel>
               <FieldError>{errors.phone?.message}</FieldError>
-              <Input id="phone" aria-invalid={!!errors.phone} {...register("phone")} placeholder="+52 (386) 105-4528" className={inputClass} />
+              <Input id="phone" aria-invalid={!!errors.phone} {...register("phone")} placeholder="+52 (386) 105-4528" />
             </Field>
 
             <Field data-invalid={!!errors.hours}>
               <FieldLabel htmlFor="hours">Horario</FieldLabel>
               <FieldError>{errors.hours?.message}</FieldError>
-              <Input id="hours" aria-invalid={!!errors.hours} {...register("hours")} placeholder="8:30 am – 1:00 pm | 7:00 pm – 10:30 pm" className={inputClass} />
+              <Input id="hours" aria-invalid={!!errors.hours} {...register("hours")} placeholder="8:30 am – 1:00 pm | 7:00 pm – 10:30 pm" />
             </Field>
           </div>
 
@@ -264,13 +253,13 @@ export default function LocationForm({ location }: Props) {
             <Field data-invalid={!!errors.mapUrl}>
               <FieldLabel htmlFor="mapUrl">URL Google Maps</FieldLabel>
               <FieldError>{errors.mapUrl?.message}</FieldError>
-              <Input id="mapUrl" aria-invalid={!!errors.mapUrl} {...register("mapUrl")} placeholder="https://maps.app.goo.gl/..." className={inputClass} />
+              <Input id="mapUrl" aria-invalid={!!errors.mapUrl} {...register("mapUrl")} placeholder="https://maps.app.goo.gl/..." />
             </Field>
 
             <Field data-invalid={!!errors.embedUrl}>
               <FieldLabel htmlFor="embedUrl">Embed URL Maps</FieldLabel>
               <FieldError>{errors.embedUrl?.message}</FieldError>
-              <Textarea id="embedUrl" rows={3} aria-invalid={!!errors.embedUrl} {...register("embedUrl")} placeholder="https://www.google.com/maps/embed?pb=..." className={inputClass} />
+              <Textarea id="embedUrl" rows={3} aria-invalid={!!errors.embedUrl} {...register("embedUrl")} placeholder="https://www.google.com/maps/embed?pb=..." className="resize-none" />
             </Field>
 
             {/* Imagen principal */}
@@ -282,8 +271,8 @@ export default function LocationForm({ location }: Props) {
             {/* Galería */}
             <Field>
               <FieldLabel>
-                Galería
-                <span className="normal-case text-stone-400 tracking-normal">
+                Galería{" "}
+                <span className="normal-case text-muted-foreground tracking-normal font-normal">
                   ({gallery.length} imagen{gallery.length !== 1 ? "es" : ""})
                 </span>
               </FieldLabel>
@@ -291,15 +280,15 @@ export default function LocationForm({ location }: Props) {
               {gallery.length > 0 && (
                 <div className="flex flex-col gap-2 mb-2">
                   {gallery.map((url, idx) => (
-                    <div key={idx} className="flex items-center gap-3 p-2 border border-stone-200 bg-stone-50">
+                    <div key={idx} className="flex items-center gap-3 p-2 border border-border bg-muted">
                       <div className="w-12 h-12 rounded overflow-hidden shrink-0">
                         <img src={url} alt={`Galería ${idx + 1}`} className="w-full h-full object-cover" />
                       </div>
-                      <span className="flex-1 text-xs text-stone-400 font-mono truncate">{url}</span>
+                      <span className="flex-1 text-xs text-muted-foreground font-mono truncate">{url}</span>
                       <button
                         type="button"
                         onClick={() => removeFromGallery(idx)}
-                        className="p-1 text-stone-300 hover:text-red-500 transition-colors cursor-pointer shrink-0"
+                        className="p-1 text-muted-foreground/50 hover:text-destructive transition-colors cursor-pointer shrink-0"
                         aria-label="Quitar imagen"
                       >
                         <IconX size={14} />

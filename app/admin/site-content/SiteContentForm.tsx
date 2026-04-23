@@ -72,7 +72,7 @@ export default function SiteContentForm({ siteContent }: Props) {
     })
 
     if (!res.ok) {
-      const json    = await res.json().catch(() => ({}))
+      const json = await res.json().catch(() => ({}))
       setSubmitError(json.error ?? "Hubo un error al guardar")
       setOverlayMode(null)
       return
@@ -106,9 +106,9 @@ export default function SiteContentForm({ siteContent }: Props) {
 
       <form id="site-content-form" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
+
           {/* ── LEFT — metadata ── */}
           <div className="flex flex-col gap-5">
-            {/* Sección */}
             <Field data-invalid={!!errors.section}>
               <FieldLabel>Sección de la página</FieldLabel>
               <Controller
@@ -123,14 +123,18 @@ export default function SiteContentForm({ siteContent }: Props) {
                         onClick={() => field.onChange(s.value)}
                         className={`flex flex-col gap-0.5 text-left px-4 py-3 border transition-colors cursor-pointer ${
                           field.value === s.value
-                            ? "bg-stone-900 text-white border-stone-900"
-                            : "bg-white text-stone-600 border-stone-200 hover:border-stone-400"
+                            ? "bg-foreground text-background border-foreground"
+                            : "bg-background text-muted-foreground border-border hover:border-foreground/40"
                         }`}
                       >
-                        <span className={`text-[10px] uppercase tracking-[0.2em] font-semibold ${field.value === s.value ? "text-white" : "text-stone-800"}`}>
+                        <span className={`text-[10px] uppercase tracking-[0.2em] font-semibold ${
+                          field.value === s.value ? "text-background" : "text-foreground"
+                        }`}>
                           {s.label}
                         </span>
-                        <span className={`text-[11px] leading-snug ${field.value === s.value ? "text-stone-300" : "text-stone-400"}`}>
+                        <span className={`text-[11px] leading-snug ${
+                          field.value === s.value ? "text-background/70" : "text-muted-foreground"
+                        }`}>
                           {s.description}
                         </span>
                       </button>
@@ -150,9 +154,9 @@ export default function SiteContentForm({ siteContent }: Props) {
               </FieldLabel>
 
               {sectionMeta && (
-                <p className="text-[11px] text-stone-400 mb-2 leading-snug">
+                <p className="text-[11px] text-muted-foreground mb-2 leading-snug">
                   Sección:{" "}
-                  <span className="font-semibold text-stone-600">{sectionMeta.label}</span>.{" "}
+                  <span className="font-semibold text-foreground">{sectionMeta.label}</span>.{" "}
                   {sectionMeta.description}
                 </p>
               )}
@@ -171,7 +175,7 @@ export default function SiteContentForm({ siteContent }: Props) {
                         onChange={field.onChange}
                         rows={5}
                         placeholder="Escribe el contenido..."
-                        className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:border-stone-400 resize-y"
+                        className="w-full border border-border bg-background text-foreground px-3 py-2 text-sm focus:outline-none focus:border-foreground/40 resize-y placeholder:text-muted-foreground"
                       />
                     )
                   }
@@ -188,7 +192,7 @@ export default function SiteContentForm({ siteContent }: Props) {
               <FieldError>{errors.value?.message}</FieldError>
             </Field>
 
-                        {/* Tipo */}
+            {/* Tipo */}
             <Field data-invalid={!!errors.type}>
               <FieldLabel>Tipo de campo</FieldLabel>
               <Controller
@@ -203,8 +207,8 @@ export default function SiteContentForm({ siteContent }: Props) {
                         onClick={() => field.onChange(t)}
                         className={`flex-1 py-2 text-[10px] uppercase tracking-[0.2em] font-semibold border transition-colors cursor-pointer ${
                           field.value === t
-                            ? "bg-stone-900 text-white border-stone-900"
-                            : "bg-white text-stone-500 border-stone-200 hover:border-stone-400"
+                            ? "bg-foreground text-background border-foreground"
+                            : "bg-background text-muted-foreground border-border hover:border-foreground/40"
                         }`}
                       >
                         {t}
@@ -225,8 +229,6 @@ export default function SiteContentForm({ siteContent }: Props) {
                 placeholder="hero.title"
                 aria-invalid={!!errors.key}
                 className="font-mono text-sm"
-                // En edición la key no debería cambiar fácilmente
-                // readOnly={isEditing}
               />
               <FieldError>{errors.key?.message}</FieldError>
               <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">

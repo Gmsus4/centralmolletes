@@ -15,9 +15,9 @@ import { AboutFeaturesPreview, BenefitsPreview, StatsPreview } from "./component
 export const metadata: Metadata = { title: "Admin | Contenido del sitio" }
 
 const TYPE_BADGE: Record<string, string> = {
-  text:     "bg-stone-100 text-stone-500",
-  textarea: "bg-green-50 text-green-700",
-  icon:     "bg-amber-50 text-amber-700",
+  text:     "bg-muted text-muted-foreground",
+  textarea: "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400",
+  icon:     "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400",
 }
 
 type LucideComponent = React.ComponentType<{ size?: number; className?: string }>
@@ -26,21 +26,20 @@ function getLucideIcon(key: string): LucideComponent | null {
   return (LucideIcons as unknown as Record<string, LucideComponent>)[key] ?? null
 }
 
-/** Renders a Lucide icon by key with amber tint */
 function IconPreview({ value }: { value: string }) {
   const Component = getLucideIcon(value)
   if (Component) {
     return (
       <span className="flex items-center gap-2 shrink-0">
-        <span className="flex items-center justify-center w-7 h-7 rounded bg-amber-50 shrink-0">
-          <Component size={15} className="text-amber-600" />
+        <span className="flex items-center justify-center w-7 h-7 rounded bg-amber-50 dark:bg-amber-950 shrink-0">
+          <Component size={15} className="text-amber-600 dark:text-amber-400" />
         </span>
-        <span className="text-[11px] text-stone-400 font-mono hidden lg:block">{value}</span>
+        <span className="text-[11px] text-muted-foreground font-mono hidden lg:block">{value}</span>
       </span>
     )
   }
   return (
-    <span className="text-[11px] text-stone-400 font-mono truncate max-w-[160px]">
+    <span className="text-[11px] text-muted-foreground font-mono truncate max-w-[160px]">
       {value}
     </span>
   )
@@ -65,7 +64,7 @@ export default async function AdminSiteContentPage() {
       link={{ label: "Nuevo item", href: "/admin/site-content/new" }}
     >
       <div className="flex items-center gap-2 mt-1">
-        <span className="text-sm text-stone-400">
+        <span className="text-sm text-muted-foreground">
           {items.length} {items.length === 1 ? "item" : "items"}
         </span>
       </div>
@@ -89,84 +88,76 @@ export default async function AdminSiteContentPage() {
           <div className="flex flex-col gap-10">
             {grouped.map((group) => (
               <div key={group.value}>
+
                 {/* Section header */}
                 <div className="flex items-center gap-3 mb-1">
-                  <span className="text-[10px] uppercase tracking-[0.3em] text-stone-500 font-semibold">
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-semibold">
                     {group.label}
                   </span>
-                  <span className="flex-1 h-px bg-stone-200" />
-                  <span className="text-[10px] text-stone-400 bg-stone-100 px-2 py-0.5 rounded-full">
+                  <span className="flex-1 h-px bg-border" />
+                  <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                     {group.items.length}
                   </span>
                   <Link
                     href={`/admin/site-content/new?section=${group.value}`}
-                    className="text-[9px] uppercase tracking-[0.2em] text-stone-400 hover:text-stone-700 border border-stone-200 hover:border-stone-400 px-2.5 py-1 transition-colors"
+                    className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground border border-border hover:border-foreground px-2.5 py-1 transition-colors"
                   >
                     + Agregar
                   </Link>
                 </div>
-                <p className="text-[11px] text-stone-400 mb-4">{group.description}</p>
+                <p className="text-[11px] text-muted-foreground mb-4">{group.description}</p>
 
-                {/* Stats section gets a visual preview of the cards */}
-                {group.value === "stats" && group.items.length > 0 && (
-                  <StatsPreview items={group.items} />
-                )}
-
-                {group.value === "about" && group.items.length > 0 && (
-                  <AboutFeaturesPreview items={group.items} />
-                )}
-
-                {group.value === "benefits" && group.items.length > 0 && (
-                  <BenefitsPreview items={group.items} />
-                )}
+                {group.value === "stats"    && group.items.length > 0 && <StatsPreview items={group.items} />}
+                {group.value === "about"    && group.items.length > 0 && <AboutFeaturesPreview items={group.items} />}
+                {group.value === "benefits" && group.items.length > 0 && <BenefitsPreview items={group.items} />}
 
                 {group.items.length === 0 ? (
-                  <p className="text-[11px] text-stone-300 italic py-4 border border-dashed border-stone-200 text-center">
+                  <p className="text-[11px] text-muted-foreground/50 italic py-4 border border-dashed border-border text-center">
                     Sin items en esta sección.{" "}
                     <Link
                       href={`/admin/site-content/new?section=${group.value}`}
-                      className="underline underline-offset-2 hover:text-stone-500 transition-colors"
+                      className="underline underline-offset-2 hover:text-foreground transition-colors"
                     >
                       Agregar
                     </Link>
                   </p>
                 ) : (
-                  <div className="flex flex-col divide-y divide-stone-100 border border-stone-200 rounded-sm">
+                  <div className="flex flex-col divide-y divide-border border border-border rounded-sm">
                     {group.items.map((item) => (
                       <Link
                         key={item.id}
                         href={`/admin/site-content/${item.id}`}
-                        className="flex items-center gap-4 px-4 py-3 hover:bg-stone-50 transition-colors group"
+                        className="flex items-center gap-4 px-4 py-3 hover:bg-accent transition-colors group"
                       >
                         {/* Type badge */}
                         <span
-                          className={`text-[9px] uppercase tracking-[0.15em] font-semibold px-2 py-0.5 shrink-0 ${TYPE_BADGE[item.type] ?? "bg-stone-100 text-stone-500"}`}
+                          className={`text-[9px] uppercase tracking-[0.15em] font-semibold px-2 py-0.5 shrink-0 ${TYPE_BADGE[item.type] ?? "bg-muted text-muted-foreground"}`}
                         >
                           {item.type}
                         </span>
 
-                        {/* Label (human name) + key */}
+                        {/* Label + key */}
                         <div className="flex flex-col min-w-0 flex-1">
-                          <span className="text-[12px] font-medium text-stone-700 truncate leading-snug">
+                          <span className="text-[12px] font-medium text-foreground truncate leading-snug">
                             {item.label}
                           </span>
-                          <span className="text-[10px] font-mono text-stone-400 truncate leading-snug">
+                          <span className="text-[10px] font-mono text-muted-foreground truncate leading-snug">
                             {item.key}
                           </span>
                         </div>
 
-                        {/* Value preview — icon renders visually, text truncates */}
+                        {/* Value preview */}
                         <div className="hidden sm:flex items-center max-w-[260px] shrink-0">
                           {item.type === "icon" ? (
                             <IconPreview value={item.value} />
                           ) : (
-                            <span className="text-[12px] text-stone-400 truncate">
+                            <span className="text-[12px] text-muted-foreground truncate">
                               {item.value}
                             </span>
                           )}
                         </div>
 
-                        <span className="text-[10px] uppercase tracking-[0.15em] text-stone-300 group-hover:text-stone-500 transition-colors shrink-0">
+                        <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 group-hover:text-muted-foreground transition-colors shrink-0">
                           Editar →
                         </span>
                       </Link>

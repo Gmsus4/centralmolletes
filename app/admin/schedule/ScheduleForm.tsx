@@ -230,7 +230,7 @@ export default function HorarioForm({ horario }: Props) {
                       id={`shifts.${idx}.openTime`}
                       aria-invalid={!!errors.shifts?.[idx]?.openTime}
                       {...register(`shifts.${idx}.openTime`)}
-                      type="time" className="[color-scheme:light]"
+                      type="time" className="[color-scheme:light] dark:[color-scheme:dark]"
                     />
                   </Field>
                   <Field data-invalid={!!errors.shifts?.[idx]?.closeTime}>
@@ -240,7 +240,7 @@ export default function HorarioForm({ horario }: Props) {
                       id={`shifts.${idx}.closeTime`}
                       aria-invalid={!!errors.shifts?.[idx]?.closeTime}
                       {...register(`shifts.${idx}.closeTime`)}
-                      type="time" className="[color-scheme:light]"
+                      type="time" className="[color-scheme:light] dark:[color-scheme:dark]"
                     />
                   </Field>
                 </div>

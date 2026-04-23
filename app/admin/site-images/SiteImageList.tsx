@@ -31,7 +31,7 @@ export function SiteImageList({ images }: { images: SiteImage[] }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
       {images.map((img) => (
-        <div key={img.id} className="relative border border-stone-200 hover:border-stone-400 transition-colors overflow-hidden bg-stone-50 group">
+        <div key={img.id} className="relative border border-border hover:border-foreground/40 transition-colors overflow-hidden bg-muted group">
           {/* Botones fuera del Link */}
           <div className="absolute top-1.5 left-1.5 flex flex-col gap-0.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
@@ -41,7 +41,7 @@ export function SiteImageList({ images }: { images: SiteImage[] }) {
                 move(img.id, img.order, "up")
               }}
               disabled={!!loading || img.order === Math.min(...images.map((i) => i.order))}
-              className="p-1 bg-white/90 border border-stone-200 hover:border-stone-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              className="p-1 bg-background/90 border border-border hover:border-foreground/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               <IconChevronUp size={12} />
             </button>
@@ -52,7 +52,7 @@ export function SiteImageList({ images }: { images: SiteImage[] }) {
                 move(img.id, img.order, "down")
               }}
               disabled={!!loading || img.order === Math.max(...images.map((i) => i.order))}
-              className="p-1 bg-white/90 border border-stone-200 hover:border-stone-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              className="p-1 bg-background/90 border border-border hover:border-foreground/40 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               <IconChevronDown size={12} />
             </button>
@@ -64,8 +64,8 @@ export function SiteImageList({ images }: { images: SiteImage[] }) {
               <img src={img.src} alt={img.alt || img.section} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
             </div>
             <div className="p-2.5">
-              <p className="text-[10px] uppercase tracking-[0.15em] text-stone-500 truncate">Orden: {img.order}</p>
-              {img.alt && <p className="text-[11px] text-stone-400 truncate mt-0.5">{img.alt}</p>}
+              <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground truncate">Orden: {img.order}</p>
+              {img.alt && <p className="text-[11px] text-muted-foreground truncate mt-0.5">{img.alt}</p>}
             </div>
           </Link>
         </div>

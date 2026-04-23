@@ -52,7 +52,7 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
 
 const STATUS_OPTIONS: { value: BlogStatus; label: string; color: string }[] = [
   { value: "published", label: "Publicado",  color: "bg-emerald-500" },
-  { value: "draft",     label: "Borrador",   color: "bg-stone-400"   },
+  { value: "draft",     label: "Borrador",   color: "bg-muted-foreground" },
   { value: "scheduled", label: "Programado", color: "bg-amber-400"   },
 ]
 
@@ -72,11 +72,11 @@ function StatusSelector({
           onClick={() => onChange(opt.value)}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-[9px] uppercase tracking-[0.2em] transition-colors cursor-pointer border ${
             value === opt.value
-              ? "bg-stone-900 text-white border-stone-900"
-              : "bg-white text-stone-500 border-stone-200 hover:border-stone-400"
+              ? "bg-foreground text-background border-foreground"
+              : "bg-background text-muted-foreground border-border hover:border-foreground/40"
           }`}
         >
-          <span className={`w-1.5 h-1.5 rounded-full ${value === opt.value ? "bg-white" : opt.color}`} />
+          <span className={`w-1.5 h-1.5 rounded-full ${value === opt.value ? "bg-background" : opt.color}`} />
           {opt.label}
         </button>
       ))}
@@ -275,7 +275,7 @@ export default function BlogForm({ blog }: Props) {
                 )}
               />
               {status === "scheduled" && (
-                <p className="text-[9px] uppercase tracking-[0.2em] text-amber-500 mt-1">
+                <p className="text-[9px] uppercase tracking-[0.2em] text-amber-500 dark:text-amber-400 mt-1">
                   Se publicará automáticamente cuando llegue la fecha
                 </p>
               )}
@@ -407,7 +407,7 @@ export default function BlogForm({ blog }: Props) {
                 id="publishedAt"
                 type="datetime-local"
                 {...register("publishedAt")}
-                className="[color-scheme:light]"
+                className="scheme-light dark:scheme-dark"
               />
               <FieldError>{errors.publishedAt?.message}</FieldError>
             </Field>
@@ -491,7 +491,7 @@ export default function BlogForm({ blog }: Props) {
             {sectionFields.map((field, idx) => {
               const sectionType = watch(`sections.${idx}.type`)
               return (
-                <div key={field.id} className="border border-border bg-white p-5">
+                <div key={field.id} className="border border-border bg-card p-5">
                   <div className="flex items-center gap-3 mb-4">
                     <IconGripVertical size={14} className="text-muted-foreground shrink-0" />
                     <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
@@ -506,7 +506,7 @@ export default function BlogForm({ blog }: Props) {
                           onClick={() => setValue(`sections.${idx}.type`, t.value)}
                           className={`px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] transition-colors cursor-pointer ${
                             sectionType === t.value
-                              ? "bg-stone-900 text-white"
+                              ? "bg-foreground text-background"
                               : "bg-muted text-muted-foreground hover:bg-muted/80"
                           }`}
                         >

@@ -44,24 +44,24 @@ export default async function AdminBlogPage() {
       <LayoutAdminSection namePage="Artículos" maxWidth="max-w-6xl" link={{ label: "Nuevo artículo", href: "/admin/blog/new" }}>
         {/* Contadores por status */}
         <div className="flex items-center gap-2 mt-1 flex-wrap">
-          <span className="text-sm text-stone-400">
+          <span className="text-sm text-muted-foreground">
             {posts.length} {posts.length === 1 ? "artículo" : "artículos"}
           </span>
           {totalPublished > 0 && (
-            <span className="flex items-center gap-1 text-[10px] text-emerald-600">
+            <span className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
               {totalPublished} publicado{totalPublished !== 1 ? "s" : ""}
             </span>
           )}
           {totalScheduled > 0 && (
-            <span className="flex items-center gap-1 text-[10px] text-amber-600">
+            <span className="flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
               {totalScheduled} programado{totalScheduled !== 1 ? "s" : ""}
             </span>
           )}
           {totalDraft > 0 && (
-            <span className="flex items-center gap-1 text-[10px] text-stone-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-stone-400 shrink-0" />
+            <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+              <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground shrink-0" />
               {totalDraft} borrador{totalDraft !== 1 ? "es" : ""}
             </span>
           )}

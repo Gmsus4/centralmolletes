@@ -46,7 +46,7 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
 
 const STATUS_OPTIONS: { value: ReviewStatus; label: string; icon: React.ReactNode; color: string }[] = [
   { value: "visible", label: "Visible", icon: <IconEye size={11} />,    color: "bg-emerald-500" },
-  { value: "hidden",  label: "Oculta",  icon: <IconEyeOff size={11} />, color: "bg-stone-400"   },
+  { value: "hidden",  label: "Oculta",  icon: <IconEyeOff size={11} />, color: "bg-muted-foreground" },
 ]
 
 function StatusSelector({
@@ -65,11 +65,11 @@ function StatusSelector({
           onClick={() => onChange(opt.value)}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-[9px] uppercase tracking-[0.2em] transition-colors cursor-pointer border ${
             value === opt.value
-              ? "bg-stone-900 text-white border-stone-900"
-              : "bg-white text-stone-500 border-stone-200 hover:border-stone-400"
+              ? "bg-foreground text-background border-foreground"
+              : "bg-background text-muted-foreground border-border hover:border-foreground/40"
           }`}
         >
-          <span className={`w-1.5 h-1.5 rounded-full ${value === opt.value ? "bg-white" : opt.color}`} />
+          <span className={`w-1.5 h-1.5 rounded-full ${value === opt.value ? "bg-background" : opt.color}`} />
           {opt.label}
         </button>
       ))}
@@ -101,7 +101,7 @@ function StarRating({
             onMouseEnter={() => setHovered(star)}
             onMouseLeave={() => setHovered(null)}
             className={`text-2xl transition-colors cursor-pointer select-none ${
-              filled ? "text-amber-400" : "text-stone-200 hover:text-amber-200"
+              filled ? "text-amber-400" : "text-border hover:text-amber-200"
             }`}
             aria-label={`${star} estrella${star !== 1 ? "s" : ""}`}
           >
@@ -323,7 +323,7 @@ export default function ReviewForm({ review }: Props) {
             {(watch("author") || watch("body")) && (
               <div className="mt-4">
                 <SectionTitle>Vista previa</SectionTitle>
-                <div className="p-5 border border-border bg-stone-50">
+                <div className="p-5 border border-border bg-muted">
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-muted border border-border">
                       {watch("photo") ? (
@@ -343,16 +343,16 @@ export default function ReviewForm({ review }: Props) {
                         {Array.from({ length: 5 }).map((_, i) => (
                           <span
                             key={i}
-                            className={`text-xs ${i < (watch("rating") ?? 5) ? "text-amber-400" : "text-stone-200"}`}
+                            className={`text-xs ${i < (watch("rating") ?? 5) ? "text-amber-400" : "text-border"}`}
                           >
                             ★
                           </span>
                         ))}
                       </div>
                       {watch("body") && (
-                        <p className="text-xs text-stone-600 italic mb-1.5">"{watch("body")}"</p>
+                        <p className="text-xs text-muted-foreground italic mb-1.5">"{watch("body")}"</p>
                       )}
-                      <p className="text-[10px] text-stone-400 uppercase tracking-[0.15em]">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-[0.15em]">
                         {watch("author") || "Nombre"} — {watch("role") || "Rol"}
                       </p>
                     </div>

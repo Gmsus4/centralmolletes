@@ -120,14 +120,14 @@ export default function SiteImageForm({ siteImage }: Props) {
                         onClick={() => field.onChange(s.value)}
                         className={`flex flex-col gap-0.5 text-left px-4 py-3 border transition-colors cursor-pointer ${
                           field.value === s.value
-                            ? "bg-stone-900 text-white border-stone-900"
-                            : "bg-white text-stone-600 border-stone-200 hover:border-stone-400"
+                            ? "bg-foreground text-background border-foreground"
+                            : "bg-background text-muted-foreground border-border hover:border-foreground/40"
                         }`}
                       >
-                        <span className={`text-[10px] uppercase tracking-[0.2em] font-semibold ${field.value === s.value ? "text-white" : "text-stone-800"}`}>
+                        <span className={`text-[10px] uppercase tracking-[0.2em] font-semibold ${field.value === s.value ? "text-background" : "text-foreground"}`}>
                           {s.label}
                         </span>
-                        <span className={`text-[11px] leading-snug ${field.value === s.value ? "text-stone-300" : "text-stone-400"}`}>
+                        <span className={`text-[11px] leading-snug ${field.value === s.value ? "text-background/70" : "text-muted-foreground"}`}>
                           {s.description}
                         </span>
                       </button>
@@ -179,8 +179,8 @@ export default function SiteImageForm({ siteImage }: Props) {
             <Field data-invalid={!!errors.src}>
               <FieldLabel>Imagen</FieldLabel>
               {sectionMeta && (
-                <p className="text-[11px] text-stone-400 mb-2 leading-snug">
-                  Esta imagen aparecerá en: <span className="font-semibold text-stone-600">{sectionMeta.label}</span>. {sectionMeta.description}
+                <p className="text-[11px] text-muted-foreground mb-2 leading-snug">
+                  Esta imagen aparecerá en: <span className="font-semibold text-foreground">{sectionMeta.label}</span>. {sectionMeta.description}
                 </p>
               )}
               <Controller

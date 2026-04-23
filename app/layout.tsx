@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma"
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { ThemeProvider } from "next-themes"
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -137,6 +138,7 @@ export default async function RootLayout({
   return (
     <html
       lang="es"
+      suppressHydrationWarning
       style={
         {
           "--bg-body": theme?.bgBody || "#FDFBF0",
@@ -170,7 +172,9 @@ export default async function RootLayout({
         />
         <SessionProvider>
            <TooltipProvider>
-            {children}
+            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+              {children}
+            </ThemeProvider>
            </TooltipProvider>
         </SessionProvider>
       </body>

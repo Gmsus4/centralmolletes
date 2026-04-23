@@ -43,7 +43,7 @@ export function TeamSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-accent text-sidebar-accent-foreground">
                 {/* {activeTeam.logo} */}
                 {teams[0].logo}
               </div>
@@ -72,7 +72,7 @@ export function TeamSwitcher({
                 <div className="flex size-6 items-center justify-center rounded-md border">
                   {team.logo}
                 </div>
-                <Link href={team.url} target={team.url === "/" ? "_self" : "_blank"} className="text-text-main">
+                <Link href={team.url} target={team.url === "/" ? "_self" : "_blank"} className="text-foreground">
                   {team.name}
                 </Link>
                 {/* {team.name} */}

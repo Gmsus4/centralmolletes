@@ -20,8 +20,8 @@ import { useDuplicate } from "@/hooks/useDuplicate"
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   <div className="flex items-center gap-3 mb-5">
-    <span className="text-[10px] uppercase tracking-[0.3em] text-stone-400">{children}</span>
-    <span className="flex-1 h-px bg-stone-100" />
+    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">{children}</span>
+    <span className="flex-1 h-px bg-border" />
   </div>
 )
 
@@ -212,15 +212,15 @@ export default function AnnouncementForm({ announcement }: { announcement?: Anno
             {/* Inicia */}
             <Field data-invalid={!!errors.startsAt}>
               <FieldLabel>Inicia</FieldLabel>
-              <Input {...register("startsAt")} type="datetime-local" className="[color-scheme:light]"/>
+              <Input {...register("startsAt")} type="datetime-local" className="[color-scheme:light] dark:[color-scheme:dark]" />
               <FieldError>{errors.startsAt?.message}</FieldError>
             </Field>
 
             {/* Termina */}
             <Field data-invalid={!!errors.endsAt}>
               <FieldLabel>Termina (opcional)</FieldLabel>
-              <Input {...register("endsAt")} type="datetime-local" className="[color-scheme:light]"/>
-              <p className="text-[10px] text-stone-400 tracking-wide">
+              <Input {...register("endsAt")} type="datetime-local" className="[color-scheme:light] dark:[color-scheme:dark]" />
+              <p className="text-[10px] text-muted-foreground tracking-wide">
                 Deja vacío si el anuncio no tiene fecha de expiración
               </p>
               <FieldError>{errors.endsAt?.message}</FieldError>

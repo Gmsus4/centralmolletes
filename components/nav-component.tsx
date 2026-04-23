@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar"
 
 interface NavProps {
@@ -18,9 +19,13 @@ export function NavComponent({items, title}: Props) {
       <SidebarMenu>
         {items.map((item, idx) => (
           <SidebarMenuItem key={idx}>
-            <SidebarMenuButton tooltip={item.title}>
-              {item.icon}
-              <a href={item.url}>{item.title}</a>
+            <SidebarMenuButton asChild tooltip={item.title}>
+              <Link href={item.url}>
+                <span className="flex items-center gap-2">
+                  {item.icon}
+                  {item.title}
+                </span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

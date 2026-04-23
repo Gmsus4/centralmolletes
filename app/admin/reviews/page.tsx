@@ -30,18 +30,18 @@ export default async function AdminReviewsPage() {
       >
         {/* Contadores */}
         <div className="flex items-center gap-2 mt-1 flex-wrap">
-          <span className="text-sm text-stone-400">
+          <span className="text-sm text-muted-foreground">
             {reviews.length} {reviews.length === 1 ? "reseña" : "reseñas"}
           </span>
           {totalVisible > 0 && (
-            <span className="flex items-center gap-1 text-[10px] text-emerald-600">
+            <span className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
               {totalVisible} visible{totalVisible !== 1 ? "s" : ""}
             </span>
           )}
           {totalHidden > 0 && (
-            <span className="flex items-center gap-1 text-[10px] text-stone-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-stone-400 shrink-0" />
+            <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+              <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground shrink-0" />
               {totalHidden} oculta{totalHidden !== 1 ? "s" : ""}
             </span>
           )}
@@ -68,7 +68,7 @@ export default async function AdminReviewsPage() {
                 <Link
                   key={review.id}
                   href={`/admin/reviews/${review.id}`}
-                  className="group flex rounded-2xl items-start gap-4 p-5 bg-white border border-border hover:border-stone-400 transition-colors"
+                  className="group flex rounded-2xl items-start gap-4 p-5 bg-card border border-border hover:border-foreground/40 transition-colors"
                 >
                   {/* Foto */}
                   <div className="w-11 h-11 rounded-full overflow-hidden shrink-0 bg-muted border border-border">
@@ -88,10 +88,10 @@ export default async function AdminReviewsPage() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-sm font-medium text-stone-800 truncate">
+                      <span className="text-sm font-medium text-foreground truncate">
                         {review.author}
                       </span>
-                      <span className="text-[10px] text-stone-400 truncate">
+                      <span className="text-[10px] text-muted-foreground truncate">
                         {review.role}
                       </span>
                     </div>
@@ -101,14 +101,14 @@ export default async function AdminReviewsPage() {
                       {Array.from({ length: 5 }).map((_, i) => (
                         <span
                           key={i}
-                          className={`text-xs ${i < review.rating ? "text-amber-400" : "text-stone-200"}`}
+                          className={`text-xs ${i < review.rating ? "text-amber-400" : "text-border"}`}
                         >
                           {STAR}
                         </span>
                       ))}
                     </div>
 
-                    <p className="text-xs text-stone-500 line-clamp-2">{review.body}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2">{review.body}</p>
                   </div>
 
                   {/* Status + orden */}
@@ -116,8 +116,8 @@ export default async function AdminReviewsPage() {
                     <span
                       className={`flex items-center gap-1 text-[9px] uppercase tracking-[0.2em] px-2 py-1 ${
                         review.status === "visible"
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "bg-stone-100 text-stone-400"
+                          ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400"
+                          : "bg-muted text-muted-foreground"
                       }`}
                     >
                       {review.status === "visible" ? (
@@ -127,7 +127,7 @@ export default async function AdminReviewsPage() {
                       )}
                       {review.status === "visible" ? "Visible" : "Oculta"}
                     </span>
-                    <span className="text-[10px] text-stone-300">#{review.order}</span>
+                    <span className="text-[10px] text-muted-foreground">#{review.order}</span>
                   </div>
                 </Link>
               ))}

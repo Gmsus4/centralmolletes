@@ -146,17 +146,17 @@ export default function MarkdownEditor({ value, onChange, rows = 8, placeholder 
   }, [value, onChange])
 
   return (
-    <div className="flex flex-col border border-stone-300 focus-within:border-stone-700 transition-colors duration-200 bg-white">
+    <div className="flex flex-col border border-border focus-within:border-foreground/40 transition-colors duration-200 bg-background">
 
       {/* Toolbar */}
-      <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-stone-200 bg-stone-50">
+      <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted">
         {TOOLS.map((tool) => (
           <button
             key={tool.label}
             type="button"
             title={tool.label}
             onClick={() => applyTool(tool)}
-            className="p-1.5 text-stone-500 hover:text-stone-900 hover:bg-stone-200 transition-colors duration-150 cursor-pointer"
+            className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-150 cursor-pointer"
           >
             {tool.icon}
           </button>
@@ -171,8 +171,8 @@ export default function MarkdownEditor({ value, onChange, rows = 8, placeholder 
           onClick={() => setPreview((p) => !p)}
           className={`px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] transition-colors duration-150 cursor-pointer ${
             preview
-              ? "bg-stone-900 text-white"
-              : "text-stone-400 hover:text-stone-700"
+              ? "bg-foreground text-background"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           Vista previa
@@ -180,7 +180,7 @@ export default function MarkdownEditor({ value, onChange, rows = 8, placeholder 
       </div>
 
       {/* Editor + Preview */}
-      <div className={`grid ${preview ? "grid-cols-2 divide-x divide-stone-200" : "grid-cols-1"}`}>
+      <div className={`grid ${preview ? "grid-cols-2 divide-x divide-border" : "grid-cols-1"}`}>
 
         {/* Textarea */}
         <textarea
@@ -191,9 +191,9 @@ export default function MarkdownEditor({ value, onChange, rows = 8, placeholder 
           placeholder={placeholder}
           className="
             w-full px-4 py-3
-            text-stone-900 text-sm font-mono
-            placeholder:text-stone-400
-            outline-none resize-none bg-white
+            text-foreground text-sm font-mono
+            placeholder:text-muted-foreground
+            outline-none resize-none bg-background
           "
         />
 
@@ -203,20 +203,20 @@ export default function MarkdownEditor({ value, onChange, rows = 8, placeholder 
             {value.trim() ? (
               <div className="
                 prose max-w-none text-sm
-                prose-p:text-stone-700 prose-p:leading-relaxed prose-p:my-1
-                prose-a:text-stone-900 prose-a:underline prose-a:underline-offset-2
-                prose-a:decoration-stone-400
-                prose-strong:text-stone-900 prose-strong:font-semibold
-                prose-em:text-stone-600
-                prose-ul:text-stone-700 prose-ol:text-stone-700
+                prose-p:text-foreground prose-p:leading-relaxed prose-p:my-1
+                prose-a:text-foreground prose-a:underline prose-a:underline-offset-2
+                prose-a:decoration-muted-foreground
+                prose-strong:text-foreground prose-strong:font-semibold
+                prose-em:text-muted-foreground
+                prose-ul:text-foreground prose-ol:text-foreground
                 prose-li:my-0.5
-                [&_p]:text-stone-700
-                [&_li]:text-stone-700
+                [&_p]:text-foreground
+                [&_li]:text-foreground
               ">
                 <ReactMarkdown>{value}</ReactMarkdown>
               </div>
             ) : (
-              <p className="text-stone-300 text-xs italic">El texto aparecerá aquí…</p>
+              <p className="text-muted-foreground text-xs italic">El texto aparecerá aquí…</p>
             )}
           </div>
         )}
