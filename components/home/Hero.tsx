@@ -95,7 +95,7 @@ export const Hero = async() => {
         {/* Buttons */}
         <div className="anim-buttons flex flex-col xs:flex-row gap-3 pt-2">
           <ButtonCustom title="Explorar menú" url="/menu" isFilled={true} className="!outline-brand-primary !text-brand-primary" />
-          <ButtonCustom title="Ubicaciones" url="/locations" isFilled={false} className="text-bg-dark" />
+          <ButtonCustom title="Ubicaciones" url="/locations" isFilled={false} className="text-bg-dark bg-brand-primary" />
         </div>
       </div>
 

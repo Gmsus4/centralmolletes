@@ -57,13 +57,13 @@ export default async function BlogPage() {
   return (
     <>
       <NavbarServer />
-      <main className="bg-stone-50">
+      <main className="bg-background">
         <TitlePage section="blog" />
         <div className="max-w-7xl mx-auto px-6 lg:py-16 py-8">
 
 
           {posts.length === 0 ? (
-            <p className="text-stone-400 text-sm text-center py-24">
+            <p className="text-sm text-center py-24">
               Próximamente publicaremos nuestras primeras historias.
             </p>
           ) : (
@@ -75,18 +75,19 @@ export default async function BlogPage() {
                     tooltip="Editar blog"
                     side="top"
                     className="absolute top-2 right-2 z-10"
+                    hideWhenNotAdmin
                   >
-                    <div className="bg-white/90 backdrop-blur-sm border border-stone-200 rounded p-1.5 shadow-sm hover:!opacity-100">
-                      <IconPencilCode className="text-text-main hover:opacity-60 transition-opacity" size={18} />
+                    <div className="bg-background/90 backdrop-blur-sm border rounded p-1.5 shadow-sm hover:!opacity-100">
+                      <IconPencilCode className="hover:opacity-60 transition-opacity" size={18} />
                     </div>
                   </AdminEditWrapper>
                   <Link
                     key={post.id}
                     href={`/blog/${post.slug}`}
-                    className="group flex flex-col bg-white border rounded-radius border-stone-200 hover:border-stone-300 transition-colors duration-200 overflow-hidden"
+                    className="group flex flex-col bg-background border rounded-radius transition-colors duration-200 overflow-hidden"
                   >
                     {/* Cover */}
-                    <div className="aspect-[4/3] overflow-hidden bg-stone-100">
+                    <div className="aspect-[4/3] overflow-hidden">
                       {post.coverImage ? (
                         <img
                           src={post.coverImage}
@@ -94,33 +95,33 @@ export default async function BlogPage() {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
-                        <div className="w-full h-full bg-stone-100" />
+                        <div className="w-full h-full" />
                       )}
                     </div>
 
                     {/* Content */}
                     <div className="flex flex-col gap-2 p-5 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[9px] uppercase tracking-[0.2em] text-stone-400 bg-stone-100 px-2 py-0.5">
+                        <span className="text-[9px] uppercase tracking-[0.2em] px-2 py-0.5">
                           {post.category}
                         </span>
-                        <span className="text-[10px] text-stone-300">
+                        <span className="text-[10px] opacity-85">
                           {new Date(post.publishedAt).toLocaleDateString("es-MX", {
                             day: "numeric", month: "short", year: "numeric",
                           })}
                         </span>
-                        <span className="text-[10px] text-stone-300">
+                        <span className="text-[10px] opacity-85">
                           {post.readMins} min de lectura
                         </span>
                       </div>
-                      <h2 className="font-medium text-stone-900 leading-snug group-hover:text-stone-600 transition-colors">
+                      <h2 className="font-medium leading-snug transition-colors text-2xl">
                         {post.title}
                       </h2>
-                      <p className="text-xs text-stone-400 line-clamp-2 flex-1">{post.subtitle}</p>
+                      <p className="text-xs text-stone-700 dark:text-stone-300 line-clamp-2 flex-1">{post.subtitle}</p>
                       {post.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1">
                           {post.tags.slice(0, 3).map((tag) => (
-                            <span key={tag} className="text-[9px] uppercase tracking-[0.15em] text-stone-300">
+                            <span key={tag} className="text-[9px] uppercase tracking-[0.15em]">
                               #{tag}
                             </span>
                           ))}

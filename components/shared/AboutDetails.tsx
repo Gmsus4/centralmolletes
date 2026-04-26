@@ -25,18 +25,18 @@ export const AboutDetails = async () => {
   ]
 
   return (
-    <div className="bg-bg-body xs:min-h-[calc(100dvh-4rem)] md:py-26 py-16 flex flex-col items-center justify-center md:gap-16 gap-12 px-6">
+    <div className="bg-background xs:min-h-[calc(100dvh-4rem)] md:py-26 py-16 flex flex-col items-center justify-center md:gap-16 gap-12 px-6">
       <div className="relative max-w-7xl">
         <div className="min-h-[600px] grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div className="grid gap-4">
             <div className="grid lg:gap-0 gap-4">
               <AdminEditWrapper href={`/admin/site-content/${methodology["methodology.title"]?.id}`} tooltip="Editar título">
-                <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight">
+                <h2 className="font-title text-3xl md:text-6xl leading-tight">
                   {methodology["methodology.title"]?.value}
                 </h2>
               </AdminEditWrapper>
               <AdminEditWrapper href={`/admin/site-content/${methodology["methodology.description"]?.id}`} tooltip="Editar descripción">
-                <p className="text-base text-text-main/70 leading-relaxed">
+                <p className="text-base leading-relaxed opacity-70">
                   {methodology["methodology.description"]?.value}
                 </p>
               </AdminEditWrapper>
@@ -51,7 +51,7 @@ export const AboutDetails = async () => {
                     </AdminEditWrapper>
                   </div>
                   <AdminEditWrapper href={`/admin/site-content/${labelId}`} tooltip="Editar texto">
-                    <p className="text-base text-text-main text-center">{label}</p>
+                    <p className="text-base text-center">{label}</p>
                   </AdminEditWrapper>
                 </div>
               ))}

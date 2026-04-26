@@ -36,12 +36,12 @@ export const BenefitsPanel = async () => {
   ]
 
   return (
-    <div className="bg-bg-body py-16 md:py-24 px-6 flex flex-col items-center gap-10">
+    <div className="bg-background py-16 md:py-24 px-6 flex flex-col items-center gap-10">
       <div className="max-w-7xl w-full flex flex-col gap-10">
 
         <div className="flex flex-col items-center text-center gap-3">
           <AdminEditWrapper href={`/admin/site-content/${benefitsContent["benefits.title"]?.id}`} tooltip="Editar título">
-            <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight max-w-md">
+            <h2 className="font-title text-3xl md:text-6xl leading-tight max-w-md">
               {benefitsContent["benefits.title"]?.value ?? "El corazón de lo que hacemos"}
             </h2>
           </AdminEditWrapper>
@@ -49,7 +49,7 @@ export const BenefitsPanel = async () => {
 
         <div className="grid grid-cols-1 xs:grid-cols-3 gap-4">
           {benefits.map(({ icon: Icon, iconId, title, titleId, description, descId, Pattern }) => (
-            <div key={title} className="rounded-radius overflow-hidden border border-black/8 flex flex-col">
+            <div key={title} className="rounded-radius overflow-hidden border flex flex-col">
               <div className="bg-brand-primary relative px-6 pt-6 pb-5 flex items-end justify-between overflow-hidden min-h-[100px]">
                 <Pattern />
                 <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-text-titles/10" />
@@ -60,12 +60,12 @@ export const BenefitsPanel = async () => {
                 </div>
               </div>
               <div className="h-px w-full bg-black/6" />
-              <div className="flex flex-col gap-2 px-6 py-5 bg-bg-body flex-1">
+              <div className="flex flex-col gap-2 px-6 py-5 bg-background flex-1">
                 <AdminEditWrapper href={`/admin/site-content/${titleId}`} tooltip="Editar título" side="left">
-                  <p className="text-base font-semibold text-text-titles">{title}</p>
+                  <p className="text-base font-semibold">{title}</p>
                 </AdminEditWrapper>
                 <AdminEditWrapper href={`/admin/site-content/${descId}`} tooltip="Editar descripción" side="left">
-                  <p className="text-sm text-text-main/65 leading-relaxed">{description}</p>
+                  <p className="text-sm leading-relaxed opacity-65">{description}</p>
                 </AdminEditWrapper>
               </div>
             </div>

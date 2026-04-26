@@ -52,7 +52,7 @@ export default function LocationDetailClient({ location }: { location: locationP
           </p>
         </div>
       </section>
-      <div className="bg-bg-body px-4 py-10">
+      <div className="bg-background px-4 py-10">
         <div className="max-w-6xl mx-auto flex flex-col gap-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Lado izquierdo — mapa */}

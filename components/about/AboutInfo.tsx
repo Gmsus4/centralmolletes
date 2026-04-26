@@ -15,9 +15,9 @@ export const AboutInfo = async () => {
       <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-20">
         <div className="flex-1 flex flex-col gap-7 lg:max-w-lg">
           <AdminEditWrapper href={`/admin/site-content/${data["about.title"]?.id}`} tooltip="Editar icono">
-            <h2 className="about-title font-title text-4xl sm:text-5xl lg:text-6xl text-text-titles leading-tight">{data["about.title"]?.value}</h2>
+            <h2 className="about-title font-title text-4xl sm:text-5xl lg:text-6xl leading-tight">{data["about.title"]?.value}</h2>
           </AdminEditWrapper>
-          <div className="about-body flex flex-col gap-4 text-text-main text-sm sm:text-base leading-relaxed">
+          <div className="about-body flex flex-col gap-4 text-sm sm:text-base leading-relaxed">
             <AdminEditWrapper href={`/admin/site-content/${data["about.subtitle"]?.id}`} tooltip="Editar texto">
               <p>{data["about.subtitle"]?.value}</p>
             </AdminEditWrapper>

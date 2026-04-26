@@ -84,7 +84,7 @@ export default async function BlogArticlePage({
       <NavbarServer />
       <ReadingProgress />
 
-      <main className="min-h-screen bg-stone-50">
+      <main className="min-h-screen bg-background">
 
         {/* Hero */}
         <div className="relative w-full min-h-[440px] sm:min-h-0 sm:aspect-[16/7] overflow-hidden bg-bg-dark">
@@ -134,7 +134,7 @@ export default async function BlogArticlePage({
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[9px] uppercase tracking-[0.2em] text-stone-700 bg-stone-200 px-2.5 py-1"
+                  className="text-[9px] uppercase tracking-[0.2em] bg-background px-2.5 py-1"
                 >
                   #{tag}
                 </span>
@@ -150,9 +150,9 @@ export default async function BlogArticlePage({
 
           {/* Divider */}
           <div className="flex items-center gap-3 mt-12 sm:mt-14">
-            <span className="flex-1 h-px bg-stone-200" />
-            <span className="w-1 h-1 rounded-full bg-stone-300" />
-            <span className="flex-1 h-px bg-stone-200" />
+            <span className="flex-1 h-px bg-background" />
+            <span className="w-1 h-1 rounded-full bg-background" />
+            <span className="flex-1 h-px bg-background" />
           </div>
 
           {/* Share */}

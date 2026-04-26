@@ -20,10 +20,10 @@ export const Testimonials = async () => {
   return (
     <section
       aria-labelledby="testimonials-title"
-      className="w-full bg-bg-body xs:min-h-[calc(100dvh-4rem)] md:py-26 py-16 flex flex-col items-center justify-center md:gap-16 gap-12 px-6"
+      className="w-full bg-background xs:min-h-[calc(100dvh-4rem)] md:py-26 py-16 flex flex-col items-center justify-center md:gap-16 gap-12 px-6"
     >
       <AdminEditWrapper href={`/admin/site-content/${content["testimonials.title"]?.id}`} tooltip="Editar título">
-        <h2 className="text-text-titles font-title text-3xl md:text-6xl leading-tight text-center">
+        <h2 className="font-title text-3xl md:text-6xl leading-tight text-center">
           {content["testimonials.title"]?.value ?? "Nos alegra el día leerlos"}
         </h2>
       </AdminEditWrapper>
@@ -55,10 +55,10 @@ export const Testimonials = async () => {
           return (
             <div key={t.id} className={`flex gap-4 ${imageFirst ? "lg:flex-col md:flex-row flex-col-reverse" : "lg:flex-col md:flex-row flex-col"}`}>
               {imageFirst && imageBlock}
-              <div className="border-1 border-border-color/20 rounded-radius bg-bg-body/15 md:flex-1 lg:flex-none">
-                <blockquote className="text-darkWarm font-light text-base p-7 flex flex-col h-full justify-between gap-4">
-                  <IconQuote size={30} className="text-text-main" />
-                  <p className="text-text-main">{t.body}</p>
+              <div className="border-1 rounded-radius bg-background/15 md:flex-1 lg:flex-none">
+                <blockquote className="font-light text-base p-7 flex flex-col h-full justify-between gap-4">
+                  <IconQuote size={30} />
+                  <p>{t.body}</p>
                   <footer className="flex items-center gap-3 mt-4">
                     {t.photo && (
                       <div className="w-9 h-9 rounded-full overflow-hidden shrink-0">
@@ -66,12 +66,12 @@ export const Testimonials = async () => {
                       </div>
                     )}
                     <div className="flex gap-2 flex-1">
-                      <cite className="text-text-main font-semibold font-titleText">{t.author}</cite>
-                      <span className="text-text-main">—</span>
-                      <span className="text-text-muted font-semibold font-titleText">{t.role}</span>
+                      <cite className=" font-semibold font-titleText">{t.author}</cite>
+                      <span>—</span>
+                      <span className="text-brand-contrast dark:text-brand-primary font-semibold font-titleText">{t.role}</span>
                     </div>
                     <AdminEditWrapper href={`/admin/reviews/${t.id}`} tooltip="Editar reseña" className="shrink-0" hideWhenNotAdmin>
-                      <IconPencilCode className="text-text-main hover:opacity-60 transition-opacity" size={18} />
+                      <IconPencilCode className=" hover:opacity-60 transition-opacity" size={18} />
                     </AdminEditWrapper>
                   </footer>
                 </blockquote>

@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   return {
     title: `${location.name} — ${location.city}`,
-    metadataBase: new URL("https://centralmolletes.netlify.app/"),
+    metadataBase: new URL("https://centralmolletes.vercel.app/"),
     description: location.name,
     openGraph: {
       title: location.name,

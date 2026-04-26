@@ -98,7 +98,7 @@ export const MenuComponent = ({ products, categories }: Props) => {
   }, {})
 
   return (
-    <section className="relative w-full pb-16 px-6 sm:px-10 lg:px-20 pt-10 lg:pt-16 bg-bg-body">
+    <section className="relative w-full pb-16 px-6 sm:px-10 lg:px-20 pt-10 lg:pt-16 bg-background">
       <div className="relative max-w-6xl mx-auto mt-10">
         {/* ── TOGGLE DÍA / NOCHE + OFERTAS ── */}
         <div className="flex items-center gap-2 mb-8 flex-wrap">
@@ -107,7 +107,7 @@ export const MenuComponent = ({ products, categories }: Props) => {
             className={`
               flex items-center gap-1.5 px-3 py-1.5 text-[10px] uppercase tracking-[0.15em] font-semibold
               border transition-all duration-200 cursor-pointer
-              ${time === "DAY" ? "bg-brand-contrast text-brand-primary rounded-radius border-border-color" : "bg-transparent rounded-radius text-text-main/70 border-border-color/30 hover:border-border-color/50 hover:text-text-main"}
+              ${time === "DAY" ? "rounded-radius border-brand-primary" : "bg-transparent rounded-radius"}
             `}
           >
             <span className="text-xs">☀️</span> Día
@@ -117,13 +117,13 @@ export const MenuComponent = ({ products, categories }: Props) => {
             className={`
               flex items-center gap-1.5 px-3 py-1.5 text-[10px] uppercase tracking-[0.15em] font-semibold
               border transition-all duration-200 cursor-pointer
-              ${time === "NIGHT" ? "bg-brand-contrast text-brand-primary rounded-radius border-border-color" : "bg-transparent rounded-radius text-text-main/70 border-border-color/30 hover:border-border-color/50 hover:text-text-main"}
+              ${time === "NIGHT" ? "rounded-radius border-brand-primary" : "bg-transparent rounded-radius"}
             `}
           >
             <span className="text-xs">🌙</span> Noche
           </button>
 
-          <span className="w-px h-4 bg-border-color/20 mx-0.5" />
+          <span className="w-px h-4 bg-brand-primary-hover mx-0.5" />
 
           <button
             onClick={handleOfertas}
@@ -131,8 +131,8 @@ export const MenuComponent = ({ products, categories }: Props) => {
               flex items-center gap-1.5 px-3 py-1.5 text-[10px] uppercase tracking-[0.15em] font-semibold
               border transition-all duration-200 cursor-pointer
               ${showOfertas
-                ? "bg-brand-contrast text-brand-primary rounded-radius border-border-color"
-                : "bg-transparent rounded-radius text-text-main/70 border-border-color/30 hover:border-border-color/50 hover:text-text-main"}
+                ? "rounded-radius border-brand-primary"
+                : "bg-transparent rounded-radius"}
             `}
           >
             <span className="text-xs">🏷️</span> Descuentos
@@ -145,10 +145,10 @@ export const MenuComponent = ({ products, categories }: Props) => {
             <select
               value={active}
               onChange={(e) => handleFilter(e.target.value)}
-              className="w-full appearance-none bg-transparent border border-border-color/20 focus:border-border-color/60 px-4 py-2.5 pr-10 text-[11px] uppercase tracking-[0.2em] text-text-main outline-none transition-colors duration-200 cursor-pointer"
+              className="w-full appearance-none bg-transparent border rounded-radius px-4 py-2.5 pr-10 text-[11px] uppercase tracking-[0.2em] outline-none transition-colors duration-200 cursor-pointer"
             >
               {allCategories.map((cat) => (
-                <option key={cat.name} value={cat.name}>
+                <option key={cat.name} value={cat.name} className="bg-background"> {/* Hay un borde que no me gusta al desplegar las opciones */}
                   {cat.name === "Todos" ? "Todos los platillos" : `${cat.emoji} ${cat.name}`}
                 </option>
               ))}
@@ -159,7 +159,7 @@ export const MenuComponent = ({ products, categories }: Props) => {
               </svg>
             </div>
           </div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-text-main/40 mt-2">
+          <p className="text-[10px] uppercase tracking-[0.2em] mt-2 pl-4 flex justify-end">
             {filtered.length} {filtered.length === 1 ? "platillo" : "platillos"}
           </p>
         </div>
@@ -173,7 +173,7 @@ export const MenuComponent = ({ products, categories }: Props) => {
             {Object.keys(grouped).length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 gap-3">
                 <span className="text-4xl">{showOfertas ? "🏷️" : time === "DAY" ? "☀️" : "🌙"}</span>
-                <p className="text-text-main/80 text-center text-sm uppercase tracking-[0.2em]">
+                <p className="text-center text-sm uppercase tracking-[0.2em]">
                   {showOfertas
                     ? active !== "Todos"
                       ? `No hay ofertas en ${active}`
@@ -185,7 +185,7 @@ export const MenuComponent = ({ products, categories }: Props) => {
                 {showOfertas && (
                   <button
                     onClick={handleOfertas}
-                    className="mt-2 text-[11px] uppercase cursor-pointer tracking-[0.2em] text-text-main/70 hover:text-text-main underline underline-offset-4 transition-colors duration-150"
+                    className="mt-2 text-[11px] uppercase cursor-pointer tracking-[0.2em] underline underline-offset-4 transition-colors duration-150"
                   >
                     Ver todos los platillos
                   </button>
@@ -193,7 +193,7 @@ export const MenuComponent = ({ products, categories }: Props) => {
                 {!showOfertas && active !== "Todos" && (
                   <button
                     onClick={() => handleFilter("Todos")}
-                    className="mt-2 text-[11px] uppercase cursor-pointer tracking-[0.2em] text-text-main/70 hover:text-text-main underline underline-offset-4 transition-colors duration-150"
+                    className="mt-2 text-[11px] uppercase cursor-pointer tracking-[0.2em] underline underline-offset-4 transition-colors duration-150"
                   >
                     Ver todos los platillos
                   </button>
@@ -205,9 +205,9 @@ export const MenuComponent = ({ products, categories }: Props) => {
                   <div key={category}>
                     <div className="flex items-center gap-3 mb-3">
                       <span className="text-base leading-none">{getEmoji(category)}</span>
-                      <span className="text-[10px] uppercase tracking-[0.3em] text-text-main font-semibold">{category}</span>
-                      <span className="flex-1 h-px bg-border-color/30" />
-                      <span className="text-[10px] text-text-main/90 tracking-widest">{items.length}</span>
+                      <span className="text-[10px] uppercase tracking-[0.3em] font-semibold">{category}</span>
+                      <span className="flex-1 h-px bg-accent-foreground opacity-30" />
+                      <span className="text-[10px] tracking-widest opacity-90">{items.length}</span>
                     </div>
 
                     <div className="flex flex-col">
@@ -215,7 +215,7 @@ export const MenuComponent = ({ products, categories }: Props) => {
                         <Link
                           key={product.slug}
                           href={`/menu/${product.slug}`}
-                          className={`group flex items-center gap-4 py-3.5 -mx-3 px-3 rounded-radius hover:bg-bg-dark/[0.05] transition-colors duration-150 ${idx < items.length - 1 ? "border-b border-border-color/[0.07]" : ""}`}
+                          className={`group flex items-center gap-4 py-3.5 -mx-3 px-3 transition-colors duration-150 ${idx < items.length - 1 ? "border-b" : ""}`}
                         >
                           <div className="relative w-14 h-14 shrink-0 rounded-radius overflow-hidden">
                             <Image src={product.img} alt={product.name} fill sizes="400px" className="object-cover group-hover:scale-105 transition-transform duration-300" />
@@ -225,21 +225,21 @@ export const MenuComponent = ({ products, categories }: Props) => {
                             {/* Contenedor de Textos: El overflow-hidden es clave para que truncate funcione */}
                             <div className="flex-1 min-w-0 overflow-hidden">
                               <div className="flex items-center gap-2 min-w-0">
-                                <span className="text-lg lg:text-xl text-text-main/95 leading-tight truncate group-hover:text-text-main transition-colors duration-200">{product.name}</span>
+                                <span className="text-lg lg:text-xl leading-tight truncate transition-colors duration-200">{product.name}</span>
                                 {product.tag && <span className={`shrink-0 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full ${tagColors[product.tag]}`}>{product.tag}</span>}
                                 {showOfertas && (
-                                  <span className="shrink-0 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-border-color/10 text-text-muted">
+                                  <span className="shrink-0 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full opacity-85">
                                     {product.availability === "BOTH" ? "☀️🌙" : product.availability === "DAY" ? "☀️ Día" : "🌙 Noche"}
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[12px] lg:text-sm text-text-muted mt-0.5 truncate">{product.desc}</p>
+                              <p className="text-[12px] lg:text-sm mt-0.5 truncate opacity-80">{product.desc}</p>
                             </div>
 
                             {/* Contenedor de Precio: shrink-0 evita que el precio se aplaste */}
                             <div className="shrink-0 flex flex-col items-end">
-                              {product.originalPrice && <span className="text-[11px] text-text-muted line-through leading-none">${product.originalPrice}</span>}
-                              <span className="font-titleText text-lg lg:text-xl text-brand-contrast">${product.price}</span>
+                              {product.originalPrice && <span className="text-[11px] line-through leading-none opacity-50">${product.originalPrice}</span>}
+                              <span className="font-titleText text-lg lg:text-xl">${product.price}</span>
                             </div>
                           </div>
                         </Link>
@@ -249,26 +249,21 @@ export const MenuComponent = ({ products, categories }: Props) => {
                 ))}
               </div>
             )}
-
-            {/* <div className="mt-14 flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-border-color/15">
-              <p className="text-text-main/70 text-sm text-center sm:text-left">¿No encuentras lo que buscas? Hacemos pedidos especiales.</p>
-              <Button title="Pedir personalizado" url="/contact" />
-            </div> */}
           </div>
 
           {/* Columna derecha — filtros sticky (solo desktop) */}
           <div className="hidden lg:block w-48 shrink-0">
             <div className="sticky top-24 flex flex-col gap-1">
-              <span className="text-[9px] uppercase tracking-[0.3em] text-text-main mb-2">Categorías</span>
+              <span className="text-[12px] uppercase tracking-[0.3em] mb-2">Categorías</span>
               {allCategories.map((cat) => (
                 <button
                   key={cat.name}
                   onClick={() => handleFilter(cat.name)}
                   aria-pressed={active === cat.name}
-                  className={`flex items-center gap-2.5 px-3 py-2 text-left cursor-pointer transition-all duration-150 rounded-radius ${active === cat.name ? "bg-bg-dark/8 text-darkWarm" : "text-text-main/50 hover:text-text-main hover:bg-bg-dark/[0.04]"}`}
+                  className={`flex items-center gap-2.5 px-3 py-2 text-left cursor-pointer transition-all duration-150 ${active === cat.name ? "outline outline-brand-primary rounded-radius" : "border-b hover:border-brand-primary opacity-70 hover:opacity-100"}`}
                 >
                   <span className="text-sm leading-none shrink-0">{cat.emoji}</span>
-                  <span className={`text-[10px] uppercase tracking-[0.15em] font-semibold leading-none truncate ${active === cat.name ? "text-text-main" : "text-text-main/70"}`}>{cat.name}</span>
+                  <span className={`text-[10px] uppercase tracking-[0.15em] font-semibold leading-none truncate ${active === cat.name ? "" : ""}`}>{cat.name}</span>
                 </button>
               ))}
             </div>

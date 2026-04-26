@@ -40,7 +40,7 @@ export default function Home() {
           <AboutDetails />
           <Testimonials />
           <LocationsHome />
-          <OrderOnline />
+          {/* <OrderOnline /> */}
           <MarqueeStrip />
         </main>
         <FooterServer />

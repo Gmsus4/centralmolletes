@@ -33,7 +33,7 @@ export default async function LocationsPage() {
             <NavbarServer />
             <main>
                 <TitlePage section="locations" isMarquee={false}/>
-                <div className="bg-bg-body px-6">
+                <div className="bg-background px-6">
                     <Locations className="lg:py-20 py-4" locations={location}/>
                 </div>
                 <MarqueeStrip />

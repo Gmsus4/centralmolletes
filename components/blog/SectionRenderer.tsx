@@ -7,6 +7,8 @@ import { BlogSection } from "@/lib/validators/blog"
 function Prose({ children }: { children: React.ReactNode }) {
   return (
     <div className="
+      opacity-90
+      flex flex-col gap-2
       prose max-w-none
       prose-p:text-stone-700 prose-p:leading-relaxed prose-p:text-base
       prose-a:text-stone-900 prose-a:underline prose-a:underline-offset-2
@@ -14,7 +16,7 @@ function Prose({ children }: { children: React.ReactNode }) {
       prose-strong:text-stone-900 prose-strong:font-semibold
       prose-em:text-stone-600
       prose-headings:text-stone-900
-      [&_p]:text-stone-700
+      [&_p]:
     ">
       {children}
     </div>
@@ -25,7 +27,7 @@ function Prose({ children }: { children: React.ReactNode }) {
 
 function SectionHeading({ text }: { text: string }) {
   return (
-    <h2 className="text-text-titles uppercase text-2xl sm:text-3xl leading-tight mb-4">
+    <h2 className="text-2xl sm:text-3xl leading-tight mb-4">
       {text}
     </h2>
   )
@@ -53,7 +55,7 @@ function ImageSection({ section }: { section: Extract<BlogSection, { type: "imag
       <img
         src={section.image}
         alt={section.heading ?? ""}
-        className="w-full object-cover"
+        className="w-full object-cover rounded-radius "
       />
       {section.heading && (
         <figcaption className="mt-2 text-center text-[10px] uppercase tracking-[0.2em] text-stone-400">
@@ -68,12 +70,12 @@ function QuoteSection({ section }: { section: Extract<BlogSection, { type: "quot
   return (
     <blockquote className="border-l-2 border-stone-300 pl-6 py-1 my-2">
       {section.heading && (
-        <p className="text-[10px] uppercase tracking-[0.25em] text-stone-400 mb-3">
+        <p className="text-[10px] uppercase tracking-[0.25em] mb-3">
           {section.heading}
         </p>
       )}
       {section.body && (
-        <p className="text-stone-600 text-lg sm:text-xl leading-relaxed italic">
+        <p className="text-stone-600 dark:text-stone-300 text-lg sm:text-xl leading-relaxed italic">
           {section.body}
         </p>
       )}
@@ -83,14 +85,14 @@ function QuoteSection({ section }: { section: Extract<BlogSection, { type: "quot
 
 function CtaSection({ section }: { section: Extract<BlogSection, { type: "cta" }> }) {
   return (
-    <div className="border border-stone-200 bg-stone-50 p-8 flex flex-col items-center text-center gap-4">
+    <div className="border bg-background rounded-radius p-8 flex flex-col items-center text-center gap-4">
       {section.heading && (
         <h3 className="font-titleText text-stone-900 uppercase text-2xl sm:text-3xl leading-tight">
           {section.heading}
         </h3>
       )}
       {section.body && (
-        <p className="text-stone-500 text-sm max-w-sm leading-relaxed">
+        <p className="text-sm max-w-sm leading-relaxed">
           {section.body}
         </p>
       )}
@@ -100,6 +102,7 @@ function CtaSection({ section }: { section: Extract<BlogSection, { type: "cta" }
           target="_blank"
           rel="noopener noreferrer"
           className="
+            rounded-radius
             inline-block mt-2
             bg-stone-900 text-white
             px-8 py-3

@@ -16,9 +16,9 @@ export const ButtonCustom = ({ url = "#", title, rel, target = "_self", isFilled
   const content = children || title || 'Button';
   const baseStyles = `inline-flex items-center justify-center rounded-radius ${size === "default" ? "px-6 py-2.5" : "px-4 py-1"}  font-medium text-center transition-all duration-100 ease-out hover:scale-x-[0.98] active:scale-[0.95]`;
 
-  const filledStyles = `bg-transparent text-bg-dark outline-1 outline-bg-dark`;
+  const filledStyles = `bg-transparent outline-1`;
 
-  const outlinedStyles = `bg-brand-primary text-bg-dark hover:bg-brand-primary-hover`;
+  const outlinedStyles = ``;
 
   const variantClass = isFilled ? filledStyles : outlinedStyles;
 

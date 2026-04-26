@@ -13,7 +13,7 @@ export const LocationAdminEdit = ({ locationId }: { locationId: string }) => {
     <Tooltip>
       <TooltipTrigger asChild>
         <Link href={`/admin/locations/${locationId}`}>
-          <IconPencilCode className="text-white hover:opacity-60 transition-opacity" size={18} />
+          <IconPencilCode className="hover:opacity-60 transition-opacity" size={18} />
         </Link>
       </TooltipTrigger>
       <TooltipContent><p>Editar sucursal</p></TooltipContent>

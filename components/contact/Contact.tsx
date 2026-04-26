@@ -104,7 +104,7 @@ export const ContactPage = ({
   const status = getStatus(horarios)
 
   return (
-    <div className="w-full bg-bg-body px-0 lg:p-10">
+    <div className="w-full bg-background px-0 lg:p-10">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden lg:rounded-radius">
 
         {/* ── Lado izquierdo ── */}

@@ -16,7 +16,7 @@ export const FindAndGetCarousel = ({ categories }: { categories: CategoryItem[] 
   return (
     <div className="relative w-full max-w-7xl mx-auto">
       <button aria-label="Desplazar izquierda" onClick={() => scroll("left")}
-        className="absolute cursor-pointer left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-bg-dark text-brand-primary flex items-center justify-center shadow-md hover:scale-105 transition-transform"
+        className="absolute cursor-pointer left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-background text-brand-primary flex items-center justify-center shadow-md hover:scale-105 transition-transform"
       >
         <IconChevronLeft size={18} />
       </button>
@@ -30,11 +30,11 @@ export const FindAndGetCarousel = ({ categories }: { categories: CategoryItem[] 
                 width={400} height={400}
                 sizes="(max-width: 768px) 144px, 192px"
                 src={item.img || "/placeholder.webp"}
-                className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110 group"
                 alt={item.name}
               />
             </div>
-            <h3 className="text-bg-dark text-lg md:text-xl font-bold font-title group-hover:text-text-main/80 transition-colors text-center">
+            <h3 className="text-lg md:text-xl font-bold font-title transition-colors text-center opacity-75 group-hover:opacity-100">
               {item.name}
             </h3>
           </Link>
@@ -47,8 +47,8 @@ export const FindAndGetCarousel = ({ categories }: { categories: CategoryItem[] 
         <IconChevronRight size={18} />
       </button>
 
-      <div className="pointer-events-none absolute left-0 top-0 h-full w-20 bg-gradient-to-r from-bg-body to-transparent z-[1]" />
-      <div className="pointer-events-none absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-bg-body to-transparent z-[1]" />
+      <div className="pointer-events-none absolute left-0 top-0 h-full w-20 bg-gradient-to-r from-background to-transparent z-[1]" />
+      <div className="pointer-events-none absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-background to-transparent z-[1]" />
     </div>
   )
 }

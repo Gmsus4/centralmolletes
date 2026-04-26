@@ -146,11 +146,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <NavbarServer />
-      <main className="min-h-screen bg-bg-body text-text-main relative">
+      <main className="min-h-screen bg-background relative">
         <div className="grid grid-cols-1 lg:grid-cols-12">
-          
           {/* ── COLUMNA IZQUIERDA: IMAGEN ── */}
-          <div className="relative w-full h-[60vh] lg:h-dvh 2xl:col-span-9 xl:col-span-8 lg:col-span-7 lg:sticky col-span-12 lg:top-0 bg-bg-dark/5">
+          <div className="relative w-full h-[60vh] lg:h-dvh 2xl:col-span-9 xl:col-span-8 lg:col-span-7 lg:sticky col-span-12 lg:top-0 bg-background">
             <Image 
               src={product.img} 
               alt={product.name} 
@@ -160,7 +159,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               className="object-cover" 
             />
             {/* Overlay sutil */}
-            <div className="absolute inset-0 bg-black/5" />
+            <div className="absolute inset-0 bg-background opacity-5" />
             
             {/* Back Button */}
             {/* <div className="absolute left-6 top-6 z-50 sm:left-10 sm:top-10">
@@ -178,23 +177,22 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </div>
 
           {/* ── COLUMNA DERECHA: INFORMACIÓN ── */}
-          <div className="col-span-12 2xl:col-span-3 xl:col-span-4 lg:col-span-5 bg-white flex flex-col relative z-10 border-l border-black/10 pb-10 lg:pb-0 lg:pt-16 pt-0">
-            
+          <div className="col-span-12 2xl:col-span-3 xl:col-span-4 lg:col-span-5 bg-background flex flex-col relative z-10 border-l border-black/10 pb-10 lg:pb-0 lg:pt-16 pt-0">
             <div className="flex flex-col px-6 py-6 sm:px-8 lg:p-10 xl:p-12">
               
               {/* CATEGORY & TAGS */}
               <div className="flex flex-row items-center justify-between mb-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+                <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">
                   {product.category}
                 </p>
                 <div className="flex flex-row gap-2">
                   {discount && (
-                    <span className="bg-[#111111] rounded-radius px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white">
+                    <span className="rounded-radius px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest">
                       -{discount}%
                     </span>
                   )}
                   {product.tag && (
-                    <span className="border border-black rounded-radius px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-black">
+                    <span className="border border rounded-radius px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest">
                       {product.tag}
                     </span>
                   )}
@@ -203,41 +201,41 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
               <div className="flex flex-col">  
                 {/* TITLE */}
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-text-titles font-title italic tracking-tighter leading-[0.95] mb-2">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-title italic tracking-tighter leading-[0.95] mb-2">
                   {product.name}
                 </h1>
 
                 {/* PRICE */}
                 <div className="flex flex-row items-baseline gap-3 mb-6 mt-6">
-                  <span className="text-2xl sm:text-5xl font-bold tracking-tight text-text-titles">${product.price}</span>
-                  {originalPrice && <span className="text-base font-medium text-text-muted line-through">${originalPrice}</span>}
+                  <span className="text-2xl sm:text-5xl font-bold tracking-tight">${product.price}</span>
+                  {originalPrice && <span className="text-base font-medium opacity-50 line-through">${originalPrice}</span>}
                 </div>
               </div>    
 
               {/* DESCRIPTION */}
-              <p className="text-text-main text-sm sm:text-base font-medium leading-relaxed">
+              <p className="text-sm sm:text-base font-medium leading-relaxed">
                 {product.descLong}
               </p>
             </div>
 
             {/* ── LISTA DE DETALLES Y EXTRAS (Estilo Acordeón a ancho completo) ── */}
-            <div className="flex flex-col border-t border-black/10 mt-auto">
+            <div className="flex flex-col border-t mt-auto">
               
               {/* EXTRAS */}
               {extras.map((extra, idx) => (
-                <div key={`extra-${idx}`} className="flex flex-col px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b border-black/10">
-                  <p className="text-xs font-bold uppercase tracking-widest text-text-titles mb-4">{extra.title}</p>
+                <div key={`extra-${idx}`} className="flex flex-col px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b">
+                  <p className="text-xs font-bold uppercase tracking-widest mb-4">{extra.title}</p>
                   <div className="flex flex-col gap-3">
                     {extra.extras.map((option, oIdx) => (
                       <div key={oIdx} className="flex justify-between items-center group cursor-pointer">
                         <div className="flex items-center gap-3">
-                          <div className="w-4 h-4 border border-black/30 rounded-full group-hover:border-black transition-colors flex items-center justify-center">
+                          <div className="w-4 h-4 border rounded-full transition-colors flex items-center justify-center">
                             {/* Un punto interno sutil al hacer hover */}
-                            <div className="w-1.5 h-1.5 bg-black rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="w-1.5 h-1.5 bg-background rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                           </div>
-                          <span className="text-sm font-medium text-text-titles">{option.label}</span>
+                          <span className="text-sm font-medium opacity-85">{option.label}</span>
                         </div>
-                        {option.price && <span className="text-xs text-text-muted font-bold">+${option.price}</span>}
+                        {option.price && <span className="text-xs font-bold opacity-85">+${option.price}</span>}
                       </div>
                     ))}
                   </div>
@@ -246,9 +244,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
               {/* INGREDIENTES */}
               {product.ingredients.length > 0 && (
-                <div className="flex flex-col gap-2 px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b border-black/10 hover:bg-black/5 transition-colors cursor-default">
-                  <p className="text-xs font-bold uppercase tracking-widest text-text-titles">Ingredientes</p>
-                  <p className="text-sm text-text-main font-medium leading-relaxed">
+                <div className="flex flex-col gap-2 px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b transition-colors cursor-default">
+                  <p className="text-xs font-bold uppercase tracking-widest">Ingredientes</p>
+                  <p className="text-sm font-medium leading-relaxed opacity-85">
                     {product.ingredients.join(" • ")}
                   </p>
                 </div>
@@ -256,41 +254,41 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
               {/* ALÉRGENOS */}
               {product.allergens.length > 0 && (
-                <div className="flex flex-col gap-2 px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b border-black/10 hover:bg-red-50 transition-colors cursor-default">
-                  <p className="text-xs font-bold uppercase tracking-widest text-red-600">Alérgenos</p>
-                  <p className="text-sm text-red-900 font-medium leading-relaxed">
+                <div className="flex flex-col gap-2 px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b border-black/10 transition-colors cursor-default">
+                  <p className="text-xs font-bold uppercase tracking-widest text-red-600 dark:text-red-200">Alérgenos</p>
+                  <p className="text-sm text-red-900 dark:text-red-300 font-medium leading-relaxed">
                     {product.allergens.join(", ")}
                   </p>
                 </div>
               )}
 
               {/* TIEMPO DE PREP */}
-              <div className="flex justify-between items-center px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b border-black/10 hover:bg-black/5 transition-colors cursor-default">
-                <span className="text-xs font-bold uppercase tracking-widest text-text-titles">Tiempo de Prep.</span>
-                <span className="text-sm font-bold text-text-titles">{product.prepTime}</span>
+              <div className="flex justify-between items-center px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b transition-colors cursor-default">
+                <span className="text-xs font-bold uppercase tracking-widest">Tiempo de Prep.</span>
+                <span className="text-sm font-bold">{product.prepTime}</span>
               </div>
 
               {/* PRESENTACIÓN */}
-              <div className="flex justify-between items-center px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b border-black/10 hover:bg-black/5 transition-colors cursor-default">
-                <span className="text-xs font-bold uppercase tracking-widest text-text-titles">Presentación</span>
-                <span className="text-sm font-bold text-text-titles">{product.weight}</span>
+              <div className="flex justify-between items-center px-6 sm:px-8 lg:px-10 xl:px-12 py-5 border-b transition-colors cursor-default">
+                <span className="text-xs font-bold uppercase tracking-widest">Presentación</span>
+                <span className="text-sm font-bold">{product.weight}</span>
               </div>
 
             </div>
 
             {/* PRODUCTOS RELACIONADOS (También te puede gustar) */}
             {relatedWithPrices.length > 0 && (
-              <div className="bg-bg-dark/5 pt-8 pb-10 px-6 sm:px-8 lg:px-10 xl:px-12">
-                <h2 className="text-xl font-black uppercase italic tracking-tight text-text-titles mb-4">También te puede gustar</h2>
+              <div className="bg-background pt-8 pb-10 px-6 sm:px-8 lg:px-10 xl:px-12">
+                <h2 className="text-xl font-black uppercase italic tracking-tight mb-4">También te puede gustar</h2>
                 <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
                   {relatedWithPrices.map((related, idx) => (
-                    <Link href={`/menu/${related.slug}`} className="group flex flex-col bg-white rounded-radius border border-black/10 overflow-hidden" key={idx}>
-                      <div className="relative w-full aspect-square border-b border-black/10 bg-bg-dark/5">
+                    <Link href={`/menu/${related.slug}`} className="group flex flex-col bg-background rounded-radius border overflow-hidden" key={idx}>
+                      <div className="relative w-full aspect-square border-b">
                         <Image src={related.img} alt={related.name} fill sizes="(max-width: 640px) 50vw, 20vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                       </div>
                       <div className="p-2.5 flex flex-col gap-0.5">
-                        <span className="text-text-titles font-bold text-[10px] uppercase leading-tight line-clamp-1 group-hover:underline decoration-black/30 underline-offset-2">{related.name}</span>
-                        <span className="text-text-muted text-[11px] font-bold">${related.price}</span>
+                        <span className="font-bold text-[10px] uppercase leading-tight line-clamp-1 group-hover:underline underline-offset-2">{related.name}</span>
+                        <span className="text-[11px] font-bold opacity-85">${related.price}</span>
                       </div>
                     </Link>
                   ))}
@@ -299,15 +297,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             )}
             
             {/* SUCURSALES (En la columna derecha) */}
-            <div className="bg-white py-10 px-6 sm:px-8 lg:px-10 xl:px-12 border-t border-black/10">
-              <h2 className="text-xl font-black uppercase italic tracking-tight text-text-titles mb-6">Nuestras Sucursales</h2>
-              <div className="rounded-radius border border-black/5">
+            <div className="bg-background py-10 px-6 sm:px-8 lg:px-10 xl:px-12 border-t">
+              <h2 className="text-xl font-black uppercase italic tracking-tight mb-6">Nuestras Sucursales</h2>
+              <div className="rounded-radius border">
                 <LocationsCards className="bg-transparent" locations={locations} />
               </div>
             </div>
           </div>
         </div>
-
       </main>
       <FooterServer />
     </>

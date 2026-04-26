@@ -75,7 +75,7 @@ export default async function Products() {
         }>
           <MenuComponent products={products} categories={categories} />
         </Suspense>
-        <OrderOnline />
+        {/* <OrderOnline /> */}
         <MarqueeStrip />
       </main>
       <FooterServer />

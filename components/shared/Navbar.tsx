@@ -5,6 +5,7 @@ import { IconMenu2, IconX, IconPhoneCall, IconHome } from "@tabler/icons-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
+import { ThemeToggle } from "../ui/ThemeToggle"
 
 interface NavbarProps {
   phone?: string | null
@@ -66,12 +67,12 @@ export const Navbar = ({ phone }: NavbarProps) => {
             <Link
               href="/"
               title="Inicio"
-              className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 ${
-                isHome ? "bg-brand-contrast/18 text-brand-contrast" : "text-brand-contrast/70 hover:bg-brand-contrast/12 hover:text-brand-contrast"
-              }`}
+              className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 bg-brand-contrast/18 text-brand-contrast`}
             >
               <IconHome size={17} />
             </Link>
+
+            <ThemeToggle />
           </div>
 
           <div className="flex h-[52px] w-full items-center rounded-b-[20px] border-x border-b border-brand-primary/15 bg-brand-primary/95 px-2.5 backdrop-blur-md lg:hidden">
@@ -96,6 +97,8 @@ export const Navbar = ({ phone }: NavbarProps) => {
             >
               <IconHome size={18} />
             </Link>
+
+            <ThemeToggle />
           </div>
         </div>
       </nav>

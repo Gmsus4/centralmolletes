@@ -1,14 +1,9 @@
-import { Images } from "@/components/about/Images"
 import { AboutDetails } from "@/components/shared/AboutDetails"
 import { TitlePage } from "@/components/ui/TitlePage"
-import { Titles } from "@/data/titles"
 import { Metadata } from "next"
-import { socialMedia } from "@/data/socialMedia"
 
 import dynamic from "next/dynamic"
 import { NavbarServer } from "@/components/shared/NavbarServer"
-import { ButtonCustom } from "@/components/ui/ButtonCustom"
-import { AdminEditWrapper } from "@/components/shared/AdminEditWrapper"
 import { AboutInfo } from "@/components/about/AboutInfo"
 
 const StatsGrid = dynamic(() => import("@/components/about/StatsGrid").then((m) => ({ default: m.StatsGrid })))
@@ -40,12 +35,12 @@ export default function AboutUs() {
           </section>
         </div>
 
-        <section aria-label="Estadísticas" className="bg-bg-body w-full overflow-hidden py-8 lg:py-20 px-6 sm:px-10 lg:px-20">
+        <section aria-label="Estadísticas" className="bg-background w-full overflow-hidden py-8 lg:py-20 px-6 sm:px-10 lg:px-20">
           <StatsGrid />
         </section>
         <BenefitsPanel />
         <AboutDetails />
-        <OrderOnline />
+        {/* <OrderOnline /> */}
         <MarqueeStrip />
       </main>
 
