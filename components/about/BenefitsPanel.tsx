@@ -36,7 +36,7 @@ export const BenefitsPanel = async () => {
   ]
 
   return (
-    <div className="bg-background py-16 md:py-24 px-6 flex flex-col items-center gap-10">
+    <div className="bg-backgroundMin py-16 md:py-24 px-6 flex flex-col items-center gap-10">
       <div className="max-w-7xl w-full flex flex-col gap-10">
 
         <div className="flex flex-col items-center text-center gap-3">

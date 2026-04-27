@@ -36,7 +36,7 @@ export default async function LocationsPage() {
                 <div className="bg-background px-6">
                     <Locations className="lg:py-20 py-4" locations={location}/>
                 </div>
-                <MarqueeStrip />
+                {/* <MarqueeStrip /> */}
             </main>
             <FooterServer />
         </>

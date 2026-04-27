@@ -49,6 +49,7 @@
   --font-title:           "Lobster Two", cursive;
   --font-body:            "Onest Variable", sans-serif;
   
+  --backgroundMin:        oklch(0.985 0 0);  
   --background:        oklch(1 0 0);
   --foreground:        oklch(0.145 0 0);
   --popover:        oklch(1 0 0);
@@ -119,6 +120,7 @@
   --color-sidebar-primary:        var(--sidebar-primary);
   --color-sidebar-foreground:        var(--sidebar-foreground);
   --color-sidebar:        var(--sidebar);
+  --color-backgroundMin:        var(--backgroundMin);
   --color-chart-5:        var(--chart-5);
   --color-chart-4:        var(--chart-4);
   --color-chart-3:        var(--chart-3);
@@ -342,6 +344,7 @@ body{
 .card-value   { background: linear-gradient(135deg, #FFE55C 30%, #FFAA30 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
 .dark {
+  --backgroundMin:        oklch(0.205 0 0);
   --background:        oklch(0.145 0 0);
   --foreground:        oklch(0.985 0 0);
   --card:        oklch(0.205 0 0);

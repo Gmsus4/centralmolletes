@@ -135,7 +135,7 @@ export default async function BlogPage() {
           )}
         </div>
       </main>
-      <MarqueeStrip />
+      {/* <MarqueeStrip /> */}
       <FooterServer />
     </>
   )

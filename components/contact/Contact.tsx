@@ -262,9 +262,9 @@ export const ContactPage = ({
           </div>
 
           {/* CTA */}
-          <ButtonCustom url={`tel:${phone}`} className="flex gap-2 items-center" isFilled={false}>
-            <IconPhone />
-            <p className="font-bold text-base">Llamar ahora</p>
+          <ButtonCustom url={`tel:${phone}`} className="flex gap-2 items-center bg-brand-primary" isFilled={false}>
+            <IconPhone className="text-brand-contrast"/>
+            <p className="font-bold text-base text-brand-contrast">Llamar ahora</p>
           </ButtonCustom>
         </div>
       </div>

@@ -41,7 +41,7 @@ export default function AboutUs() {
         <BenefitsPanel />
         <AboutDetails />
         {/* <OrderOnline /> */}
-        <MarqueeStrip />
+        {/* <MarqueeStrip /> */}
       </main>
 
       <FooterServer />

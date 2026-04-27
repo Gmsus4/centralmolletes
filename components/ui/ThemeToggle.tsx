@@ -1,11 +1,20 @@
-// components/ui/ThemeToggle.tsx
 "use client"
 
 import { useTheme } from "next-themes"
 import { IconSun, IconMoon } from "@tabler/icons-react"
+import { useEffect, useState } from "react"
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
+
+  if (!mounted) {
+    return (
+      <div className="h-10 w-10 rounded-full bg-brand-contrast/18" />
+    )
+  }
 
   return (
     <button

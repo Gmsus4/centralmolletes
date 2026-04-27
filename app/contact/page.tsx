@@ -38,7 +38,7 @@ export default async function Contact(){
             </Suspense>
             <TitlePage section="contact"/>
             <ContactPage contact={contact} horarios={horarios}/>
-            <MarqueeStrip />
+            {/* <MarqueeStrip /> */}
             <FooterServer />
         </>
     )
